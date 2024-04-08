@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:team_project/firebase_options.dart';
+import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
 as myAuthProvider;
 import 'package:team_project/providers/auth/auth_state.dart';
@@ -130,6 +132,9 @@ class _MainFormState extends State<MainForm> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel userModel = context.read<ProfileState>().userModel;
+    User? user = FirebaseAuth.instance.currentUser;
+
     final _themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       key: _scaffoldKey,
@@ -181,7 +186,9 @@ class _MainFormState extends State<MainForm> {
               currentAccountPicture: CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
-                //나중에 backgroundImage이용해서 사진 지정.
+                backgroundImage: userModel.profileImage == null
+                    ? ExtendedAssetImageProvider('assets/images/profile.png') as ImageProvider
+                    : ExtendedNetworkImageProvider(userModel.profileImage!),
               ),
               otherAccountsPictures: [
                 CircleAvatar(
