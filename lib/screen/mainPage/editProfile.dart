@@ -12,8 +12,11 @@ import 'package:provider/provider.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class EditProfile extends StatefulWidget {
+  const EditProfile({super.key});
+
   @override
   _EditProfileState createState() => _EditProfileState();
+
 }
 
 class _EditProfileState extends State<EditProfile> {
@@ -31,10 +34,9 @@ class _EditProfileState extends State<EditProfile> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try{
         await profileProvider.getProfile(uid: uid);
-      }on CustomException catch(e){
+      } on CustomException catch(e){
         errorDialogWidget(context, e);
       }
-
     });
   }
 

@@ -32,7 +32,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   initializeDateFormatting().then(
-        (_) => runApp(
+        (_) => runApp( MultiProvider(providers: [
+          ChangeNotifierProvider(create: (_) => ThemeManager()),
+        ],child: MyApp()),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => ThemeManager()),
         Provider<AuthRepository>(
@@ -66,24 +78,16 @@ void main() async {
         StateNotifierProvider<ProfileProvider, ProfileState>(
           create: (context) => ProfileProvider(),
         ),
-      ], child: MyApp()),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+      ],
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Convex Bottom Bar Example',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: Provider.of<ThemeManager>(context).themeMode,
       home: SplashScreen(),
-    );
+    ),
+      );
   }
 }
 
