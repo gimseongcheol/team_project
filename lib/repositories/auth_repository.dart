@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,7 @@ class AuthRepository {
       {required this.firebaseAuth,
       required this.firebaseStorage,
       required this.firebaseFirestore});
+
 
   Future<void> signOut() async{
     try {

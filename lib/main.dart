@@ -17,6 +17,7 @@ import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
+import 'package:team_project/screens/signup_screen.dart';
 import 'package:team_project/screens/splash_screen.dart';
 import 'package:team_project/screen/mainPage/editProfile.dart';
 import 'package:team_project/screen/mainPage/editClub.dart';
@@ -221,13 +222,31 @@ class _MainFormState extends State<MainForm> {
                 ),
               ),
             ),
-            _buildDrawerCard(Icons.login, '회원가입하기', Colors.black12, () {}),
+            _buildDrawerCard(
+              user != null && user.isAnonymous
+                ? Icons.login
+                : Icons.account_circle_rounded,
+              user != null && user.isAnonymous ? "회원가입하기" : "인증 완료",
+                  Colors.black12,
+                  () {
+              // 클릭 이벤트 처리하는 함수 람다 전달
+                if (user != null && user.isAnonymous) {
+                  // 익명 로그인 유저인 경우에만 회원가입화면으로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignupScreen()),
+                  );
+                }
+              },
+            ),
             _buildDrawerCard(
                 Icons.question_mark_outlined, 'About', Colors.black12, () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AboutExplain()));
             }),
-            _buildDrawerCard(Icons.output, '로그아웃', Colors.black12, () {}),
+            _buildDrawerCard(Icons.output, '로그아웃', Colors.black12, () async{
+              await context.read<myAuthProvider.AuthProvider>().signOut();
+            }),
           ],
         ),
       ),
