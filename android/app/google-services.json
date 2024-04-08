@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "74607705179",
+    "project_id": "schoolteam-pc",
+    "storage_bucket": "schoolteam-pc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74607705179:android:d75e09ba75136be34a137e",
+        "android_client_info": {
+          "package_name": "com.example.team_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAB67CJgG1LfYboOZ-PJJFxKX0lh73rKdQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
