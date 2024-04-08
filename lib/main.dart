@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: Provider.of<ThemeManager>(context).themeMode,
-      home: MainForm(),
+      home: SplashScreen(),
     );
   }
 }

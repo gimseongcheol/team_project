@@ -27,7 +27,7 @@ class _EditProfileState extends State<EditProfile> {
     _getProfile();
   }
   void _getProfile() {
-    String uid = context.read<UserState>().userModel.uid;
+    late String uid = context.read<UserState>().userModel.uid;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try{
         await profileProvider.getProfile(uid: uid);
