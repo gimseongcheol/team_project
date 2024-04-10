@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:team_project/screens/feed_screen.dart';
-import 'package:team_project/screens/feed_upload_screen.dart';
+import 'package:team_project/screen/auth/feed_screen.dart';
+import 'package:team_project/screen/auth/feed_upload_screen.dart';
 import 'package:team_project/widgets/logout.dart';
 
 class MainScreen extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:team_project/providers/auth/auth_provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/auth/auth_state.dart';
-import 'package:team_project/screens/search_password.dart';
-import 'package:team_project/screens/signup_screen.dart';
+import 'package:team_project/screen/auth/search_password.dart';
+import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/utils/logger.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:provider/provider.dart';
@@ -178,7 +178,7 @@ class _SigninScreenState extends State<SigninScreen> {
                               }
                             }
                           : null,
-                      child: Text('로그인'),
+                      child: Text('로그인', style: TextStyle(color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff1e2b67),
                         shape: RoundedRectangleBorder(
@@ -199,7 +199,7 @@ class _SigninScreenState extends State<SigninScreen> {
                               ))
                           : null,
                       child: Text('회원이 아니신가요? 회원가입 하기',
-                          style: TextStyle(fontSize: 16)),
+                          style: TextStyle(fontSize: 16, color: Colors.black)),
                     ),
 
                     TextButton(
@@ -212,7 +212,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           : null,
                       child: Text(
                         '비밀번호를 잊어버리셨나요?',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                     ),
                     TextButton(
@@ -231,7 +231,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           : null,
                       child: Text(
                         '비회원 입장',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                     ),
                   ].reversed.toList(),

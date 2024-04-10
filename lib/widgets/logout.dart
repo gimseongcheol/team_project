@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:team_project/screens/signin_screen.dart'; // 로그인 화면 파일을 임포트합니다.
+import 'package:team_project/screen/auth/signin_screen.dart'; // 로그인 화면 파일을 임포트합니다.
 
 Future<void> logoutAndNavigateToLoginScreen(BuildContext context) async {
   try {

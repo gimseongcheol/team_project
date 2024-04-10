@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/providers/auth/auth_provider.dart' as myAuthProvider;
-import 'package:team_project/screens/signup_screen.dart';
+import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/widgets/logout.dart';
 
 Future<void> SignUpButtonWidget(BuildContext context) async {

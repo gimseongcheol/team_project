@@ -4,7 +4,7 @@ import 'package:team_project/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:team_project/screens/signin_screen.dart';
+import 'package:team_project/screen/auth/signin_screen.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:team_project/screens/signin_screen.dart';
+import 'package:team_project/screen/auth/signin_screen.dart';
 import 'package:validators/validators.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
