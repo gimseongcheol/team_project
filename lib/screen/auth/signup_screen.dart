@@ -1,4 +1,3 @@
-import 'package:flutter_svg/svg.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';

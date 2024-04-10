@@ -1,26 +1,107 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/providers/club/club_provider.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/event.dart';
 
 class CreateClubScreen extends StatefulWidget {
   @override
   _CreateClubScreenState createState() => _CreateClubScreenState();
-}
 
-class Comment {
-  final String text;
-  final String author;
-  final DateTime date;
-
-  Comment({required this.text, required this.author, required this.date});
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
+  GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+
   List<String> imagePaths = [];
   String? _selectedClubType;
   TextEditingController _eventController = TextEditingController();
+  TextEditingController clubNameController = TextEditingController();
+  TextEditingController presidentNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController professorNameController = TextEditingController();
+  TextEditingController shortIntroController = TextEditingController();
+  TextEditingController fullIntroController = TextEditingController();
+  final List<String> _files = [];
+  Uint8List? _image;
+
+  @override
+  void dispose() {
+    clubNameController.dispose();
+    presidentNameController.dispose();
+    phoneNumberController.dispose();
+    professorNameController.dispose();
+    shortIntroController.dispose();
+    fullIntroController.dispose();
+    super.dispose();
+  }
+  Future<List<String>> selectImages() async {
+    List<XFile> images = await ImagePicker().pickMultiImage(
+      maxHeight: 1024,
+      maxWidth: 1024,
+    );
+    return images.map((e) => e.path).toList();
+  }
+
+  List<Widget> selectedImageList() {
+    final clubStatus = context
+        .watch<ClubState>()
+        .clubStatus;
+
+    return _files.map((data) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Stack(
+          children: [
+            ClipRRect(
+              child: Image.file(
+                File(data),
+                fit: BoxFit.cover,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.4,
+                width: 100,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: InkWell(
+                onTap: clubStatus == ClubStatus.submitting
+                    ? null
+                    : () {
+                  setState(() {
+                    _files.remove(data);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                  height: 30,
+                  width: 30,
+                  child: Icon(
+                    color: Colors.black.withOpacity(0.6),
+                    size: 30,
+                    Icons.highlight_remove_outlined,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
 
   Map<DateTime, List<Event>> _selectedEvents = {}; // _selectedEvents 변수 추가
 
@@ -44,7 +125,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clubStatus = context.watch<ClubState>().clubStatus;
     final _themeManager = Provider.of<ThemeManager>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -72,22 +155,25 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 onPressed: () {
                   _showConfirmationDialog(context);
                 },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.save,
-                      color: Colors.white, // 아이콘 색상을 하얀색으로 지정
-                    ),
-                    SizedBox(width: 4), // 아이콘과 텍스트 사이 간격 추가
-                    Text(
-                      '저장',
-                      style: TextStyle(
-                        fontFamily: 'Dongle',
-                        color: Colors.white, // 텍스트 색상을 하얀색으로 지정
-                        fontSize: 30.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.save,
+                        color: Colors.white, // 아이콘 색상을 하얀색으로 지정
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 4), // 아이콘과 텍스트 사이 간격 추가
+                      Text(
+                        '저장',
+                        style: TextStyle(
+                          fontFamily: 'Dongle',
+                          color: Colors.white, // 텍스트 색상을 하얀색으로 지정
+                          fontSize: 30.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -369,12 +455,26 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       ),
     );
   }
-
-  // 이미지를 추가하는 메서드입니다.
+// 이미지를 추가하는 메서드입니다.
   void _addImage() {
     setState(() {
       imagePaths.add('assets/example_image.jpg');
     });
+  }
+  // 이미지를 추가하는 메서드입니다.
+  Future<void> selectImage() async {
+    ImagePicker imagePicker = new ImagePicker();
+    XFile? file = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 512,
+      maxWidth: 512,
+    );
+    if (file != null) {
+      Uint8List uint8list = await file.readAsBytes();
+      setState(() {
+        _image = uint8list;
+      });
+    }
   }
 
   // 이미지를 삭제하는 메서드입니다.

@@ -7,13 +7,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:team_project/firebase_options.dart';
 import 'package:team_project/models/user_model.dart';
-import 'package:team_project/providers/auth/auth_provider.dart' as myAuthProvider;
+import 'package:team_project/providers/auth/auth_provider.dart'
+    as myAuthProvider;
 import 'package:team_project/providers/auth/auth_state.dart';
+import 'package:team_project/providers/club/club_provider.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
+import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
@@ -34,9 +38,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   initializeDateFormatting().then(
-        (_) => runApp( MultiProvider(providers: [
-          ChangeNotifierProvider(create: (_) => ThemeManager()),
-        ],child: MyApp()),
+    (_) => runApp(
+      MultiProvider(providers: [
+        ChangeNotifierProvider(create: (_) => ThemeManager()),
+      ], child: MyApp()),
     ),
   );
 }
@@ -46,8 +51,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      MultiProvider(providers: [
+    return MultiProvider(
+      providers: [
         ChangeNotifierProvider(create: (_) => ThemeManager()),
         Provider<AuthRepository>(
           create: (context) => AuthRepository(
@@ -67,6 +72,12 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<ClubRepository>(
+          create: (context) => ClubRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+            firebaseStorage: FirebaseStorage.instance,
+          ),
+        ),
         StreamProvider<User?>(
           create: (context) => FirebaseAuth.instance.authStateChanges(),
           initialData: null,
@@ -80,16 +91,19 @@ class MyApp extends StatelessWidget {
         StateNotifierProvider<ProfileProvider, ProfileState>(
           create: (context) => ProfileProvider(),
         ),
+        StateNotifierProvider<ClubProvider, ClubState>(
+          create: (context) => ClubProvider(),
+        ),
       ],
       child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Convex Bottom Bar Example',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: Provider.of<ThemeManager>(context).themeMode,
-      home: SplashScreen(),
-    ),
-      );
+        debugShowCheckedModeBanner: false,
+        title: 'Convex Bottom Bar Example',
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: Provider.of<ThemeManager>(context).themeMode,
+        home: SplashScreen(),
+      ),
+    );
   }
 }
 
@@ -187,7 +201,8 @@ class _MainFormState extends State<MainForm> {
                 radius: 30,
                 backgroundColor: Colors.white,
                 backgroundImage: userModel.profileImage == null
-                    ? ExtendedAssetImageProvider('assets/images/profile.png') as ImageProvider
+                    ? ExtendedAssetImageProvider('assets/images/profile.png')
+                        as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
               ),
               otherAccountsPictures: [
@@ -209,7 +224,9 @@ class _MainFormState extends State<MainForm> {
               accountEmail: Text(
                 '이메일을 인증하세요.',
                 style: TextStyle(
-                    fontFamily: 'YeongdeokSea',fontSize: 18, color: Colors.white),
+                    fontFamily: 'YeongdeokSea',
+                    fontSize: 18,
+                    color: Colors.white),
               ),
               decoration: BoxDecoration(
                 color: _themeManager.themeMode == ThemeMode.dark
@@ -223,12 +240,12 @@ class _MainFormState extends State<MainForm> {
             ),
             _buildDrawerCard(
               user != null && user.isAnonymous
-                ? Icons.login
-                : Icons.account_circle_rounded,
+                  ? Icons.login
+                  : Icons.account_circle_rounded,
               user != null && user.isAnonymous ? "회원가입하기" : "인증 완료",
-                  Colors.black12,
-                  () {
-              // 클릭 이벤트 처리하는 함수 람다 전달
+              Colors.black12,
+              () {
+                // 클릭 이벤트 처리하는 함수 람다 전달
                 if (user != null && user.isAnonymous) {
                   // 익명 로그인 유저인 경우에만 회원가입화면으로 이동
                   Navigator.push(
@@ -243,7 +260,7 @@ class _MainFormState extends State<MainForm> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AboutExplain()));
             }),
-            _buildDrawerCard(Icons.output, '로그아웃', Colors.black12, () async{
+            _buildDrawerCard(Icons.output, '로그아웃', Colors.black12, () async {
               await context.read<myAuthProvider.AuthProvider>().signOut();
             }),
           ],
@@ -287,8 +304,8 @@ class _MainFormState extends State<MainForm> {
                         item["icon"],
                         color: _selectedPage == index
                             ? _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white
-                            : Colors.black
+                                ? Colors.white
+                                : Colors.black
                             : Colors.white,
                       ),
                       SizedBox(height: 2), // 아이콘과 텍스트 사이의 간격 조정
@@ -296,10 +313,10 @@ class _MainFormState extends State<MainForm> {
                         item["text"],
                         style: TextStyle(
                           color: _selectedPage ==
-                              index //여기서 라이트모드일때 선택안한 아이콘이 하얀색이었으면 하는데...
+                                  index //여기서 라이트모드일때 선택안한 아이콘이 하얀색이었으면 하는데...
                               ? _themeManager.themeMode == ThemeMode.dark
-                              ? Colors.white
-                              : Colors.black
+                                  ? Colors.white
+                                  : Colors.black
                               : Colors.white,
                         ),
                       ),
@@ -349,9 +366,9 @@ class _MainFormState extends State<MainForm> {
       title: Text(title,
           style: TextStyle(
               color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Colors.white
-                  : Colors.black)),
+                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                      ? Colors.white
+                      : Colors.black)),
       onTap: onTap,
       trailing: Icon(Icons.navigate_next,
           color: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark

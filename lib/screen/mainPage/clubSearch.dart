@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/modify/ModifyClubScreen.dart';
@@ -43,6 +45,7 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
     final _themeManager = Provider.of<ThemeManager>(context);
 
     return Scaffold(
