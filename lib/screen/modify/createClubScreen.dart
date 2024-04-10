@@ -28,6 +28,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   TextEditingController professorNameController = TextEditingController();
   TextEditingController shortIntroController = TextEditingController();
   TextEditingController fullIntroController = TextEditingController();
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   final List<String> _files = [];
   Uint8List? _image;
 
@@ -43,33 +44,33 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
   Future<List<String>> selectImages() async {
     List<XFile> images = await ImagePicker().pickMultiImage(
-      maxHeight: 1024,
-      maxWidth: 1024,
+      maxHeight: 100,
+      maxWidth: 100,
     );
     return images.map((e) => e.path).toList();
   }
 
   List<Widget> selectedImageList() {
-    final clubStatus = context
-        .watch<ClubState>()
-        .clubStatus;
+    final clubStatus = context.watch<ClubState>().clubStatus;
 
     return _files.map((data) {
       return Padding(
-        padding: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Stack(
+          // Position the delete icon on top of the image
           children: [
-            ClipRRect(
+            Container(
+              width: 100.0,
+              height: 100.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               child: Image.file(
                 File(data),
                 fit: BoxFit.cover,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.4,
                 width: 100,
               ),
-              borderRadius: BorderRadius.circular(5),
             ),
             Positioned(
               top: 10,
@@ -102,6 +103,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       );
     }).toList();
   }
+
 
   Map<DateTime, List<Event>> _selectedEvents = {}; // _selectedEvents 변수 추가
 
@@ -193,84 +195,46 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             ),
             Divider(),
             // "+" 버튼과 이미지들을 표시할 영역
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _addImage();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white24
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        size: 40.0,
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white70
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-                // 이미지들을 표시합니다.
-                Expanded(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: imagePaths.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Stack(
-                            // 삭제 아이콘 위치를 두려고 -> 그림위의 아이콘
-                            children: [
-                              Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Image.asset(
-                                  imagePaths[index],
-                                  width: 100.0,
-                                  height: 100.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: Icon(Icons.delete,
-                                      color: Colors.black), // 아이콘 색상 검은색으로 설정
-                                  onPressed: () {
-                                    _removeImage(index);
-                                  },
-                                ),
-                              ),
-                            ],
+            Form(
+              key: _globalKey,
+              autovalidateMode: _autovalidateMode,
+              child: Row(
+                children: [
+                  SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: clubStatus == ClubStatus.submitting
+                              ? null
+                              : () async {
+                            final _images = await selectImages();
+                            setState(() {
+                              _files.addAll(_images);
+                            });
+                          },
+                          child: Container(
+                            height: 80,
+                            width: 80,
+                            child: const Icon(Icons.add),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                        ...selectedImageList(),
+                      ],
                     ),
                   ),
-                ),
-              ],
+
+                ],
+              ),
             ),
             // 사진의 개수를 나타내는 작은 텍스트 추가
             Padding(
               padding: const EdgeInsets.only(left: 13.0, top: 8.0),
               child: Text(
-                '사진 개수 : ${imagePaths.length}개',
+                '사진 개수 : ${_files.length}개',
                 style: TextStyle(
                   fontSize: 12.0,
                   color: _themeManager.themeMode == ThemeMode.dark
