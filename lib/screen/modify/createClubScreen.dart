@@ -88,11 +88,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                     color: Colors.white.withOpacity(0.4),
                     borderRadius: BorderRadius.circular(60),
                   ),
-                  height: 30,
-                  width: 30,
+                  height: 20,
+                  width: 20,
                   child: Icon(
                     color: Colors.black.withOpacity(0.6),
-                    size: 30,
+                    size: 20,
                     Icons.highlight_remove_outlined,
                   ),
                 ),
@@ -214,13 +214,18 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                             });
                           },
                           child: Container(
-                            height: 80,
-                            width: 80,
-                            child: const Icon(Icons.add),
+                            height: 100,
+                            width: 100,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(5),
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white24
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(0.0),
                             ),
+                            child: Icon(Icons.add, size: 40.0,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white70
+                                  : Colors.black,),
                           ),
                         ),
                         ...selectedImageList(),
@@ -442,45 +447,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     }
   }
 
-  // 이미지를 삭제하는 메서드입니다.
-  void _removeImage(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final Brightness brightness = Theme.of(context).brightness;
-        return AlertDialog(
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Color(0xFF212121),
-          title: Text('이미지 삭제'),
-          content: Text('이미지를 삭제하시겠습니까?'),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  imagePaths.removeAt(index); // 이미지 삭제
-                });
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67), // 확인 버튼 색상
-              ),
-              child: Text('확인', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white,
-              ),
-              child: Text('취소', style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void _showConfirmationDialog(BuildContext context) {
     showDialog(
