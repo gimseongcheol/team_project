@@ -73,8 +73,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               ),
             ),
             Positioned(
-              top: 10,
-              right: 10,
+              top: 1,
+              right: 1,
               child: InkWell(
                 onTap: clubStatus == ClubStatus.submitting
                     ? null
@@ -195,13 +195,13 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             ),
             Divider(),
             // "+" 버튼과 이미지들을 표시할 영역
-            //여기 Listview추가해야함 오류 조심
             Form(
               key: _globalKey,
               autovalidateMode: _autovalidateMode,
               child: Row(
                 children: [
                   SingleChildScrollView(
+                    scrollDirection: Axis.horizontal, //이게 작동을 안함 listview 같은 느낌인데
                     child: Row(
                       children: [
                         InkWell(
