@@ -5,15 +5,23 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/event.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class CreateClubScreen extends StatefulWidget {
+  final VoidCallback onClubUploaded;
+
+  const CreateClubScreen({
+    super.key,
+    required this.onClubUploaded,
+  });
+
   @override
   _CreateClubScreenState createState() => _CreateClubScreenState();
-
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
@@ -42,6 +50,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     fullIntroController.dispose();
     super.dispose();
   }
+
   Future<List<String>> selectImages() async {
     List<XFile> images = await ImagePicker().pickMultiImage(
       maxHeight: 100,
@@ -79,10 +88,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 onTap: clubStatus == ClubStatus.submitting
                     ? null
                     : () {
-                  setState(() {
-                    _files.remove(data);
-                  });
-                },
+                        setState(() {
+                          _files.remove(data);
+                        });
+                      },
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.4),
@@ -103,7 +112,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       );
     }).toList();
   }
-
 
   Map<DateTime, List<Event>> _selectedEvents = {}; // _selectedEvents 변수 추가
 
@@ -154,11 +162,20 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           Row(
             children: [
               TextButton(
-                onPressed: () {
-                  _showConfirmationDialog(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                onPressed:
+                    (_files.length == 0 || clubStatus == ClubStatus.submitting)
+                        ? null
+                        : () async {
+                            try {
+                              FocusScope.of(context).unfocus();
+                              _showConfirmationDialog(context);
+                              widget.onClubUploaded();
+                            } on CustomException catch (e) {
+                              errorDialogWidget(context, e);
+                            }
+                          },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       Icon(
@@ -201,18 +218,19 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Row(
                 children: [
                   SingleChildScrollView(
-                    scrollDirection: Axis.horizontal, //이게 작동을 안함 listview 같은 느낌인데
+                    scrollDirection: Axis.horizontal,
+                    //이게 작동을 안함 listview 같은 느낌인데
                     child: Row(
                       children: [
                         InkWell(
                           onTap: clubStatus == ClubStatus.submitting
                               ? null
                               : () async {
-                            final _images = await selectImages();
-                            setState(() {
-                              _files.addAll(_images);
-                            });
-                          },
+                                  final _images = await selectImages();
+                                  setState(() {
+                                    _files.addAll(_images);
+                                  });
+                                },
                           child: Container(
                             height: 100,
                             width: 100,
@@ -222,17 +240,19 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                                   : Colors.grey[300],
                               borderRadius: BorderRadius.circular(0.0),
                             ),
-                            child: Icon(Icons.add, size: 40.0,
+                            child: Icon(
+                              Icons.add,
+                              size: 40.0,
                               color: _themeManager.themeMode == ThemeMode.dark
                                   ? Colors.white70
-                                  : Colors.black,),
+                                  : Colors.black,
+                            ),
                           ),
                         ),
                         ...selectedImageList(),
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -324,13 +344,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 4),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: clubNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '동아리 이름을 입력합니다.',
+                labelText: '동아리 명',
                 prefixIcon: Icon(
                   Icons.home,
                 ),
@@ -343,13 +364,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: presidentNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '회장 이름을 입력합니다.',
+                labelText: '회장 이름',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -359,13 +381,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.number,
+              controller: phoneNumberController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '전화번호를 입력합니다.',
+                labelText: '연락처',
                 prefixIcon: Icon(Icons.phone),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -375,13 +398,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: professorNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '담당교수 이름을 입력합니다.',
+                labelText: '담당 교수',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -391,13 +415,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: shortIntroController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '한줄 소개를 입력합니다.',
+                labelText: '한줄 소개',
                 prefixIcon: Icon(Icons.textsms_outlined),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -407,13 +432,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: fullIntroController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '동아리 소개를 입력합니다.',
+                labelText: '동아리 소개',
                 prefixIcon: Icon(Icons.text_snippet_outlined),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -425,30 +451,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       ),
     );
   }
-// 이미지를 추가하는 메서드입니다.
-  void _addImage() {
-    setState(() {
-      imagePaths.add('assets/example_image.jpg');
-    });
-  }
-  // 이미지를 추가하는 메서드입니다.
-  Future<void> selectImage() async {
-    ImagePicker imagePicker = new ImagePicker();
-    XFile? file = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxHeight: 512,
-      maxWidth: 512,
-    );
-    if (file != null) {
-      Uint8List uint8list = await file.readAsBytes();
-      setState(() {
-        _image = uint8list;
-      });
-    }
-  }
-
 
   void _showConfirmationDialog(BuildContext context) {
+    final clubStatus = context.watch<ClubState>().clubStatus;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -496,9 +502,32 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed:
+                  (_files.length == 0 || clubStatus == ClubStatus.submitting)
+                      ? null
+                      : () async {
+                          try {
+                            FocusScope.of(context).unfocus();
+                            Navigator.of(context).pop();
+                            await context.read<ClubProvider>().uploadClub(
+                                  files: _files,
+                                  clubName: clubNameController.text,
+                                  professorName: professorNameController.text,
+                                  call: phoneNumberController.text,
+                                  shortComment: shortIntroController.text,
+                                  fullComment: fullIntroController.text,
+                                  writer: presidentNameController.text,
+                                  clubType: _selectedClubType.toString(),
+                                  //uid: uid,
+                                );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('동아리 생성했습니다.')),
+                            );
+                            widget.onClubUploaded();
+                          } on CustomException catch (e) {
+                            errorDialogWidget(context, e);
+                          }
+                        },
               style: ElevatedButton.styleFrom(
                 primary: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)

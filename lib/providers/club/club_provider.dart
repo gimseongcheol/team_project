@@ -43,7 +43,7 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin{
     }
   }
 
-   Future<ClubModel?> getClubList(String clubId) async {
+   Future<void> getClubList() async {
     try {
       state = state.copyWith(clubStatus: ClubStatus.fetching);
       List<ClubModel> clubList = await read<ClubRepository>().getClubList();

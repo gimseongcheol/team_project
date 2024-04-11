@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
+import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/modify/ModifyClubScreen.dart';
 import 'package:team_project/screen/modify/createClubScreen.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class ClubSearch extends StatefulWidget {
   @override
   _ClubSearchState createState() => _ClubSearchState();
 }
 
-class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin {
+class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<ClubSearch>  {
+  late final ClubProvider clubProvider;
   late TabController _tabController;
+  @override
+  bool get wantKeepAlive => true;
+
   final List<String> _departmentList = <String>[
+
     '프란치스코칼리지',
     '글로벌비즈니스대학',
     '신학대학',
@@ -41,13 +49,27 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin {
       vsync: this,
     );
     super.initState();
+    clubProvider = context.read<ClubProvider>();
+    _getClubList();
   }
 
+  void _getClubList() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        await clubProvider.getClubList();
+      } on CustomException catch (e) {
+        errorDialogWidget(context, e);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
-
+    super.build(context);
+    ClubState clubState = context.watch<ClubState>();
+    List<ClubModel> clubList = clubState.clubList;
     final _themeManager = Provider.of<ThemeManager>(context);
 
+    // ㄱ
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -477,7 +499,7 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateClubScreen()));
+              MaterialPageRoute(builder: (context) => CreateClubScreen(onClubUploaded: () {  },)));
         }, //화면 연결시 동아리 만드는 파일에 연결하기
         child: Icon(Icons.add, color: Colors.black),
       ),
