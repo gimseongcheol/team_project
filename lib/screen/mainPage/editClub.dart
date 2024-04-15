@@ -46,6 +46,7 @@ class _EditClubState extends State<EditClub> {
                   ),
                   suffixIcon: Icon(Icons.search, color: Colors.black),
                 ),
+                style: TextStyle(color: Colors.black),
               ),
             ),
           ),

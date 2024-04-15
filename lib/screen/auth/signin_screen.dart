@@ -4,6 +4,7 @@ import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/auth/auth_state.dart';
 import 'package:team_project/screen/auth/search_password.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
+import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/utils/logger.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeManager = Provider.of<ThemeManager>(context);
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
@@ -62,7 +64,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
                     //email
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           _isLabelDark1 = !_isLabelDark1;
                         });
@@ -75,11 +77,17 @@ class _SigninScreenState extends State<SigninScreen> {
                           border: OutlineInputBorder(),
                           labelText: 'DCU 이메일',
                           labelStyle: TextStyle(
-                            color: _isLabelDark1 ? Colors.grey : Colors.black,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : Colors.grey,
                           ),
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(
+                            Icons.email,
+                            color: Colors.black,
+                          ),
                           filled: true,
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -106,7 +114,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
                     //Password
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           _isLabelDark2 = !_isLabelDark2;
                         });
@@ -120,11 +128,17 @@ class _SigninScreenState extends State<SigninScreen> {
                           border: OutlineInputBorder(),
                           labelText: '비밀번호',
                           labelStyle: TextStyle(
-                            color: _isLabelDark2 ? Colors.grey : Colors.black,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : Colors.grey,
                           ),
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                          ),
                           filled: true,
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -178,7 +192,10 @@ class _SigninScreenState extends State<SigninScreen> {
                               }
                             }
                           : null,
-                      child: Text('로그인', style: TextStyle(color: Colors.white),),
+                      child: Text(
+                        '로그인',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff1e2b67),
                         shape: RoundedRectangleBorder(
@@ -199,7 +216,11 @@ class _SigninScreenState extends State<SigninScreen> {
                               ))
                           : null,
                       child: Text('회원이 아니신가요? 회원가입 하기',
-                          style: TextStyle(fontSize: 16, color: Colors.black)),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white
+                                  : Colors.black)),
                     ),
 
                     TextButton(
@@ -212,7 +233,11 @@ class _SigninScreenState extends State<SigninScreen> {
                           : null,
                       child: Text(
                         '비밀번호를 잊어버리셨나요?',
-                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.white
+                                : Colors.black),
                       ),
                     ),
                     TextButton(
@@ -231,7 +256,11 @@ class _SigninScreenState extends State<SigninScreen> {
                           : null,
                       child: Text(
                         '비회원 입장',
-                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.white
+                                : Colors.black),
                       ),
                     ),
                   ].reversed.toList(),

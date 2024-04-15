@@ -53,7 +53,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeManager()),
         Provider<AuthRepository>(
           create: (context) => AuthRepository(
             firebaseAuth: FirebaseAuth.instance,
@@ -97,7 +96,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Convex Bottom Bar Example',
+        title: '대구가톨릭대학교 동아리 홍보 시스템',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: Provider.of<ThemeManager>(context).themeMode,

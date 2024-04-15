@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:team_project/screen/auth/signin_screen.dart';
+import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
+import 'package:provider/provider.dart';
+import 'package:team_project/theme/theme_constants.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -61,6 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeManager = Provider.of<ThemeManager>(context);
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
@@ -133,11 +137,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           border: OutlineInputBorder(),
                           labelText: '학교 이메일',
                           labelStyle: TextStyle(
-                            color: _isLabelDark1 ? Colors.grey : Colors.black,
-                          ),
-                          prefixIcon: Icon(Icons.email),
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.black
+                                  : Colors.grey),
+                          prefixIcon: Icon(Icons.email, color: Colors.black),
                           filled: true,
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -163,7 +169,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: 20),
                     //name
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           _isLabelDark2 = !_isLabelDark2;
                         });
@@ -176,11 +182,15 @@ class _SignupScreenState extends State<SignupScreen> {
                           border: OutlineInputBorder(),
                           labelText: '이름',
                           labelStyle: TextStyle(
-                            color: _isLabelDark2 ? Colors.grey : Colors.black,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : Colors.grey,
                           ),
-                          prefixIcon: Icon(Icons.account_circle),
+                          prefixIcon:
+                              Icon(Icons.account_circle, color: Colors.black),
                           filled: true,
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -200,57 +210,62 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     SizedBox(height: 20),
                     //학번
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _isLabelDark5 = !_isLabelDark5;
-                          });
-                        },
-                        child: SingleChildScrollView(
-                          child: DropdownButtonFormField<String>(
-                            value: _selectedNumber,
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedNumber = newValue;
-                                _isEnabled = newValue != null;
-                                _useridEditingController.text = newValue ?? '';
-                              });
-                            },
-                            items: [
-                              '24학번',
-                              '23학번',
-                              '22학번',
-                              '21학번',
-                              '20학번',
-                              '19학번',
-                              '18학번',
-                              '17학번',
-                              '16학번',
-                            ].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: '학번 선택',
-                              labelStyle: TextStyle(
-                                color: _isLabelDark5 ? Colors.grey : Colors.black,
-                              ),
-                              prefixIcon: Icon(Icons.account_box),
-                              filled: true,
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _isLabelDark5 = !_isLabelDark5;
+                        });
+                      },
+                      child: SingleChildScrollView(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedNumber,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedNumber = newValue;
+                              _isEnabled = newValue != null;
+                              _useridEditingController.text = newValue ?? '';
+                            });
+                          },
+                          items: [
+                            '24학번',
+                            '23학번',
+                            '22학번',
+                            '21학번',
+                            '20학번',
+                            '19학번',
+                            '18학번',
+                            '17학번',
+                            '16학번',
+                          ].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: '학번 선택',
+                            labelStyle: TextStyle(
+                                color: _themeManager.themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Colors.grey),
+                            prefixIcon: Icon(
+                              Icons.account_box,
+                              color: Colors.black,
                             ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return '학번을 선택해주세요.';
-                              }
-                              return null;
-                            },
-                            isExpanded: true,
+                            filled: true,
                           ),
+                          style: TextStyle(color: Colors.black),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '학번을 선택해주세요.';
+                            }
+                            return null;
+                          },
+                          isExpanded: true,
                         ),
                       ),
+                    ),
                     SizedBox(height: 20),
 
                     //Password
@@ -269,15 +284,18 @@ class _SignupScreenState extends State<SignupScreen> {
                           border: OutlineInputBorder(),
                           labelText: '비밀번호',
                           labelStyle: TextStyle(
-                            color: _isLabelDark3 ? Colors.grey : Colors.black,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : Colors.grey,
                           ),
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: Colors.black),
                           filled: true,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
+                              color: Colors.black,
                             ),
                             onPressed: () {
                               setState(() {
@@ -286,6 +304,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             },
                           ),
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -310,7 +329,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: 20),
                     //Confirm Password
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           _isLabelDark4 = !_isLabelDark4;
                         });
@@ -323,23 +342,28 @@ class _SignupScreenState extends State<SignupScreen> {
                           border: OutlineInputBorder(),
                           labelText: '비밀번호 확인',
                           labelStyle: TextStyle(
-                            color: _isLabelDark4 ? Colors.grey : Colors.black,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.black
+                                : Colors.grey,
                           ),
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: Colors.black),
                           filled: true,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _password2Visible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
+                              color: Colors.black,
                             ),
                             onPressed: () {
                               setState(() {
-                                _password2Visible = !_password2Visible; // 수정된 부분
+                                _password2Visible =
+                                    !_password2Visible; // 수정된 부분
                               });
                             },
                           ),
                         ),
+                        style: TextStyle(color: Colors.black),
                         onChanged: (value) {
                           // 입력이 변경될 때마다 색상 업데이트
                           setState(() {
@@ -408,7 +432,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               }
                             }
                           : null,
-                      child: Text('회원가입'),
+                      child: Text(
+                        '회원가입',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff1e2b67),
                         shape: RoundedRectangleBorder(
@@ -429,7 +456,11 @@ class _SignupScreenState extends State<SignupScreen> {
                               ))
                           : null,
                       child: Text('이미 회원이신가요? 로그인하기',
-                          style: TextStyle(fontSize: 16)),
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white
+                                  : Colors.black)),
                     ),
                   ].reversed.toList(),
                 ),

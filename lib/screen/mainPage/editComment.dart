@@ -109,6 +109,7 @@ class _EditCommentState extends State<EditComment> {
                     ),
                     suffixIcon: Icon(Icons.search, color: Colors.black),
                   ),
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
