@@ -25,18 +25,16 @@ class CreateClubScreen extends StatefulWidget {
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
-  GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+
 
   List<String> imagePaths = [];
   String? _selectedClubType;
-  TextEditingController _eventController = TextEditingController();
   TextEditingController clubNameController = TextEditingController();
   TextEditingController presidentNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController professorNameController = TextEditingController();
   TextEditingController shortIntroController = TextEditingController();
   TextEditingController fullIntroController = TextEditingController();
-  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   final List<String> _files = [];
   Uint8List? _image;
 
@@ -127,12 +125,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     initializeDateFormatting();
     _selectedDay = DateTime.now(); // Initialize _selectedDay in initState
   }
-
-  void _createClub() {
-    // 동아리 생성 함수 구현
-    print('동아리를 생성합니다.');
-  }
-
   @override
   Widget build(BuildContext context) {
     final clubStatus = context.watch<ClubState>().clubStatus;
@@ -162,18 +154,75 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           Row(
             children: [
               TextButton(
-                onPressed:
-                    (_files.length == 0 || clubStatus == ClubStatus.submitting)
-                        ? null
-                        : () async {
-                            try {
-                              FocusScope.of(context).unfocus();
-                              _showConfirmationDialog(context);
-                              widget.onClubUploaded();
-                            } on CustomException catch (e) {
-                              errorDialogWidget(context, e);
-                            }
-                          },
+                onPressed: (_files.length == 0 ||
+                        clubStatus == ClubStatus.submitting)
+                    ? null
+                    : () async {
+                        if (_selectedClubType == null ||
+                            clubNameController.text.isEmpty ||
+                            presidentNameController.text.isEmpty) {
+                          // 필수 필드가 비어 있는 경우 사용자에게 경고를 표시
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('경고'),
+                                content: Text('모든 필수 필드를 입력해주세요.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('확인'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          try {
+                            await context.read<ClubProvider>().uploadClub(
+                                  files: _files,
+                                  clubName: clubNameController.text,
+                                  professorName: professorNameController.text,
+                                  call: phoneNumberController.text,
+                                  shortComment: shortIntroController.text,
+                                  fullComment: fullIntroController.text,
+                                  presidentName: presidentNameController.text,
+                                  clubType: _selectedClubType.toString(),
+                                  //uid: uid,
+                                );
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('동아리 생성'),
+                                  content: Text('동아리를 생성하시겠습니까?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        widget.onClubUploaded();
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('동아리 생성했습니다.')),
+                                        );
+                                      },
+                                      child: Text('확인'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(); // 다이얼로그 닫기
+                                      },
+                                      child: Text('취소'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } on CustomException catch (e) {
+                            errorDialogWidget(context, e);
+                          }
+                        }
+                      },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
@@ -212,14 +261,12 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             ),
             Divider(),
             // "+" 버튼과 이미지들을 표시할 영역
-            Form(
-              key: _globalKey,
-              autovalidateMode: _autovalidateMode,
-              child: Row(
-                children: [
-                  SingleChildScrollView(
+            Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    //이게 작동을 안함 listview 같은 느낌인데
+                    //이게 작동을 안하는거 같음 listview 같은 느낌인데
                     child: Row(
                       children: [
                         InkWell(
@@ -253,8 +300,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             // 사진의 개수를 나타내는 작은 텍스트 추가
             Padding(
@@ -453,8 +500,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
-    final clubStatus = context.watch<ClubState>().clubStatus;
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -502,32 +547,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed:
-                  (_files.length == 0 || clubStatus == ClubStatus.submitting)
-                      ? null
-                      : () async {
-                          try {
-                            FocusScope.of(context).unfocus();
-                            Navigator.of(context).pop();
-                            await context.read<ClubProvider>().uploadClub(
-                                  files: _files,
-                                  clubName: clubNameController.text,
-                                  professorName: professorNameController.text,
-                                  call: phoneNumberController.text,
-                                  shortComment: shortIntroController.text,
-                                  fullComment: fullIntroController.text,
-                                  writer: presidentNameController.text,
-                                  clubType: _selectedClubType.toString(),
-                                  //uid: uid,
-                                );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('동아리 생성했습니다.')),
-                            );
-                            widget.onClubUploaded();
-                          } on CustomException catch (e) {
-                            errorDialogWidget(context, e);
-                          }
-                        },
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               style: ElevatedButton.styleFrom(
                 primary: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)

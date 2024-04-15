@@ -53,7 +53,7 @@ class ClubRepository {
     required List<String> files,
     required String clubName,
     required String professorName,
-    required String writer,
+    required String presidentName,
     required String call,
     required String shortComment,
     required String fullComment,

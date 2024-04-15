@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: '대구가톨릭대학교 동아리 홍보 시스템',
+        title: 'Convex Bottom Bar Example',
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: Provider.of<ThemeManager>(context).themeMode,

@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:team_project/models/user_model.dart';
+
 class ClubModel {
   final String clubId;
   final String clubType;
   final String clubName;
-  final String writer;
+  final UserModel writer;
+  final Timestamp createAt;
+  final String presidentName;
   final String professorName;
   final String call;
   final String shortComment;
@@ -19,6 +24,8 @@ class ClubModel {
     required this.clubType,
     required this.clubName,
     required this.writer,
+    required this.createAt,
+    required this.presidentName,
     required this.professorName,
     required this.call,
     required this.shortComment,
@@ -30,44 +37,17 @@ class ClubModel {
     required this.likes,
   });
 
-  ClubModel copyWith({
-    String? clubId,
-    String? clubName,
-    String? clubType,
-    String? writer,
-    String? professorName,
-    String? call,
-    String? shortComment,
-    String? fullComment,
-    List<String>? profileImageUrl,
-    List<String>? followers,
-    int? commentCount,
-    int? noticeCount,
-    List<String>? likes,
-  }) {
-    return ClubModel(
-      clubId: clubId ?? this.clubId,
-      clubName: clubName ?? this.clubName,
-      clubType: clubType ?? this.clubType,
-      writer: writer ?? this.writer,
-      professorName: professorName ?? this.professorName,
-      call: call ?? this.call,
-      shortComment: shortComment ?? this.shortComment,
-      fullComment: fullComment ?? this.fullComment,
-      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
-      followers: followers ?? this.followers,
-      commentCount: commentCount ?? this.commentCount,
-      noticeCount: noticeCount ?? this.noticeCount,
-      likes: likes ?? this.likes,
-    );
-  }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({
+    required DocumentReference<Map<String, dynamic>> userDocRef,
+}) {
     return {
       'clubId': this.clubId,
       'clubName': this.clubName,
       'clubType' : this.clubType,
-      'writer': this.writer,
+      'writer': userDocRef,
+      'createAt': this.createAt,
+      'presidentName': this.presidentName,
       'professorName': this.professorName,
       'call': this.call,
       'shortComment': this.shortComment,
@@ -82,24 +62,26 @@ class ClubModel {
 
   factory ClubModel.fromMap(Map<String, dynamic> map) {
     return ClubModel(
-      clubId: map['clubId'] as String,
-      clubName: map['clubName'] as String,
-      clubType: map['clubtype'] as String,
-      writer: map['writer'] as String,
-      professorName: map['professorName'] as String,
-      call: map['call'] as String,
-      shortComment: map['shortComment'] as String,
-      fullComment: map['fullComemnt'] as String,
-      profileImageUrl: map['profileImageUrl'] as List<String>,
-      followers: map['followers'] as List<String>,
-      commentCount: map['commentCount'] as int,
-      noticeCount: map['noticeCount'] as int,
-      likes: map['likes'] as List<String>,
+      clubId: map['clubId'],
+      clubName: map['clubName'],
+      clubType: map['clubtype'],
+      writer: map['writer'],
+      createAt: map['createAt'],
+      presidentName: map['presidentName'],
+      professorName: map['professorName'],
+      call: map['call'],
+      shortComment: map['shortComment'],
+      fullComment: map['fullComemnt'],
+      profileImageUrl: map['profileImageUrl'],
+      followers: map['followers'],
+      commentCount: map['commentCount'],
+      noticeCount: map['noticeCount'],
+      likes: map['likes'],
     );
   }
 
   @override
   String toString() {
-    return 'ClubModel{clubId: $clubId, clubName: $clubName, writer: $writer, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, followers: $followers, commentCount: $commentCount, noticeCount : $noticeCount, likes: $likes}';
+    return 'ClubModel{clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, followers: $followers, commentCount: $commentCount, noticeCount : $noticeCount, likes: $likes}';
   }
 }
