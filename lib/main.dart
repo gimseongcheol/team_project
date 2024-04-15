@@ -338,15 +338,6 @@ class _MainFormState extends State<MainForm> {
     );
   }
 
-  Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-      trailing: const Icon(Icons.navigate_next),
-    );
-  }
-
   Widget _buildDrawerCard(
       IconData icon, String title, Color color, VoidCallback onTap) {
     return ListTile(
