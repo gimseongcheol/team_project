@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +13,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool _isMoved = false;
   final ScrollController _scrollController = ScrollController();
   final List<Post> posts = [
     Post(
@@ -21,6 +24,17 @@ class _MainScreenState extends State<MainScreen> {
     ),
   ];
 
+  void initState() {
+    super.initState();
+    // 4초 후에 이미지를 원래 위치로 되돌립니다.
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      setState(() {
+        _isMoved = !_isMoved;
+      });
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
@@ -30,35 +44,36 @@ class _MainScreenState extends State<MainScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    _themeManager.themeMode == ThemeMode.dark
-                        ? Color(0xff505050) //색 두개 수정해야함
-                        : Colors.white,
-                    BlendMode.overlay,
-                  ),
-                  child: Container(
-                    height: 50,
-                    width: 100,
-                    color: Colors.yellowAccent,
-                  ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isMoved = !_isMoved;
+                });
+              },
+              child: AnimatedContainer(
+                duration: Duration(seconds: 8),
+                curve: Curves.linear,
+                transform: Matrix4.translationValues(
+                  _isMoved ? MediaQuery.of(context).size.width - 150 : 0,
+                  0,
+                  0,
                 ),
-                ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                      _themeManager.themeMode == ThemeMode.dark
-                          ? Color(0xff505050) //여기도 색 수정필요
-                          : Colors.black,
-                      BlendMode.overlay),
-                  child: Container(
-                    height: 50,
-                    width: 100,
-                    color: Colors.greenAccent,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      'assets/images/university.png',
+                      height: 60,
+                      width: 60,
+                    ),
+                    Image.asset(
+                      'assets/images/university_main_logo_name.png',
+                      height: 60,
+                      width: 100,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
             SizedBox(height: 15),
             Row(
