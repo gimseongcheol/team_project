@@ -61,15 +61,11 @@ class _MainScreenState extends State<MainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+
                     Image.asset(
-                      'assets/images/university.png',
+                      'assets/images/university_main_logo.png',
                       height: 60,
-                      width: 60,
-                    ),
-                    Image.asset(
-                      'assets/images/university_main_logo_name.png',
-                      height: 60,
-                      width: 100,
+                      width: 200,
                     ),
                   ],
                 ),
