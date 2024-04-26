@@ -143,7 +143,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       //padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
-                    child: Text('이메일 전송'),
+                    child: Text('이메일 전송', style: TextStyle(color: Colors.white),),
                   ),
                 ),
                 SizedBox(height: 16.0),

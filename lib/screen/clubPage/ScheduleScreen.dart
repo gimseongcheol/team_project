@@ -74,7 +74,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67),
+                backgroundColor: Color(0xff1e2b67),
               ),
               child: Text("삭제", style: TextStyle(color: Colors.white)),
             ),
@@ -83,7 +83,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
@@ -147,7 +147,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67),
+                backgroundColor: Color(0xff1e2b67),
               ),
               child: Text("추가", style: TextStyle(color: Colors.white)),
             ),
@@ -156,7 +156,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text(
                 "취소",
@@ -288,7 +288,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                                       _selectedDay!);
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              primary: Color(0xff1e2b67),
+                                              backgroundColor: Color(0xff1e2b67),
                                             ),
                                             child: Text("수정",
                                                 style: TextStyle(
@@ -299,7 +299,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                               Navigator.of(context).pop();
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              primary: Colors
+                                              backgroundColor: Colors
                                                   .white, // 라이트 모드일 때는 흰색, 다크 모드일 때는 검은색으로 설정
                                             ),
                                             child: Text("취소",

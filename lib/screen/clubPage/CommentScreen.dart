@@ -103,7 +103,7 @@ class _CommentScreenState extends State<CommentScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
@@ -112,7 +112,7 @@ class _CommentScreenState extends State<CommentScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: _themeManager.themeMode == ThemeMode.dark
+                backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),

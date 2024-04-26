@@ -156,7 +156,7 @@ class _EditCommentState extends State<EditComment> {
         actions: [
           ElevatedButton(
               style: TextButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
@@ -165,7 +165,7 @@ class _EditCommentState extends State<EditComment> {
               )),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Provider.of<ThemeManager>(context).themeMode ==
+                backgroundColor: Provider.of<ThemeManager>(context).themeMode ==
                         ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
@@ -221,13 +221,13 @@ class _EditCommentState extends State<EditComment> {
         actions: [
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               onPressed: () => Navigator.of(context).pop(),
               child: Text('취소', style: TextStyle(color: Colors.black),)),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                backgroundColor: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),

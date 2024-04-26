@@ -142,6 +142,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                   : Colors.grey),
                           prefixIcon: Icon(Icons.email, color: Colors.black),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: _themeManager.themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Color(0xFF2195F2)), // 선택된 색상
+                          ),
                         ),
                         style: TextStyle(color: Colors.black),
                         onChanged: (value) {
@@ -189,6 +195,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           prefixIcon:
                               Icon(Icons.account_circle, color: Colors.black),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.black
+                                  : Color(0xFF2195F2),
+                            ),
+                          ),
                         ),
                         style: TextStyle(color: Colors.black),
                         onChanged: (value) {
@@ -239,7 +252,14 @@ class _SignupScreenState extends State<SignupScreen> {
                           ].map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                    color: _themeManager.themeMode ==
+                                            ThemeMode.dark
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
                             );
                           }).toList(),
                           decoration: InputDecoration(
@@ -254,6 +274,13 @@ class _SignupScreenState extends State<SignupScreen> {
                               color: Colors.black,
                             ),
                             filled: true,
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: _themeManager.themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Color(0xFF2195F2),
+                              ),
+                            ),
                           ),
                           style: TextStyle(color: Colors.black),
                           validator: (value) {
@@ -290,6 +317,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.black
+                                  : Color(0xFF2195F2),
+                            ),
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible
@@ -348,6 +382,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.black
+                                  : Color(0xFF2195F2),
+                            ),
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _password2Visible

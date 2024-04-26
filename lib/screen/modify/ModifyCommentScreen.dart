@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'ModifyClubScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:team_project/theme/theme_manager.dart';
 
 // 댓글 창 수정
 class ModifyCommentScreen extends StatefulWidget {
@@ -64,11 +66,11 @@ class _ModifyCommentScreenState extends State<ModifyCommentScreen> {
       context: context,
       barrierDismissible: false, // 사용자가 다이얼로그 외부를 탭하여 닫을 수 없도록 설정
       builder: (BuildContext context) {
-        final Brightness brightness = Theme.of(context).brightness;
+        final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Color(0xFF212121),
+          backgroundColor: _themeManager.themeMode == ThemeMode.dark
+              ? Color(0xFF212121)
+              : Colors.white,
           title: Text('댓글 삭제'),
           content: Text('해당 댓글을 삭제하시겠습니까?'), // 메시지 출력
           actions: <Widget>[
@@ -78,7 +80,7 @@ class _ModifyCommentScreenState extends State<ModifyCommentScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67),
+                backgroundColor: Color(0xff1e2b67),
               ),
               child: Text('확인', style: TextStyle(color: Colors.white)),
             ),
@@ -87,7 +89,7 @@ class _ModifyCommentScreenState extends State<ModifyCommentScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
@@ -112,26 +114,26 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Brightness brightness = Theme.of(context).brightness;
+    final _themeManager = Provider.of<ThemeManager>(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
-          color: brightness == Brightness.light
-              ? Colors.white
-              : Colors.grey[800], // 테마에 따라 배경색 조정
-          boxShadow: brightness == Brightness.light
-              ? [
+          color: _themeManager.themeMode == ThemeMode.dark
+              ? Colors.grey[800]
+              : Colors.white, // 테마에 따라 배경색 조정
+          boxShadow: _themeManager.themeMode == ThemeMode.dark
+              ? null
+              : [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 3,
                     blurRadius: 7,
                     offset: Offset(0, 3), // 그림자 위치 조정
                   ),
-                ]
-              : null, // 다크 모드에서는 그림자 효과 제거
+                ], // 다크 모드에서는 그림자 효과 제거
         ),
         child: ListTile(
           title: Text(comment.text),

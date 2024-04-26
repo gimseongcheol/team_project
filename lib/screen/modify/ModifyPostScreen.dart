@@ -384,7 +384,7 @@ class PostItem extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
@@ -393,7 +393,7 @@ class PostItem extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _themeManager.themeMode == ThemeMode.dark
+                backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),

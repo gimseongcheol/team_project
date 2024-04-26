@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:team_project/theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class DescriptionScreen extends StatefulWidget {
   @override
@@ -230,11 +232,11 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final Brightness brightness = Theme.of(context).brightness;
+        final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Color(0xFF212121),
+          backgroundColor: _themeManager.themeMode == ThemeMode.dark
+              ? Color(0xFF212121)
+              : Colors.white,
           title: Text('이미지 삭제'),
           content: Text('이미지를 삭제하시겠습니까?'),
           actions: <Widget>[
@@ -246,7 +248,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67), // 확인 버튼 색상
+                backgroundColor: Color(0xff1e2b67), // 확인 버튼 색상
               ),
               child: Text('확인', style: TextStyle(color: Colors.white)),
             ),
@@ -255,7 +257,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text('취소', style: TextStyle(color: Colors.black)),
             ),

@@ -385,7 +385,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xff1e2b67), // 확인 버튼 색상
+                backgroundColor: Color(0xff1e2b67), // 확인 버튼 색상
               ),
               child: Text('확인', style: TextStyle(color: Colors.white)),
             ),
@@ -394,7 +394,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white,
+                backgroundColor: Colors.white,
               ),
               child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
@@ -447,7 +447,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
                 _selectedEvents[_selectedDay] = _getEventsForDay(_selectedDay);
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
@@ -456,7 +456,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _themeManager.themeMode == ThemeMode.dark
+                backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),

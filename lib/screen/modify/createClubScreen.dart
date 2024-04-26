@@ -59,7 +59,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   List<Widget> selectedImageList() {
     final clubStatus = context.watch<ClubState>().clubStatus;
-
     return _files.map((data) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -129,6 +128,24 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   Widget build(BuildContext context) {
     final clubStatus = context.watch<ClubState>().clubStatus;
     final _themeManager = Provider.of<ThemeManager>(context);
+    final List<String> _departmentList = <String>[
+      '프란치스코칼리지',
+      '글로벌비즈니스대학',
+      '신학대학',
+      '바이오메디대학',
+      '공과대학',
+      '반도체대학',
+      '소프트웨어융합대학',
+      '의과대학',
+      '간호대학',
+      '약학대학',
+      '사회과학대학',
+      '사범대학',
+      '음악공연예술대학',
+      '디자인대학',
+      '유스티아노자유대학',
+    ];
+    String? _selectDepartment;
 
     return Scaffold(
       appBar: AppBar(
@@ -326,13 +343,33 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             Divider(),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
-                '동아리 종류를 선택하세요',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '동아리 종류를 선택하세요',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  DropdownButton(
+                    //선택시 내부 색상 변경이 가능한지 확인하기
+                      hint: const Text('학부 선택'),
+                      value: _selectDepartment,
+                      items: _departmentList.map((String item) {
+                        return DropdownMenuItem<String>(
+                          child: Text('$item'),
+                          value: item,
+                        );
+                      }).toList(),
+                      onChanged: (dynamic value) {
+                        setState(() {
+                          _selectDepartment = value;
+                        });
+                      }),
+                ],
               ),
             ),
             RadioListTile(
@@ -340,7 +377,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               tileColor: _themeManager.themeMode == ThemeMode.dark
-                  ? Colors.black26
+                  ? Color(0xff505050)
                   : Colors.white,
               title: Text(
                 '중앙동아리',
@@ -367,7 +404,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               tileColor: _themeManager.themeMode == ThemeMode.dark
-                  ? Colors.black26
+                  ? Color(0xff505050)
                   : Colors.white,
               title: Text(
                 '과동아리',
@@ -403,7 +440,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                   Icons.home,
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -421,7 +462,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 labelText: '회장 이름',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -438,7 +483,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 labelText: '연락처',
                 prefixIcon: Icon(Icons.phone),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -455,7 +504,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 labelText: '담당 교수',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -489,7 +542,11 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 labelText: '동아리 소개',
                 prefixIcon: Icon(Icons.text_snippet_outlined),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -542,7 +599,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 _selectedEvents[_selectedDay] = _getEventsForDay(_selectedDay);
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.white70,
+                backgroundColor: Colors.white70,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
@@ -551,7 +608,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _themeManager.themeMode == ThemeMode.dark
+                backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),

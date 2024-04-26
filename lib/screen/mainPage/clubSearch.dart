@@ -22,7 +22,6 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin, 
   bool get wantKeepAlive => true;
 
   final List<String> _departmentList = <String>[
-
     '프란치스코칼리지',
     '글로벌비즈니스대학',
     '신학대학',
@@ -69,7 +68,6 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin, 
     List<ClubModel> clubList = clubState.clubList;
     final _themeManager = Provider.of<ThemeManager>(context);
 
-    // ㄱ
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

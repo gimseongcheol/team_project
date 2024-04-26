@@ -86,6 +86,13 @@ class _SigninScreenState extends State<SigninScreen> {
                             color: Colors.black,
                           ),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: _themeManager.themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Color(0xFF2195F2),
+                            ),
+                          ),
                         ),
                         style: TextStyle(color: Colors.black),
                         onChanged: (value) {
@@ -137,6 +144,12 @@ class _SigninScreenState extends State<SigninScreen> {
                             color: Colors.black,
                           ),
                           filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: _themeManager.themeMode == ThemeMode.dark
+                                    ? Colors.black
+                                    : Color(0xFF2195F2)), // 선택된 색상
+                          ),
                         ),
                         style: TextStyle(color: Colors.black),
                         onChanged: (value) {

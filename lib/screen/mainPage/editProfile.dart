@@ -11,6 +11,8 @@ import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
+import '../auth/signup_screen.dart';
+
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
@@ -129,7 +131,12 @@ class _EditProfileState extends State<EditProfile> {
                   icon: const Icon(Icons.edit),
                   color: Colors.black,
                   iconSize: 30,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignupScreen()),
+                    );
+                  },
                 ),
                 SizedBox(width: 6),
                 IconButton(

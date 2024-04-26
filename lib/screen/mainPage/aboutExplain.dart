@@ -67,7 +67,7 @@ class AboutExplain extends StatelessWidget {
                       .push(MaterialPageRoute(builder: (_) => LicensePage()));
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.white54,
+                  backgroundColor: Colors.white54,
                 ),
                 child: Text(
                   "확인하기",
