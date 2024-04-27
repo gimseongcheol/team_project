@@ -57,26 +57,6 @@ class AboutExplain extends StatelessWidget {
           Text("아주 좋은 홍보 및 정보를 얻을수 있는 어플리케이션 입니다."),
           Text("대구가톨릭대학교의 동아리 활동을 증진시켜 보세요."),
           Divider(thickness: 1),
-          Row(
-            children: [
-              Text("License : "),
-              SizedBox(width: 5),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => LicensePage()));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white54,
-                ),
-                child: Text(
-                  "확인하기",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-          Divider(),
         ],
       ),
     );
