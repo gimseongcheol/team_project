@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team_project/providers/auth/auth_state.dart';
-import 'package:team_project/main.dart';
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/screen/auth/signin_screen.dart';
 import 'package:provider/provider.dart';
 
