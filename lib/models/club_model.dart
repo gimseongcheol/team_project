@@ -72,11 +72,11 @@ class ClubModel {
       call: map['call'],
       shortComment: map['shortComment'],
       fullComment: map['fullComemnt'],
-      profileImageUrl: map['profileImageUrl'],
+      profileImageUrl: List<String>.from(map['profileImageUrl']),
       followers: map['followers'],
       commentCount: map['commentCount'],
       noticeCount: map['noticeCount'],
-      likes: map['likes'],
+      likes: List<String>.from(map['likes']),
     );
   }
 

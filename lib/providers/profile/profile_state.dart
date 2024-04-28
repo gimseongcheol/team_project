@@ -13,13 +13,13 @@ enum ProfileStatus {
 class ProfileState {
   final ProfileStatus profileStatus;
   final UserModel userModel;
-  final List<FeedModel> feedList; //feedModel 게시물의 정보가 여러개 있음으로 리스트
+  //final List<FeedModel> feedList; //feedModel 게시물의 정보가 여러개 있음으로 리스트
   final List<ClubModel> clubList;
 
   const ProfileState({
     required this.profileStatus,
     required this.userModel,
-    required this.feedList,
+    //required this.feedList,
     required this.clubList,
   });
 
@@ -27,7 +27,7 @@ class ProfileState {
     return ProfileState(
       profileStatus: ProfileStatus.init,
       userModel: UserModel.init(),
-      feedList: [],
+      //feedList: [],
       clubList: [],
     );
   }
@@ -35,13 +35,13 @@ class ProfileState {
   ProfileState copyWith({
     ProfileStatus? profileStatus,
     UserModel? userModel,
-    List<FeedModel>? feedList,
+    //List<FeedModel>? feedList,
     List<ClubModel>? clubList,
   }) {
     return ProfileState(
       profileStatus: profileStatus ?? this.profileStatus,
       userModel: userModel ?? this.userModel,
-      feedList: feedList ?? this.feedList,
+      //feedList: feedList ?? this.feedList,
       clubList: clubList ?? this.clubList,
     );
   }

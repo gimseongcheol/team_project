@@ -7,17 +7,18 @@ import 'package:team_project/providers/auth/auth_provider.dart' as myAuthProvide
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_state.dart';
+import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/utils/logger.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
-import '../auth/signup_screen.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
   @override
-  _EditProfileState createState() => _EditProfileState();
+  State<EditProfile> createState() => _EditProfileState();
 
 }
 
@@ -45,23 +46,25 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(top: 2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildProfileHeader(),
-            _buildProfileInfo(),
-            _buildNotificationSection(),
-          ],
+        body: Container(
+          padding: EdgeInsets.only(top: 2),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _buildProfileHeader(),
+              _buildProfileInfo(),
+              _buildNotificationSection(),
+            ],
+          ),
         ),
-      ),
     );
   }
 
   Widget _buildProfileHeader() {
     ProfileState profileState = context.watch<ProfileState>();
-    UserModel userModel = context.read<ProfileState>().userModel;
+    UserModel userModel = profileState.userModel;
+    //UserModel userModel = context.read<ProfileState>().userModel;
+    logger.d(context.watch<ProfileState>().userModel);
     return Container( //하단부분 둥근 형태로 제작
       color: Colors.white,
       child: Row(

@@ -14,6 +14,8 @@ import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
+import 'package:team_project/providers/user/user_provider.dart';
+import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
@@ -73,6 +75,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<myAuthProvider.AuthProvider, AuthState>(
           create: (context) => myAuthProvider.AuthProvider(),
+        ),
+        StateNotifierProvider<UserProvider, UserState>(
+          create: (context) => UserProvider(),
         ),
         StateNotifierProvider<FeedProvider, FeedState>(
           create: (context) => FeedProvider(),

@@ -13,8 +13,7 @@ class ProfileProvider extends StateNotifier<ProfileState> with LocatorMixin {
     state = state.copyWith(profileStatus: ProfileStatus.fetching);
     try {
       //read를 사용하기 위해 with LocatorMixin추가
-      UserModel userModel = await read<ProfileRepository>().getProfile(
-          uid: uid);
+      UserModel userModel = await read<ProfileRepository>().getProfile(uid: uid);
 
       state = state.copyWith(
         profileStatus: ProfileStatus.success,

@@ -5,7 +5,8 @@ enum UserStatus {
   submitting,
   success,
 }
-class UserState{
+
+class UserState {
   final UserStatus userStatus;
   final UserModel userModel;
 
@@ -13,8 +14,12 @@ class UserState{
     required this.userStatus,
     required this.userModel,
   });
-  factory UserState.init(){ //최초의 객체를 생성했을 경우 UserStatus, UserModel 값은 init
-    return UserState(userStatus: UserStatus.init, userModel: UserModel.init());
+
+  factory UserState.init() {
+    return UserState(
+      userStatus: UserStatus.init,
+      userModel: UserModel.init(),
+    );
   }
 
   UserState copyWith({
