@@ -25,6 +25,7 @@ class MainForm extends StatefulWidget {
 }
 
 class _MainFormState extends State<MainForm> {
+
   int _selectedPage = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Widget> _pageOptions = [
@@ -137,7 +138,7 @@ class _MainFormState extends State<MainForm> {
               accountName: Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
-                  '베타 테스트',
+                  userModel.name,
                   style: TextStyle(
                       fontFamily: 'YeongdeokSea',
                       fontSize: 25,
@@ -145,7 +146,7 @@ class _MainFormState extends State<MainForm> {
                 ),
               ),
               accountEmail: Text(
-                '이메일을 인증하세요.',
+                userModel.email,
                 style: TextStyle(
                     fontFamily: 'YeongdeokSea',
                     fontSize: 18,

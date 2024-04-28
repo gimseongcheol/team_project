@@ -89,7 +89,7 @@ class _EditProfileState extends State<EditProfile> {
                 children: [
                   SizedBox(
                     width: 8,
-                    height: 20,
+                    height: 100,
                   ),
                   Text(
                     userModel.name,
@@ -102,14 +102,12 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-              SizedBox(height: 9),
               Row(
-                //지우면 좋겠다고 하는데 너무 허전한데...?
                 children: [
                   SizedBox(width: 8),
                   Text(
-                    '가입 일자',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    userModel.email,
+                    style: TextStyle(fontSize: 18, color: Colors.black),
                   ),
                 ],
               ),
@@ -124,7 +122,7 @@ class _EditProfileState extends State<EditProfile> {
                     ? ExtendedAssetImageProvider('assets/images/profile.png')
                         as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
-                radius: 40,
+                radius: 45,
               ),
             ],
           ),
