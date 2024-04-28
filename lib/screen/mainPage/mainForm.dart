@@ -1,10 +1,12 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
 as myAuthProvider;
 import 'package:team_project/providers/profile/profile_state.dart';
+import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/screen/mainPage/editProfile.dart';
 import 'package:team_project/screen/mainPage/editClub.dart';
@@ -15,6 +17,7 @@ import 'package:team_project/screen/mainPage/clubSearch.dart';
 import 'package:team_project/screen/mainPage/aboutExplain.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class MainForm extends StatefulWidget {
   @override
@@ -31,6 +34,10 @@ class _MainFormState extends State<MainForm> {
     EditClub(),
     EditComment(),
   ];
+  void initState(){
+    super.initState();
+    _getProfile();
+  }
   final List<String> _appbarNameList = [
     '메인 화면',
     '개인정보 수정',
@@ -53,6 +60,13 @@ class _MainFormState extends State<MainForm> {
     });
   }
 
+  Future<void> _getProfile()async{
+    try{
+      await context.read<UserProvider>().getUserInfo();
+    }on CustomException catch(e){
+      errorDialogWidget(context, e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     UserModel userModel = context.read<ProfileState>().userModel;

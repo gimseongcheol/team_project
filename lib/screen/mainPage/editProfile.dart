@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/user_model.dart';
-import 'package:team_project/providers/auth/auth_provider.dart' as myAuthProvider;
+import 'package:team_project/providers/auth/auth_provider.dart'
+    as myAuthProvider;
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_state.dart';
@@ -13,31 +14,41 @@ import 'package:provider/provider.dart';
 import 'package:team_project/utils/logger.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
-
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  const EditProfile({
+    super.key,
+  });
 
   @override
   State<EditProfile> createState() => _EditProfileState();
-
 }
 
 class _EditProfileState extends State<EditProfile> {
-  late final ProfileProvider profileProvider;
   final ScrollController _scrollController = ScrollController();
+  late final ProfileProvider profileProvider;
 
   @override
   void initState() {
     super.initState();
+    //_scrollController.addListener(scrollListener);
     profileProvider = context.read<ProfileProvider>();
     _getProfile();
   }
+
+  // @override
+  // void dispose() {
+  //   _scrollController.removeListener(scrollListener);
+   //  _scrollController.dispose();
+  //   super.dispose();
+  // }
+
+
   void _getProfile() {
-    late String uid = context.read<UserState>().userModel.uid;
+    String uid = context.read<UserState>().userModel.uid;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try{
+      try {
         await profileProvider.getProfile(uid: uid);
-      } on CustomException catch(e){
+      } on CustomException catch (e) {
         errorDialogWidget(context, e);
       }
     });
@@ -62,10 +73,12 @@ class _EditProfileState extends State<EditProfile> {
 
   Widget _buildProfileHeader() {
     ProfileState profileState = context.watch<ProfileState>();
+    // 프로필을 확인하려는 유저의 정보
     UserModel userModel = profileState.userModel;
     //UserModel userModel = context.read<ProfileState>().userModel;
     logger.d(context.watch<ProfileState>().userModel);
-    return Container( //하단부분 둥근 형태로 제작
+    return Container(
+      //하단부분 둥근 형태로 제작
       color: Colors.white,
       child: Row(
         children: [
@@ -74,7 +87,10 @@ class _EditProfileState extends State<EditProfile> {
             children: [
               Row(
                 children: [
-                  SizedBox(width: 8,height: 20,),
+                  SizedBox(
+                    width: 8,
+                    height: 20,
+                  ),
                   Text(
                     userModel.name,
                     style: TextStyle(fontSize: 24, color: Colors.black),
@@ -87,7 +103,8 @@ class _EditProfileState extends State<EditProfile> {
                 ],
               ),
               SizedBox(height: 9),
-              Row( //지우면 좋겠다고 하는데 너무 허전한데...?
+              Row(
+                //지우면 좋겠다고 하는데 너무 허전한데...?
                 children: [
                   SizedBox(width: 8),
                   Text(
@@ -102,9 +119,10 @@ class _EditProfileState extends State<EditProfile> {
           Column(
             children: [
               CircleAvatar(
-                backgroundImage: userModel.profileImage == null || userModel.profileImage!.isEmpty
+                backgroundImage: userModel.profileImage == null ||
+                        userModel.profileImage!.isEmpty
                     ? ExtendedAssetImageProvider('assets/images/profile.png')
-                as ImageProvider
+                        as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
                 radius: 40,
               ),
@@ -146,7 +164,7 @@ class _EditProfileState extends State<EditProfile> {
                   icon: Icon(Icons.exit_to_app),
                   color: Colors.black,
                   iconSize: 30,
-                  onPressed: () async{
+                  onPressed: () async {
                     await context.read<myAuthProvider.AuthProvider>().signOut();
                   },
                 ),
@@ -214,7 +232,7 @@ class _EditProfileState extends State<EditProfile> {
         tileColor: Colors.white,
         title: Text(title, style: TextStyle(fontSize: 20, color: Colors.black)),
         subtitle:
-        Text(time, style: TextStyle(fontSize: 15, color: Colors.black)),
+            Text(time, style: TextStyle(fontSize: 15, color: Colors.black)),
       ),
     );
   }
