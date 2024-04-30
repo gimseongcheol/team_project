@@ -13,9 +13,9 @@ class ClubModel {
   final String shortComment;
   final String fullComment;
   final List<String> profileImageUrl;
-  final List<String> followers;
   final int commentCount;
   final int noticeCount;
+  final String depart;
   //final int followersCount;
   final List<String> likes;
 
@@ -31,9 +31,9 @@ class ClubModel {
     required this.shortComment,
     required this.fullComment,
     required this.profileImageUrl,
-    required this.followers,
     required this.commentCount,
     required this.noticeCount,
+    required this.depart,
     required this.likes,
   });
 
@@ -53,9 +53,9 @@ class ClubModel {
       'shortComment': this.shortComment,
       'fullComment' : this.fullComment,
       'profileImageUrl': this.profileImageUrl,
-      'followers': this.followers,
       'commentCount': this.commentCount,
       'noticeCount' : this.noticeCount,
+      'depart' : this.depart,
       'likes': this.likes,
     };
   }
@@ -73,15 +73,15 @@ class ClubModel {
       shortComment: map['shortComment'],
       fullComment: map['fullComemnt'],
       profileImageUrl: List<String>.from(map['profileImageUrl']),
-      followers: map['followers'],
       commentCount: map['commentCount'],
       noticeCount: map['noticeCount'],
+      depart: map['depart'],
       likes: List<String>.from(map['likes']),
     );
   }
 
   @override
   String toString() {
-    return 'ClubModel{clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, followers: $followers, commentCount: $commentCount, noticeCount : $noticeCount, likes: $likes}';
+    return 'ClubModel{clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount, noticeCount : $noticeCount, depart : $depart, likes: $likes}';
   }
 }

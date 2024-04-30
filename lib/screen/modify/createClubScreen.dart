@@ -29,6 +29,9 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
 
   List<String> imagePaths = [];
   String? _selectedClubType;
+  String? _selectDepartment;
+  TextEditingController selectedClubType = TextEditingController();
+  TextEditingController selectedDepartment = TextEditingController();
   TextEditingController clubNameController = TextEditingController();
   TextEditingController presidentNameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -46,6 +49,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     professorNameController.dispose();
     shortIntroController.dispose();
     fullIntroController.dispose();
+    selectedClubType.dispose();
     super.dispose();
   }
 
@@ -145,7 +149,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       '디자인대학',
       '유스티아노자유대학',
     ];
-    String? _selectDepartment;
 
     return Scaffold(
       appBar: AppBar(
@@ -171,94 +174,25 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
           Row(
             children: [
               TextButton(
-                onPressed: (_files.length == 0 ||
-                        clubStatus == ClubStatus.submitting)
-                    ? null
-                    : () async {
-                        if (_selectedClubType == null ||
-                            clubNameController.text.isEmpty ||
-                            presidentNameController.text.isEmpty) {
-                          // 필수 필드가 비어 있는 경우 사용자에게 경고를 표시
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text('경고'),
-                                content: Text('모든 필수 필드를 입력해주세요.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('확인'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          try {
-                            await context.read<ClubProvider>().uploadClub(
-                                  files: _files,
-                                  clubName: clubNameController.text,
-                                  professorName: professorNameController.text,
-                                  call: phoneNumberController.text,
-                                  shortComment: shortIntroController.text,
-                                  fullComment: fullIntroController.text,
-                                  presidentName: presidentNameController.text,
-                                  clubType: _selectedClubType.toString(),
-                                  //uid: uid,
-                                );
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('동아리 생성'),
-                                  content: Text('동아리를 생성하시겠습니까?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        widget.onClubUploaded();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('동아리 생성했습니다.')),
-                                        );
-                                      },
-                                      child: Text('확인'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      },
-                                      child: Text('취소'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } on CustomException catch (e) {
-                            errorDialogWidget(context, e);
-                          }
-                        }
-                      },
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.save,
-                        color: Colors.white, // 아이콘 색상을 하얀색으로 지정
+                onPressed: () {
+                  _showConfirmationDialog(context);
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.save,
+                      color: Colors.white, // 아이콘 색상을 하얀색으로 지정
+                    ),
+                    SizedBox(width: 4), // 아이콘과 텍스트 사이 간격 추가
+                    Text(
+                      '저장',
+                      style: TextStyle(
+                        fontFamily: 'Dongle',
+                        color: Colors.white, // 텍스트 색상을 하얀색으로 지정
+                        fontSize: 30.0,
                       ),
-                      SizedBox(width: 4), // 아이콘과 텍스트 사이 간격 추가
-                      Text(
-                        '저장',
-                        style: TextStyle(
-                          fontFamily: 'Dongle',
-                          color: Colors.white, // 텍스트 색상을 하얀색으로 지정
-                          fontSize: 25.0,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -364,9 +298,10 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                           value: item,
                         );
                       }).toList(),
-                      onChanged: (dynamic value) {
+                      onChanged: (value) {
                         setState(() {
                           _selectDepartment = value;
+                          selectedDepartment.text = value ?? '';
                         });
                       }),
                 ],
@@ -392,6 +327,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               onChanged: (value) {
                 setState(() {
                   _selectedClubType = value as String?;
+                  selectedClubType.text = value ?? '중앙동아리';
                 });
               },
               activeColor: _themeManager.themeMode == ThemeMode.dark
@@ -419,6 +355,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               onChanged: (value) {
                 setState(() {
                   _selectedClubType = value as String?;
+                  selectedClubType.text = value ?? '과동아리';
                 });
               },
               activeColor: _themeManager.themeMode == ThemeMode.dark
@@ -557,6 +494,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
+    final clubStatus = context.watch<ClubState>().clubStatus;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -604,8 +542,31 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: (_files.length == 0 || clubStatus == ClubStatus.submitting) ? null
+                  : () async {
+                try {
+                  FocusScope.of(context).unfocus();
+
+                  await context.read<ClubProvider>().uploadClub(
+                    files: _files,
+                    clubName: clubNameController.text,
+                    professorName: professorNameController.text,
+                    call: phoneNumberController.text,
+                    shortComment: shortIntroController.text,
+                    fullComment: fullIntroController.text,
+                    presidentName: presidentNameController.text,
+                    depart:  selectedDepartment.text,
+                    clubType: selectedClubType.text,
+
+                    //uid: uid,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('게시물을 등록했습니다.')),
+                  );
+                  widget.onClubUploaded();
+                } on CustomException catch (e) {
+                  errorDialogWidget(context, e);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeManager.themeMode == ThemeMode.dark
