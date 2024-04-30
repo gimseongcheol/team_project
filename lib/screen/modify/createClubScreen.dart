@@ -289,6 +289,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  if (_selectedClubType == '과동아리')
                   DropdownButton(
                     //선택시 내부 색상 변경이 가능한지 확인하기
                       hint: const Text('학부 선택'),
@@ -495,15 +496,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
-    final clubStatus = context.watch<ClubState>().clubStatus;
+    final clubStatus = context.read<ClubState>().clubStatus;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
-          backgroundColor: _themeManager.themeMode == ThemeMode.dark
-              ? Color(0xFF505050)
-              : Color(0xFF212121),
+          backgroundColor:  _themeManager.themeMode == ThemeMode.dark
+              ? Color(0xFF212121)
+              : Colors.white,
           title: Text(
             "동아리 생성",
             style: TextStyle(
