@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +25,8 @@ class CreateClubScreen extends StatefulWidget {
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
+
+
   List<String> imagePaths = [];
   String? _selectedClubType;
   String? _selectDepartment;
@@ -126,7 +129,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     initializeDateFormatting();
     _selectedDay = DateTime.now(); // Initialize _selectedDay in initState
   }
-
   @override
   Widget build(BuildContext context) {
     final clubStatus = context.watch<ClubState>().clubStatus;
@@ -287,9 +289,8 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (_selectedClubType == '과동아리')
-                    DropdownButton(
-                      //선택시 내부 색상 변경이 가능한지 확인하기
+                  DropdownButton(
+                    //선택시 내부 색상 변경이 가능한지 확인하기
                       hint: const Text('학부 선택'),
                       value: _selectDepartment,
                       items: _departmentList.map((String item) {
@@ -303,8 +304,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                           _selectDepartment = value;
                           selectedDepartment.text = value ?? '';
                         });
-                      },
-                    ),
+                      }),
                 ],
               ),
             ),
@@ -495,15 +495,15 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
-    final clubStatus = context.read<ClubState>().clubStatus;
+    final clubStatus = context.watch<ClubState>().clubStatus;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
           backgroundColor: _themeManager.themeMode == ThemeMode.dark
-              ? Color(0xFF212121)
-              : Colors.white,
+              ? Color(0xFF505050)
+              : Color(0xFF212121),
           title: Text(
             "동아리 생성",
             style: TextStyle(
@@ -543,23 +543,21 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed:
-                  (_files.length == 0 || clubStatus == ClubStatus.submitting)
-                      ? null
-                      : () async {
-                          try {
-                            FocusScope.of(context).unfocus();
+              onPressed: (_files.length == 0 || clubStatus == ClubStatus.submitting) ? null
+                  : () async {
+                try {
+                  FocusScope.of(context).unfocus();
 
-                            await context.read<ClubProvider>().uploadClub(
-                                  files: _files,
-                                  clubName: clubNameController.text,
-                                  professorName: professorNameController.text,
-                                  call: phoneNumberController.text,
-                                  shortComment: shortIntroController.text,
-                                  fullComment: fullIntroController.text,
-                                  presidentName: presidentNameController.text,
-                                  depart: selectedDepartment.text,
-                                  clubType: selectedClubType.text,
+                  await context.read<ClubProvider>().uploadClub(
+                    files: _files,
+                    clubName: clubNameController.text,
+                    professorName: professorNameController.text,
+                    call: phoneNumberController.text,
+                    shortComment: shortIntroController.text,
+                    fullComment: fullIntroController.text,
+                    presidentName: presidentNameController.text,
+                    depart:  selectedDepartment.text,
+                    clubType: selectedClubType.text,
 
                                   //uid: uid,
                                 );
