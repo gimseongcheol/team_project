@@ -24,6 +24,7 @@ class AboutExplain extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -35,7 +36,7 @@ class AboutExplain extends StatelessWidget {
                 height: 50,
               ),
               SizedBox(width: 5),
-              Text('앱 이름')
+              Text('디쿠동', style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w400),)
             ],
           ),
           Divider(thickness: 1),

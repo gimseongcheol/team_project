@@ -68,6 +68,7 @@ class _MainFormState extends State<MainForm> {
       errorDialogWidget(context, e);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     UserModel userModel = context.read<ProfileState>().userModel;

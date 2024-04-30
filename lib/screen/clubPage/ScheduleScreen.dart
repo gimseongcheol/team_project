@@ -340,7 +340,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           print("나 실행중이다.");
           _addEvent(context);
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.black,),
       ),
     );
   }

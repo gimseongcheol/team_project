@@ -14,6 +14,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   bool _isMoved = false;
   final ScrollController _scrollController = ScrollController();
+  late Timer _timer;
   final List<Post> posts = [
     Post(
       //imageUrl: 'assets/post_image1.jpeg',
@@ -23,14 +24,22 @@ class _MainScreenState extends State<MainScreen> {
     ),
   ];
 
+  @override
   void initState() {
     super.initState();
-    // 4초 후에 이미지를 원래 위치로 되돌립니다.
-    Timer.periodic(Duration(seconds: 5), (timer) {
+    // initState()에서 타이머 설정
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
       setState(() {
         _isMoved = !_isMoved;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // dispose()에서 타이머 취소
+    _timer.cancel();
+    super.dispose();
   }
 
 

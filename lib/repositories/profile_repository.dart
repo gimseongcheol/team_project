@@ -15,7 +15,7 @@ class ProfileRepository {
     try {
       //doc으로 가져오면 DocumentReference, get으로 가져오면 DocumentSnapShot
       DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await firebaseFirestore.collection('users').doc(uid).get();
+      await firebaseFirestore.collection('users').doc(uid).get();
       //map -> usermodel로 변환
       return UserModel.fromMap(snapshot.data()!);
     } on FirebaseException catch (e) {

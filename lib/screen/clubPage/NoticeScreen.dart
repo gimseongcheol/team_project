@@ -87,14 +87,6 @@ class NoticeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
                       color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 3,
-                          blurRadius: 7,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: NoticeItem(notice: notices[index]),
                   ),
@@ -174,7 +166,7 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
           padding: EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: [ //widget.notice.date
               SizedBox(height: 8.0),
               Text(
                 '게시일: ${DateFormat('yyyy.MM.dd').format(widget.notice.date)}',

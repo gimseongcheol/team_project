@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:team_project/firebase_options.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
-    as myAuthProvider;
+as myAuthProvider;
 import 'package:team_project/providers/auth/auth_state.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
@@ -30,7 +30,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   initializeDateFormatting().then(
-    (_) => runApp(
+        (_) => runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ], child: MyApp()),

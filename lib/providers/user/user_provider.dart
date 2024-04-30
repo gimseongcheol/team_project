@@ -11,7 +11,7 @@ class UserProvider extends StateNotifier<UserState> with LocatorMixin{
   //현재 접속중인 userid를 가져와서
   //firestore users collection을 가져와서 동일한 문서id를 갖는 데이터를 가져오는 작업
   Future<void> getUserInfo() async{
-  //profile_state 코드를 그대로 호출해서 사용할 계획 -> uid(userid)를 가져와서 UserModel로 반환시키는 코드 재사용
+    //profile_state 코드를 그대로 호출해서 사용할 계획 -> uid(userid)를 가져와서 UserModel로 반환시키는 코드 재사용
     try{
       String uid = read<User>().uid;
       UserModel userModel = await read<ProfileRepository>().getProfile(uid: uid);

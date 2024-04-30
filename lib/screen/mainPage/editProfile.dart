@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
-    as myAuthProvider;
+as myAuthProvider;
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_state.dart';
@@ -39,7 +39,7 @@ class _EditProfileState extends State<EditProfile> {
   // @override
   // void dispose() {
   //   _scrollController.removeListener(scrollListener);
-   //  _scrollController.dispose();
+  //  _scrollController.dispose();
   //   super.dispose();
   // }
 
@@ -58,17 +58,17 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-          padding: EdgeInsets.only(top: 2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _buildProfileHeader(),
-              _buildProfileInfo(),
-              _buildNotificationSection(),
-            ],
-          ),
+      body: Container(
+        padding: EdgeInsets.only(top: 2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildProfileHeader(),
+            _buildProfileInfo(),
+            _buildNotificationSection(),
+          ],
         ),
+      ),
     );
   }
 
@@ -119,9 +119,9 @@ class _EditProfileState extends State<EditProfile> {
             children: [
               CircleAvatar(
                 backgroundImage: userModel.profileImage == null ||
-                        userModel.profileImage!.isEmpty
+                    userModel.profileImage!.isEmpty
                     ? ExtendedAssetImageProvider('assets/images/profile.png')
-                        as ImageProvider
+                as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
                 radius: 45,
               ),
@@ -231,7 +231,7 @@ class _EditProfileState extends State<EditProfile> {
         tileColor: Colors.white,
         title: Text(title, style: TextStyle(fontSize: 20, color: Colors.black)),
         subtitle:
-            Text(time, style: TextStyle(fontSize: 15, color: Colors.black)),
+        Text(time, style: TextStyle(fontSize: 15, color: Colors.black)),
       ),
     );
   }
