@@ -36,7 +36,6 @@ class _EditSignScreenState extends State<EditSignScreen> {
     });
   }
 
-
   // Method to toggle editing mode for student ID
   void _toggleStudentIDEditing() {
     setState(() {
@@ -55,10 +54,10 @@ class _EditSignScreenState extends State<EditSignScreen> {
     //Perform update logic here using Provider
     //Example:
     await context.read<AuthProvider>().updateUserInfo(
-      name: _nameEditingController.text,
-      studentID: _useridEditingController.text,
-      profileImage: _image,
-    );
+          name: _nameEditingController.text,
+          studentID: _useridEditingController.text,
+          profileImage: _image,
+        );
 
     // Navigate back to previous screen after successful update
     Navigator.of(context).pop();
@@ -82,7 +81,10 @@ class _EditSignScreenState extends State<EditSignScreen> {
     final _themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('정보 수정', style: TextStyle(fontSize: 20),),
+        title: Text(
+          '정보 수정',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -106,39 +108,70 @@ class _EditSignScreenState extends State<EditSignScreen> {
                       ),
                       child: _image != null
                           ? CircleAvatar(
-                        radius: 64,
-                        backgroundImage: MemoryImage(_image!),
-                      )
+                              radius: 64,
+                              backgroundImage: MemoryImage(_image!),
+                            )
                           : Icon(
-                        Icons.add_a_photo,
-                        size: 64,
-                        color: Colors.grey[700],
-                      ),
+                              Icons.add_a_photo,
+                              size: 64,
+                              color: Colors.grey[700],
+                            ),
                     ),
                   ],
                 ),
               ),
-
-              // Name
-              TextFormField(
-                enabled: _isEditingName,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  suffixIcon: IconButton(
-                    icon: Icon(_isEditingName ? Icons.save : Icons.edit),
-                    onPressed: _toggleNameEditing,
-                  ),
-                ),
-                validator: (value) {
-                  if (_isEditingName && (value == null || value.isEmpty)) {
-                    return 'Please enter your name.';
-                  }
-                  return null;
-                },
+              SizedBox(
+                height: 20,
               ),
-
-
-
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _isLabelDark1 = !_isLabelDark1;
+                  });
+                },
+                child: TextFormField(
+                  enabled: _isEnabled,
+                  controller: _nameEditingController,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '이름',
+                    labelStyle: TextStyle(
+                      color: _themeManager.themeMode == ThemeMode.dark
+                          ? Colors.black
+                          : Colors.grey,
+                    ),
+                    prefixIcon: Icon(Icons.account_circle, color: Colors.black),
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _themeManager.themeMode == ThemeMode.dark
+                            ? Colors.black
+                            : Color(0xFF2195F2),
+                      ),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.black),
+                  onChanged: (value) {
+                    // 입력이 변경될 때마다 색상 업데이트
+                    setState(() {
+                      _isLabelDark2 = value.isEmpty;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '이름을 입력해주세요.';
+                    }
+                    if (value.length < 2 || value.length > 10) {
+                      return '이름은 최소 3글자, 최대 10글자 까지 입력 가능합니다.';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               InkWell(
                 onTap: () {
                   setState(() {
@@ -171,8 +204,7 @@ class _EditSignScreenState extends State<EditSignScreen> {
                         child: Text(
                           value,
                           style: TextStyle(
-                              color: _themeManager.themeMode ==
-                                  ThemeMode.dark
+                              color: _themeManager.themeMode == ThemeMode.dark
                                   ? Colors.white
                                   : Colors.black),
                         ),
@@ -209,18 +241,35 @@ class _EditSignScreenState extends State<EditSignScreen> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 20,
+              ),
               // Update Button
               ElevatedButton(
                 onPressed: _updateUserInfo,
-                child: Text('Update'),
+                child: Text(
+                  '변경',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff1e2b67),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  textStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
               ),
               TextButton(
                 onPressed: _isEnabled
                     ? () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ForgotPasswordScreen2(),
-                    ))
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForgotPasswordScreen2(),
+                        ))
                     : null,
                 child: Text(
                   '비밀번호 수정하기',
