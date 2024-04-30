@@ -50,6 +50,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     shortIntroController.dispose();
     fullIntroController.dispose();
     selectedClubType.dispose();
+    selectedDepartment.dispose();
     super.dispose();
   }
 
