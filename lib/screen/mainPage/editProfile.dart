@@ -8,6 +8,7 @@ import 'package:team_project/providers/auth/auth_provider.dart'
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_state.dart';
+import 'package:team_project/screen/auth/editsign_screen.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
@@ -153,7 +154,7 @@ class _EditProfileState extends State<EditProfile> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignupScreen()),
+                      MaterialPageRoute(builder: (context) => EditSignScreen()),
                     );
                   },
                 ),

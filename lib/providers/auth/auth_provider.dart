@@ -84,6 +84,23 @@ class AuthProvider extends StateNotifier<AuthState> with LocatorMixin {
       print('익명 로그인 실패: $e');
     }
   }
+  Future<void> updateUserInfo({
+    required String name,
+    required String studentID,
+    required Uint8List? profileImage,
+  }) async {
+    try {
+      // Call the repository method to update user info
+      await read<AuthRepository>().updateUserInfo(
+        name: name,
+        studentID: studentID,
+        profileImage: profileImage,
+      );
+      // Optionally, update local state if needed
+    } on CustomException catch (_) {
+      rethrow;
+    }
+  }
 /*Future<void> deleteAnonymousAccount() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;

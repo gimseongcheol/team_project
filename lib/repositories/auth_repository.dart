@@ -15,8 +15,7 @@ class AuthRepository {
       required this.firebaseStorage,
       required this.firebaseFirestore});
 
-
-  Future<void> signOut() async{
+  Future<void> signOut() async {
     try {
       // 현재 사용자 정보 가져오기
       User? user = FirebaseAuth.instance.currentUser;
@@ -120,6 +119,47 @@ class AuthRepository {
     } catch (e) {
       throw CustomException(
         code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
+
+  Future<void> updateUserInfo({
+    required String name,
+    required String studentID,
+    required Uint8List? profileImage,
+  }) async {
+    try {
+      // Get the current user
+      User? currentUser = firebaseAuth.currentUser;
+
+      // Check if the user is authenticated
+      if (currentUser == null || currentUser.isAnonymous) {
+        throw CustomException(
+          code: "인증되지 않은 사용자",
+          message: '접근 불가능한 경로입니다.',
+        );
+      }
+
+      // Update the user's display name if name is provided
+      if (name.isNotEmpty) {
+        await currentUser.updateDisplayName(name);
+      }
+
+      // Implement the logic to update student ID
+      // (You may need to store this information in your database)
+
+      // Implement the logic to update profile image
+      // (You may need to upload the new profile image to a storage service like Firebase Storage)
+
+      // Optionally, update the user's profile image
+      // if (profileImage != null) {
+      //   // Implement the logic to upload the new profile image
+      // }
+    } catch (e) {
+      // Handle any errors that occur during the update process
+      throw CustomException(
+        code: "Failed to update user information: $e",
         message: e.toString(),
       );
     }

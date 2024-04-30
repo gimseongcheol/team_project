@@ -218,7 +218,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    //이게 작동을 안하는거 같음 listview 같은 느낌인데
                     child: Row(
                       children: [
                         InkWell(
@@ -565,6 +564,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                     SnackBar(content: Text('게시물을 등록했습니다.')),
                   );
                   widget.onClubUploaded();
+                  Navigator.of(context).pop();
                 } on CustomException catch (e) {
                   errorDialogWidget(context, e);
                 }
