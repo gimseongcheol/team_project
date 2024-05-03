@@ -39,7 +39,7 @@ class _ForgotPasswordScreenState2 extends State<ForgotPasswordScreen2> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditSignScreen(),
+                  builder: (context) => EditProfile(),
                 ),
               );
             },

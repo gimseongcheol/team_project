@@ -65,8 +65,8 @@ class MyApp extends StatelessWidget {
         ),
         Provider<ClubRepository>(
           create: (context) => ClubRepository(
-            firebaseFirestore: FirebaseFirestore.instance,
             firebaseStorage: FirebaseStorage.instance,
+            firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
         StreamProvider<User?>(

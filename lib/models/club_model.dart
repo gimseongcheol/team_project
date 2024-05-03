@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:team_project/models/user_model.dart';
 
 class ClubModel {
+  final String uid;
   final String clubId;
   final String clubType;
   final String clubName;
@@ -20,6 +21,7 @@ class ClubModel {
   final List<String> likes;
 
   const ClubModel({
+    required this.uid,
     required this.clubId,
     required this.clubType,
     required this.clubName,
@@ -42,6 +44,7 @@ class ClubModel {
     required DocumentReference<Map<String, dynamic>> userDocRef,
 }) {
     return {
+      'uid': this.uid,
       'clubId': this.clubId,
       'clubName': this.clubName,
       'clubType' : this.clubType,
@@ -62,16 +65,17 @@ class ClubModel {
 
   factory ClubModel.fromMap(Map<String, dynamic> map) {
     return ClubModel(
+      uid:map['uid'],
       clubId: map['clubId'],
       clubName: map['clubName'],
-      clubType: map['clubtype'],
+      clubType: map['clubType'],
       writer: map['writer'],
       createAt: map['createAt'],
       presidentName: map['presidentName'],
       professorName: map['professorName'],
       call: map['call'],
       shortComment: map['shortComment'],
-      fullComment: map['fullComemnt'],
+      fullComment: map['fullComment'],
       profileImageUrl: List<String>.from(map['profileImageUrl']),
       commentCount: map['commentCount'],
       noticeCount: map['noticeCount'],
@@ -82,6 +86,6 @@ class ClubModel {
 
   @override
   String toString() {
-    return 'ClubModel{clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount, noticeCount : $noticeCount, depart : $depart, likes: $likes}';
+    return 'ClubModel{uid: $uid, clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount, noticeCount : $noticeCount, depart : $depart, likes: $likes}';
   }
 }

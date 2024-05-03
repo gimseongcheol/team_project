@@ -123,7 +123,9 @@ class _ClubSearchState extends State<ClubSearch> with TickerProviderStateMixin, 
               controller: _tabController,
             ),
           ),
+
           SizedBox(height: 4),
+
           Expanded(
             child: TabBarView(
               controller: _tabController,

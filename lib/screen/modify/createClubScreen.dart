@@ -21,25 +21,22 @@ class CreateClubScreen extends StatefulWidget {
   });
 
   @override
-  _CreateClubScreenState createState() => _CreateClubScreenState();
+  State<CreateClubScreen> createState() => _CreateClubScreenState();
 }
 
 class _CreateClubScreenState extends State<CreateClubScreen> {
-
-
-  List<String> imagePaths = [];
+  final List<String> imagePaths = [];
   String? _selectedClubType;
   String? _selectDepartment;
-  TextEditingController selectedClubType = TextEditingController();
-  TextEditingController selectedDepartment = TextEditingController();
-  TextEditingController clubNameController = TextEditingController();
-  TextEditingController presidentNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController professorNameController = TextEditingController();
-  TextEditingController shortIntroController = TextEditingController();
-  TextEditingController fullIntroController = TextEditingController();
+  final TextEditingController selectedClubType = TextEditingController();
+  final TextEditingController selectedDepartment = TextEditingController();
+  final TextEditingController clubNameController = TextEditingController();
+  final TextEditingController presidentNameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController professorNameController = TextEditingController();
+  final TextEditingController shortIntroController = TextEditingController();
+  final TextEditingController fullIntroController = TextEditingController();
   final List<String> _files = [];
-  Uint8List? _image;
 
   @override
   void dispose() {
@@ -129,6 +126,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
     initializeDateFormatting();
     _selectedDay = DateTime.now(); // Initialize _selectedDay in initState
   }
+
   @override
   Widget build(BuildContext context) {
     final clubStatus = context.watch<ClubState>().clubStatus;
@@ -218,7 +216,6 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    //이게 작동을 안하는거 같음 listview 같은 느낌인데
                     child: Row(
                       children: [
                         InkWell(
@@ -290,22 +287,22 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                     ),
                   ),
                   if (_selectedClubType == '과동아리')
-                  DropdownButton(
-                    //선택시 내부 색상 변경이 가능한지 확인하기
-                      hint: const Text('학부 선택'),
-                      value: _selectDepartment,
-                      items: _departmentList.map((String item) {
-                        return DropdownMenuItem<String>(
-                          child: Text('$item'),
-                          value: item,
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectDepartment = value;
-                          selectedDepartment.text = value ?? '';
-                        });
-                      }),
+                    DropdownButton(
+                        //선택시 내부 색상 변경이 가능한지 확인하기
+                        hint: const Text('학부 선택'),
+                        value: _selectDepartment,
+                        items: _departmentList.map((String item) {
+                          return DropdownMenuItem<String>(
+                            child: Text('$item'),
+                            value: item,
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectDepartment = value;
+                            selectedDepartment.text = value ?? '';
+                          });
+                        }),
                 ],
               ),
             ),
@@ -502,7 +499,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
       builder: (BuildContext context) {
         final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
-          backgroundColor:  _themeManager.themeMode == ThemeMode.dark
+          backgroundColor: _themeManager.themeMode == ThemeMode.dark
               ? Color(0xFF212121)
               : Colors.white,
           title: Text(
@@ -544,32 +541,37 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: (_files.length == 0 || clubStatus == ClubStatus.submitting) ? null
+              onPressed: (_files.length == 0 ||
+                      clubStatus == ClubStatus.submitting ||
+                      _selectedClubType == null ||
+                      _selectDepartment == null)
+                  ? null
                   : () async {
-                try {
-                  FocusScope.of(context).unfocus();
+                        Navigator.of(context).pop();
+                      try {
+                        FocusScope.of(context).unfocus();
 
-                  await context.read<ClubProvider>().uploadClub(
-                    files: _files,
-                    clubName: clubNameController.text,
-                    professorName: professorNameController.text,
-                    call: phoneNumberController.text,
-                    shortComment: shortIntroController.text,
-                    fullComment: fullIntroController.text,
-                    presidentName: presidentNameController.text,
-                    depart:  selectedDepartment.text,
-                    clubType: selectedClubType.text,
+                        await context.read<ClubProvider>().uploadClub(
+                              files: _files,
+                              clubName: clubNameController.text,
+                              professorName: professorNameController.text,
+                              call: phoneNumberController.text,
+                              shortComment: shortIntroController.text,
+                              fullComment: fullIntroController.text,
+                              presidentName: presidentNameController.text,
+                              depart: selectedDepartment.text,
+                              clubType: selectedClubType.text,
 
-                                  //uid: uid,
-                                );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('게시물을 등록했습니다.')),
+                              //uid: uid,
                             );
-                            widget.onClubUploaded();
-                          } on CustomException catch (e) {
-                            errorDialogWidget(context, e);
-                          }
-                        },
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('게시물을 등록했습니다.')),
+                        );
+                        widget.onClubUploaded();
+                      } on CustomException catch (e) {
+                        errorDialogWidget(context, e);
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)

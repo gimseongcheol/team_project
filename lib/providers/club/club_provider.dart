@@ -11,6 +11,7 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
    Future<void> getClubList() async {
     try {
       state = state.copyWith(clubStatus: ClubStatus.fetching);
+
       List<ClubModel> clubList = await read<ClubRepository>().getClubList();
       state = state.copyWith(
         clubList: clubList,
@@ -34,8 +35,9 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
   }) async {
     try {
       state = state.copyWith(clubStatus: ClubStatus.submitting);
+
       String uid = read<User>().uid;
-      ClubModel? clubModel = await read<ClubRepository>().uploadClub(
+      ClubModel clubModel = await read<ClubRepository>().uploadClub(
         files: files,
         clubName : clubName,
         professorName : professorName,
@@ -51,7 +53,7 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
       state = state.copyWith(
           clubStatus: ClubStatus.success,
           //새롭게 생성된 게시물 갱신
-          clubList: [clubModel!, ...state.clubList]);
+          clubList: [clubModel, ...state.clubList]);
     } on CustomException catch (_) {
       state = state.copyWith(clubStatus: ClubStatus.error);
       rethrow;

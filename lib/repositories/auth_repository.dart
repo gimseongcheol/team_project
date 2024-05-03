@@ -105,7 +105,7 @@ class AuthRepository {
         'email': email,
         'name': name,
         'profileImage': downloadURL,
-        'feedCount': 0,
+        'clubCount': 0,
         'likes': [],
         'followers': [],
         'following': [],
@@ -123,45 +123,80 @@ class AuthRepository {
       );
     }
   }
-
-  Future<void> updateUserInfo({
-    required String name,
-    required String studentID,
-    required Uint8List? profileImage,
-  }) async {
-    try {
-      // Get the current user
-      User? currentUser = firebaseAuth.currentUser;
-
-      // Check if the user is authenticated
-      if (currentUser == null || currentUser.isAnonymous) {
-        throw CustomException(
-          code: "인증되지 않은 사용자",
-          message: '접근 불가능한 경로입니다.',
-        );
-      }
-
-      // Update the user's display name if name is provided
-      if (name.isNotEmpty) {
-        await currentUser.updateDisplayName(name);
-      }
-
-      // Implement the logic to update student ID
-      // (You may need to store this information in your database)
-
-      // Implement the logic to update profile image
-      // (You may need to upload the new profile image to a storage service like Firebase Storage)
-
-      // Optionally, update the user's profile image
-      // if (profileImage != null) {
-      //   // Implement the logic to upload the new profile image
-      // }
-    } catch (e) {
-      // Handle any errors that occur during the update process
-      throw CustomException(
-        code: "Failed to update user information: $e",
-        message: e.toString(),
-      );
-    }
-  }
+  // Future<void> updateUserInfo({
+  //   required String email,
+  //   required String password,
+  //   required String name,
+  //   required String userid,
+  //   required Uint8List? profileImage,
+  // }) async {
+  //   try {
+  //     String? downloadURL;
+  //     UserCredential userCredential =
+  //     await firebaseAuth.createUserWithEmailAndPassword(
+  //       //회원가입동시에 로그인
+  //         email: email,
+  //         password: password);
+  //     String uid = userCredential.user!.uid;
+  //     // 프로필 이미지가 null이 아닌 경우에만 업로드 수행
+  //     if (profileImage != null) {
+  //       // mime 패키지의 lookupMimeType 함수를 사용해서 파일의 mimeType을 가져옴
+  //       String? mimeType = lookupMimeType('profile.jpg', headerBytes: profileImage);
+  //       SettableMetadata metadata = SettableMetadata(contentType: mimeType);
+  //
+  //       // 프로필 이미지를 Firebase Storage에 업로드
+  //       Reference ref = firebaseStorage.ref().child('profile').child(uid);
+  //       TaskSnapshot snapshot = await ref.putData(profileImage, metadata);
+  //
+  //       // 업로드된 이미지의 다운로드 URL 가져오기
+  //       downloadURL = await snapshot.ref.getDownloadURL();
+  //     }
+  //
+  //     // Firestore에 사용자 문서 업데이트
+  //     DocumentReference<Map<String, dynamic>> userDocRef =
+  //     FirebaseFirestore.instance.collection('users').doc(uid);
+  //
+  //     // 업로드된 이미지 URL과 함께 사용자 문서 업데이트
+  //     await userDocRef.update({
+  //       'name': name,
+  //       'userid': userid,
+  //       'profileImage': downloadURL,
+  //     });
+  //   } on CustomException catch (_) {
+  //     rethrow;
+  //   }
+  // }
+  // Future<void> updateUserInfo({
+  //   required String name,
+  //   required String userid,
+  //   required Uint8List? profileImage,
+  // }) async {
+  //   try {
+  //     // Get the current user
+  //     User? currentUser = firebaseAuth.currentUser;
+  //
+  //     // Check if the user is authenticated
+  //     if (currentUser == null || currentUser.isAnonymous) {
+  //       throw CustomException(
+  //         code: "인증되지 않은 사용자",
+  //         message: '접근 불가능한 경로입니다.',
+  //       );
+  //     }
+  //
+  //     // Update the user's display name if name is provided
+  //     if (name.isNotEmpty) {
+  //       await currentUser.updateDisplayName(name);
+  //     }
+  //     Map<String, dynamic> userData = {
+  //       'name': name,
+  //       'userid': userid,
+  //     };
+  //   } catch (e) {
+  //     // Handle any errors that occur during the update process
+  //     throw CustomException(
+  //       code: "Failed to update user information: $e",
+  //       message: e.toString(),
+  //     );
+  //   }
+  // }
 }

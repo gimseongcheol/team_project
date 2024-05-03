@@ -1,6 +1,9 @@
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
+import 'package:mime/mime.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/auth/auth_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
@@ -84,23 +87,53 @@ class AuthProvider extends StateNotifier<AuthState> with LocatorMixin {
       print('익명 로그인 실패: $e');
     }
   }
-  Future<void> updateUserInfo({
-    required String name,
-    required String studentID,
-    required Uint8List? profileImage,
-  }) async {
-    try {
-      // Call the repository method to update user info
-      await read<AuthRepository>().updateUserInfo(
-        name: name,
-        studentID: studentID,
-        profileImage: profileImage,
-      );
-      // Optionally, update local state if needed
-    } on CustomException catch (_) {
-      rethrow;
-    }
-  }
+  // // 현재 로그인한 사용자의 UID를 가져오는 메서드
+  // String getCurrentUserId() {
+  //   return FirebaseAuth.instance.currentUser?.uid ?? '';
+  // }
+
+//   // Firebase 데이터베이스에서 사용자 정보를 업데이트하는 메서드
+//   Future<void> updateFirebaseUserInfo({
+//     required String name,
+//     required String userid,
+//     Uint8List? profileImage,
+// }) async {
+//     try {
+//       // 현재 로그인한 사용자의 UID를 가져옵니다.
+//       String uid = getCurrentUserId();
+//
+//       // Firestore 컬렉션 참조
+//       CollectionReference users = FirebaseFirestore.instance.collection('users');
+//
+//       // 해당 사용자의 문서를 가져와서 업데이트합니다.
+//       await users.doc(uid).update({
+//         'name': name, // 변경할 사용자 이름
+//         'userid': userid, // 변경할 학번
+//         'profileImage': profileImage,
+//       });
+//     } catch (e) {
+//       // 업데이트 과정에서 오류가 발생하면 CustomException을 throw하여 예외 처리합니다.
+//       throw CustomException(code: '에러', message: '사용자 정보를 업데이트하는 도중 오류가 발생했습니다.');
+//     }
+//   }
+
+  // Future<void> updateUserInfo({
+  //   required String name,
+  //   required String studentID,
+  //   required Uint8List? profileImage,
+  // }) async {
+  //   try {
+  //     // Call the repository method to update user info
+  //     await read<AuthRepository>().updateUserInfo(
+  //       name: name,
+  //       studentID: studentID,
+  //       profileImage: profileImage,
+  //     );
+  //     // Optionally, update local state if needed
+  //   } on CustomException catch (_) {
+  //     rethrow;
+  //   }
+}
 /*Future<void> deleteAnonymousAccount() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -114,4 +147,3 @@ class AuthProvider extends StateNotifier<AuthState> with LocatorMixin {
       print('익명 계정 삭제 실패: $e');
     }
   }*/
-}
