@@ -174,30 +174,27 @@ class _ClubSearchState extends State<ClubSearch>
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Expanded(
-                            child: Scrollbar(
-                              controller: _scrollController,
-                              thickness: 5,
-                              child: RefreshIndicator(
-                                onRefresh: ()async{
-                                  _getClubList();
-                                },
-                                child: ListView.builder(
-                                    itemCount: clubList.length,
-                                    itemBuilder: (context, index){
-                                      return CardClubWidget(clubModel: clubList[index]);
-                                    }),
-                              ),
-                            ),
-                          ),
-                        ],
+                      SizedBox(height: 10),
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            _getClubList();
+                          },
+                          child: ListView.builder(
+                              itemCount: clubList.length,
+                              itemBuilder: (context, index) {
+                                return CardClubWidget(
+                                    clubModel: clubList[index]);
+                              }),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             child: Padding(
