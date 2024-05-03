@@ -55,7 +55,7 @@ dependencies:
   intl: ^0.19.0
   smooth_page_indicator: ^1.1.0
   table_calendar: ^3.1.1
-
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:

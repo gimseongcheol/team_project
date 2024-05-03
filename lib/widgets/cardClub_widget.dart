@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,22 +12,20 @@ class CardClubWidget extends StatefulWidget {
   final ClubModel clubModel;
 
   const CardClubWidget({
-    Key? key,
+    super.key,
     required this.clubModel,
-  }) : super(key: key);
+  });
 
   @override
   State<CardClubWidget> createState() => _CardClubWidgetState();
 }
 
 class _CardClubWidgetState extends State<CardClubWidget> {
-  String? _selectDepartment;
   final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     ClubModel clubModel = widget.clubModel;
-    UserModel userModel = clubModel.writer;
     final _themeManager = Provider.of<ThemeManager>(context);
 //동아리 타입과 부서 조건문 짜야함
     return Expanded(
@@ -62,11 +61,13 @@ class _CardClubWidgetState extends State<CardClubWidget> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image:  clubModel.profileImageUrl == null ||
-                      clubModel.profileImageUrl!.isEmpty
-                          ? ExtendedAssetImageProvider('assets/images/university_circle.jpg')
-                      as ImageProvider
-                            : ExtendedNetworkImageProvider(clubModel.profileImageUrl! as String),
+                        image: clubModel.profileImageUrl == null ||
+                                clubModel.profileImageUrl!.isEmpty
+                            ? ExtendedAssetImageProvider(
+                                    'assets/images/university_circle.jpg')
+                                as ImageProvider
+                            : ExtendedNetworkImageProvider(
+                                clubModel.profileImageUrl[0]),
                         fit: BoxFit.cover,
                       ),
                     ),
