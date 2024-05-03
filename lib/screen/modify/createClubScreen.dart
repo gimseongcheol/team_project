@@ -327,6 +327,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                 setState(() {
                   _selectedClubType = value as String?;
                   selectedClubType.text = value ?? '중앙동아리';
+                  selectedDepartment.text = value ?? '';
                 });
               },
               activeColor: _themeManager.themeMode == ThemeMode.dark
