@@ -72,16 +72,7 @@ class _ClubSearchState extends State<ClubSearch>
     ClubState clubState = context.watch<ClubState>();
     List<ClubModel> clubList = clubState.clubList;
     final _themeManager = Provider.of<ThemeManager>(context);
-    if(clubState.clubStatus == ClubStatus.fetching){
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    if(clubState.clubStatus == ClubStatus.success && clubList.length == 0){
-      return Center(
-        child: Text('게시물이 존재하지 않습니다.'),
-      );
-    }
+
     return Scaffold(
           appBar: AppBar(
             leading: IconButton(
@@ -262,12 +253,13 @@ class _ClubSearchState extends State<ClubSearch>
                                   itemCount: clubList.length,
                                   itemBuilder: (context, index) {
                                     final clubModel = clubList[index];
+
                                     // Check if the club type is '중앙동아리'
                                     if (clubModel.clubType != '중앙동아리') {
                                       // If it's '중앙동아리', return the CardClubWidget
                                       if (_selectDepartment == null || clubModel.depart == _selectDepartment) {
                                         // If it matches, return the CardClubWidget
-                                        return CardClubWidget(clubModel: clubModel);
+                                        return CardClubWidget(clubModel: clubList[index]);
                                       } else {
                                         // If it doesn't match, return a SizedBox to indicate no clubs
                                         return SizedBox.shrink();

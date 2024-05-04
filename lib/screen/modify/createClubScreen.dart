@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/screen/mainPage/clubSearch.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/event.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
@@ -544,11 +545,14 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
             ElevatedButton(
               onPressed: (_files.length == 0 ||
                       clubStatus == ClubStatus.submitting ||
-                      _selectedClubType == null ||
-                      _selectDepartment == null)
+                      _selectedClubType == null)
                   ? null
                   : () async {
-                        Navigator.of(context).pop();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ClubSearch()
+                        ));
                       try {
                         FocusScope.of(context).unfocus();
 
