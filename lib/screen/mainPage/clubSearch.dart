@@ -183,8 +183,15 @@ class _ClubSearchState extends State<ClubSearch>
                           child: ListView.builder(
                               itemCount: clubList.length,
                               itemBuilder: (context, index) {
-                                return CardClubWidget(
-                                    clubModel: clubList[index]);
+                                final clubModel = clubList[index];
+                                // Check if the club type is '중앙동아리'
+                                if (clubModel.clubType == '중앙동아리') {
+                                  // If it's '중앙동아리', return the CardClubWidget
+                                  return CardClubWidget(clubModel: clubModel);
+                                } else {
+                                  // If it's not '중앙동아리', return a SizedBox to indicate no clubs
+                                  return SizedBox.shrink();
+                                }
                               }),
                         ),
                       ),
@@ -247,136 +254,29 @@ class _ClubSearchState extends State<ClubSearch>
                           ),
                           SizedBox(height: 8),
                           Expanded(
-                            child: Scrollbar(
-                              controller: _scrollController,
-                              thickness: 5,
-                              child: ListView(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ClubMainScreen()));
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                        side: _themeManager.themeMode ==
-                                                ThemeMode.dark
-                                            ? BorderSide(
-                                                color: Colors.white, width: 1)
-                                            : BorderSide(
-                                                color: Colors.black, width: 1),
-                                      ),
-                                      child: ListTile(
-                                        tileColor: _themeManager.themeMode ==
-                                                ThemeMode.dark
-                                            ? Color(0xFF444444)
-                                            : Colors.white,
-                                        leading: Container(
-                                          width: 40,
-                                          height: 80,
-                                          color: Colors.cyan,
-                                        ),
-                                        title: Text(
-                                          '동아리1',
-                                          style: TextStyle(
-                                              color: _themeManager.themeMode ==
-                                                      ThemeMode.dark
-                                                  ? Colors.white70
-                                                  : Colors.black),
-                                        ),
-                                        subtitle: Text(
-                                          '동아리1에 대한 설명',
-                                          style: TextStyle(
-                                              color: _themeManager.themeMode ==
-                                                      ThemeMode.dark
-                                                  ? Colors.white70
-                                                  : Colors.black),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: _themeManager.themeMode ==
-                                              ThemeMode.dark
-                                          ? BorderSide(
-                                              color: Colors.white, width: 1)
-                                          : BorderSide(
-                                              color: Colors.black, width: 1),
-                                    ),
-                                    child: ListTile(
-                                      tileColor: _themeManager.themeMode ==
-                                              ThemeMode.dark
-                                          ? Color(0xFF444444)
-                                          : Colors.white,
-                                      leading: Container(
-                                        width: 40,
-                                        height: 80,
-                                        color: Colors.tealAccent,
-                                      ),
-                                      title: Text(
-                                        '동아리2',
-                                        style: TextStyle(
-                                            color: _themeManager.themeMode ==
-                                                    ThemeMode.dark
-                                                ? Colors.white70
-                                                : Colors.black),
-                                      ),
-                                      subtitle: Text(
-                                        '동아리2에 대한 설명',
-                                        style: TextStyle(
-                                            color: _themeManager.themeMode ==
-                                                    ThemeMode.dark
-                                                ? Colors.white70
-                                                : Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                  Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: _themeManager.themeMode ==
-                                              ThemeMode.dark
-                                          ? BorderSide(
-                                              color: Colors.white, width: 1)
-                                          : BorderSide(
-                                              color: Colors.black, width: 1),
-                                    ),
-                                    child: ListTile(
-                                      tileColor: _themeManager.themeMode ==
-                                              ThemeMode.dark
-                                          ? Color(0xFF444444)
-                                          : Colors.white,
-                                      leading: Container(
-                                        width: 40,
-                                        height: 80,
-                                        color: Colors.orange,
-                                      ),
-                                      title: Text(
-                                        '동아리3',
-                                        style: TextStyle(
-                                            color: _themeManager.themeMode ==
-                                                    ThemeMode.dark
-                                                ? Colors.white70
-                                                : Colors.black),
-                                      ),
-                                      subtitle: Text(
-                                        '동아리3에 대한 설명',
-                                        style: TextStyle(
-                                            color: _themeManager.themeMode ==
-                                                    ThemeMode.dark
-                                                ? Colors.white70
-                                                : Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                _getClubList();
+                              },
+                              child: ListView.builder(
+                                  itemCount: clubList.length,
+                                  itemBuilder: (context, index) {
+                                    final clubModel = clubList[index];
+                                    // Check if the club type is '중앙동아리'
+                                    if (clubModel.clubType != '중앙동아리') {
+                                      // If it's '중앙동아리', return the CardClubWidget
+                                      if (_selectDepartment == null || clubModel.depart == _selectDepartment) {
+                                        // If it matches, return the CardClubWidget
+                                        return CardClubWidget(clubModel: clubModel);
+                                      } else {
+                                        // If it doesn't match, return a SizedBox to indicate no clubs
+                                        return SizedBox.shrink();
+                                      }
+                                    } else {
+                                      // If it's '중앙동아리', return a SizedBox to indicate no clubs
+                                      return SizedBox.shrink();
+                                    }
+                                  }),
                             ),
                           ),
                         ],
