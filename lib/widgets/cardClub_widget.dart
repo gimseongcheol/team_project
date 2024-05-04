@@ -33,7 +33,7 @@ class _CardClubWidgetState extends State<CardClubWidget> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ClubMainScreen(),
+            builder: (context) => ClubMainScreen(clubModel: clubModel),
           ),
         );
       },

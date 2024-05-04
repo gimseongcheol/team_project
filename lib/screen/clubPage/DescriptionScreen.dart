@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 
 class DescriptionScreen extends StatefulWidget {
+  final ClubModel clubModel;
+
+  DescriptionScreen({
+    super.key,
+    required this.clubModel,
+  });
+
   @override
-  _DescriptionScreenState createState() => _DescriptionScreenState();
+  State<DescriptionScreen> createState() => _DescriptionScreenState();
 }
 
 class Comment {
@@ -34,6 +42,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    ClubModel clubModel = widget.clubModel;
 
     return SingleChildScrollView(
       child: Column(
@@ -159,7 +168,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text('과 동아리',
+            subtitle: Text(clubModel.clubType,
                 style: TextStyle(
                     color: Theme.of(context).textTheme.bodyText1!.color)),
           ),
@@ -175,7 +184,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text('홍길동',
+            subtitle: Text(clubModel.presidentName,
                 style: TextStyle(
                     color: Theme.of(context).textTheme.bodyText1!.color)),
           ),
@@ -185,13 +194,13 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 ? Color(0xFF444444)
                 : Colors.white,
             title: Text(
-              '회장 전화번호',
+              '연락처',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             subtitle: Text(
-              '010-1234-5678',
+              clubModel.call,
               style: TextStyle(
                   color: Theme.of(context).textTheme.bodyText1!.color),
             ),
@@ -208,7 +217,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               ),
             ),
             subtitle: Text(
-              '김철수',
+              clubModel.professorName,
               style: TextStyle(
                   color: Theme.of(context).textTheme.bodyText1!.color),
             ),
@@ -225,7 +234,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               ),
             ),
             subtitle: Text(
-              '게임을 즐기는 동아리입니다.',
+              clubModel.shortComment,
             ),
           ),
           Divider(),
@@ -240,9 +249,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               ),
             ),
             subtitle: Text(
-              '이 동아리는 게임에 관심 있는 학생들이 모여 활동하고 있습니다. '
-              '게임 분야에 대한 교육 및 연구를 통해 회원들 간의 교류를 증진시키고, '
-              '사회에 기여할 수 있는 능력을 함양하는 것을 목표로 하고 있습니다.',
+             clubModel.fullComment
             ),
           ),
         ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/DescriptionScreen.dart';
 import 'package:team_project/screen/clubPage/PostScreen.dart';
@@ -9,21 +11,19 @@ import 'package:team_project/screen/clubPage/NoticeScreen.dart';
 import 'package:team_project/screen/clubPage/CommentScreen.dart';
 
 class ClubMainScreen extends StatefulWidget {
-  ClubMainScreen({Key? key}) : super(key: key);
+  final ClubModel clubModel;
+
+  const ClubMainScreen({
+    super.key,
+    required this.clubModel,
+  });
 
   @override
-  _ClubMainScreenState createState() => _ClubMainScreenState();
+  State<ClubMainScreen> createState() => _ClubMainScreenState();
 }
 
 class _ClubMainScreenState extends State<ClubMainScreen> {
   int _selectedPage = 0;
-  List<Widget> _screens = [
-    DescriptionScreen(), //동아리 메인 화면
-    PostScreen(), // 게시글 화면
-    ScheduleScreen(), //달력 화면
-    NoticeScreen(), //공지 화면
-    CommentScreen(), //댓글 화면
-  ];
 
   List<Map<String, dynamic>> _bottomItems = [
     {"icon": Icons.description, "text": "설명"},
@@ -31,15 +31,6 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
     {"icon": Icons.calendar_today, "text": "일정"},
     {"icon": Icons.notification_important, "text": "공지사항"},
     {"icon": Icons.comment, "text": "댓글"},
-  ];
-
-  final List<String> _appbarNameList = [
-    //이거 나중에 동아리명 받아서 작업해야해서 ${}이 방식으로 수정.
-    '게임동아리',
-    '게임동아리  게시글',
-    '게임동아리  일정',
-    '게임동아리  공지사항',
-    '게임동아리  댓글',
   ];
 
   void _onItemTapped(int index) {
@@ -52,6 +43,24 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    ClubState clubState = context.watch<ClubState>();
+    List<ClubModel> clubList = clubState.clubList;
+    ClubModel clubModel = widget.clubModel;
+    final List<String> _appbarNameList = [
+      //이거 나중에 동아리명 받아서 작업해야해서 ${}이 방식으로 수정.
+      clubModel.clubName,
+      clubModel.clubName +' 게시글',
+      clubModel.clubName+' 일정',
+      clubModel.clubName+' 공지사항',
+      clubModel.clubName+' 댓글',
+    ];
+    List<Widget> _screens = [
+      DescriptionScreen(clubModel: clubModel), //동아리 메인 화면
+      PostScreen(), // 게시글 화면
+      ScheduleScreen(), //달력 화면
+      NoticeScreen(), //공지 화면
+      CommentScreen(), //댓글 화면
+    ];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
