@@ -1,5 +1,7 @@
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
@@ -30,12 +32,75 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
   bool _isReported = false;
   List<Comment> comments = [];
   TextEditingController commentController = TextEditingController();
+  final CarouselController carouselController = CarouselController();
+  int _indicatorIndex = 0;
 
-  final List<String> imagePaths = [
-    'assets/club_image2.jpeg',
-    'assets/club_image3.jpg',
-    'assets/club_image.jpeg',
-  ];
+  Widget _imageZoomInOutWidget(String imageUrl) {
+    //터치했을 때 보이는 이미지
+    return GestureDetector(
+      onTap: () {
+        showGeneralDialog(
+          context: context,
+          pageBuilder: (context, _, __) {
+            //확대
+            return InteractiveViewer(
+              //다시 클릭시 화면 닫힘
+              child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: ExtendedImage.network(imageUrl)),
+            );
+          },
+        );
+      },
+      //이미지
+      child: ExtendedImage.network(
+        imageUrl,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.contain,
+      ),
+    );
+  }
+
+//이미지 슬라이더
+  Widget _imageSliderWidget(List<String> imageUrls) {
+    return Stack(
+      children: [
+        CarouselSlider(
+          carouselController: carouselController,
+          items: imageUrls.map((url) => _imageZoomInOutWidget(url)).toList(),
+          options: CarouselOptions(
+            viewportFraction: 1.0,
+            height: MediaQuery.of(context).size.height * 0.4,
+            onPageChanged: (index, reason) {
+              _indicatorIndex = index;
+            },
+          ),
+        ),
+        //이미지 수에 따라 동그라미 추가
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: imageUrls.asMap().keys.map((e) {
+                return Container(
+                  width: 8,
+                  height: 8,
+                  margin:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white
+                        .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        )
+      ],
+    );
+  }
 
   final controller = PageController(viewportFraction: 0.8, keepPage: true);
 
@@ -47,38 +112,10 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          Container(
-            height: 250.0,
-            child: PageView.builder(
-              controller: controller,
-              itemCount: imagePaths.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey.shade300,
-                    image: DecorationImage(
-                      image: AssetImage(imagePaths[index]),
-                      fit: BoxFit.cover, // 이미지가 컨테이너에 꽉 차도록 설정
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          _imageSliderWidget(clubModel.profileImageUrl), // Replaced PageView.builder with _imageSliderWidget
           SizedBox(height: 16), // 간격 조절
-          SmoothPageIndicator(
-            // 페이지 인디케이터 추가
-            controller: controller,
-            count: imagePaths.length,
-            effect: const WormEffect(
-              dotHeight: 16,
-              dotWidth: 16,
-              type: WormType.thinUnderground,
-            ),
-          ),
           Divider(),
+          //좋아요
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
