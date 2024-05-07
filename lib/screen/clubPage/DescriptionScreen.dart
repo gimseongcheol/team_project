@@ -112,8 +112,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _imageSliderWidget(clubModel.profileImageUrl), // Replaced PageView.builder with _imageSliderWidget
-          SizedBox(height: 16), // 간격 조절
+          _imageSliderWidget(clubModel.profileImageUrl),
           Divider(),
           //좋아요
           Row(

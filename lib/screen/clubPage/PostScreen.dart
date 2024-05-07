@@ -1,11 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/models/user_model.dart';
+import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/Post.dart';
 
-class PostScreen extends StatelessWidget {
+class PostScreen extends StatefulWidget {
+  final ClubModel clubModel;
+
+  PostScreen({super.key, required this.clubModel});
+  @override
+  State<PostScreen> createState() => _PostScreen();
+}
+class _PostScreen extends State<PostScreen> {
   final List<Post> posts = [
     Post(
       //imageUrl: 'assets/post_image1.jpeg',
@@ -24,6 +35,10 @@ class PostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    ClubModel clubModel = widget.clubModel;
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,13 +103,14 @@ class PostScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      // 현재 사용자가 있고, 그 사용자의 UID가 'clubModel.writer'와 같은 경우에만 FloatingActionButton 활성화
+      floatingActionButton: currentUser != null && currentUser.uid == clubModel.writer.uid ? FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => CreatePostScreen()));
         },
         child: Icon(Icons.add),
-      ),
+      ): null,
     );
   }
 }

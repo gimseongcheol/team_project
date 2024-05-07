@@ -1,10 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/screen/modify/createNoticeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 
-class NoticeScreen extends StatelessWidget {
+class NoticeScreen extends StatefulWidget {
+  final ClubModel clubModel;
+
+  NoticeScreen({super.key, required this.clubModel});
+  @override
+  State<NoticeScreen> createState() => _NoticeScreen();
+}
+class _NoticeScreen extends State<NoticeScreen> {
   final List<Notice> notices = [
     Notice(
       imageUrl: 'assets/notice_image1.jpg',
@@ -23,6 +32,9 @@ class NoticeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    ClubModel clubModel = widget.clubModel;
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -96,13 +108,14 @@ class NoticeScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      // 현재 사용자가 있고, 그 사용자의 UID가 'clubModel.writer'와 같은 경우에만 FloatingActionButton 활성화
+      floatingActionButton: currentUser != null && currentUser.uid == clubModel.writer.uid ? FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => CreateNoticeScreen()));
         },
-        child: Icon(Icons.add, color: Colors.black),
-      ),
+        child: Icon(Icons.add),
+      ): null,
     );
   }
 }
