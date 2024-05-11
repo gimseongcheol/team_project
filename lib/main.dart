@@ -12,6 +12,8 @@ import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/notice/notice_provider.dart';
+import 'package:team_project/providers/notice/notice_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_provider.dart';
@@ -19,6 +21,7 @@ import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
+import 'package:team_project/repositories/notice_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
 import 'package:team_project/screen/auth/splash_screen.dart';
 import 'package:team_project/theme/theme_constants.dart';
@@ -58,6 +61,12 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<NoticeRepository>(
+          create: (context) => NoticeRepository(
+            firebaseStorage: FirebaseStorage.instance,
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         Provider<ProfileRepository>(
           create: (context) => ProfileRepository(
             firebaseFirestore: FirebaseFirestore.instance,
@@ -84,6 +93,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<ProfileProvider, ProfileState>(
           create: (context) => ProfileProvider(),
+        ),
+        StateNotifierProvider<NoticeProvider, NoticeState>(
+          create: (context) => NoticeProvider(),
         ),
         StateNotifierProvider<ClubProvider, ClubState>(
           create: (context) => ClubProvider(),

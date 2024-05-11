@@ -42,7 +42,7 @@ class ClubModel {
 
   Map<String, dynamic> toMap({
     required DocumentReference<Map<String, dynamic>> userDocRef,
-}) {
+  }) {
     return {
       'uid': this.uid,
       'clubId': this.clubId,
