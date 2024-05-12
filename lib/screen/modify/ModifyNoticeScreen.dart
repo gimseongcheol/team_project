@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'createNoticeScreen.dart';
 import 'revise_notice_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:team_project/theme/theme_manager.dart';
 
 class ModifyNoticeScreen extends StatelessWidget {
   final List<Notice> notices = [
@@ -24,7 +23,7 @@ class ModifyNoticeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeManager = Provider.of<ThemeManager>(context);
+    //final _themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(

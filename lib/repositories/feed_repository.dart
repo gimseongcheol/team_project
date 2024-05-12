@@ -58,7 +58,7 @@ class FeedRepository {
     }
   }
 
-  Future<void> uploadFeed({
+  Future<FeedModel> uploadFeed({
     required List<String> files,
     required String desc,
     required String title,
@@ -120,11 +120,12 @@ class FeedRepository {
       // await userDocRef.update({
       //   'feedCount': FieldValue.increment(1),
       // });
-      batch.update(clubDocRef, {
-        'feedCount': FieldValue.increment(1),
-      });
+      //batch.update(clubDocRef, {
+      //  'feedCount': FieldValue.increment(1),
+      //});
 
       batch.commit();
+      return feedModel;
     } on FirebaseException catch (e) {
       _deleteImage(imageUrls);
       throw CustomException(

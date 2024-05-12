@@ -1,7 +1,5 @@
 import 'dart:typed_data';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:mime/mime.dart';
 import 'package:team_project/exceptions/custom_exception.dart';

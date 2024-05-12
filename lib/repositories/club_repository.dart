@@ -105,6 +105,7 @@ class ClubRepository {
         'fullComment': fullComment,
         'profileImageUrl': profileImageUrl,
         'commentCount': 0,
+        'feedCount': 0,
         'noticeCount': 0,
         'depart': depart,
         'likes': [],

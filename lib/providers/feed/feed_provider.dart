@@ -34,13 +34,15 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
       state = state.copyWith(feedStatus: FeedStatus.submitting);
 
       String clubId = read<ClubModel>().clubId;
-      await read<FeedRepository>().uploadFeed(
+      FeedModel feedModel = await read<FeedRepository>().uploadFeed(
         files: files,
         desc: desc,
         title: title,
         clubId: clubId,
       );
-      state = state.copyWith(feedStatus: FeedStatus.success);
+      state = state.copyWith(feedStatus: FeedStatus.success,
+          //새롭게 생성된 게시물 갱신
+          feedList: [feedModel, ...state.feedList]);
     } on CustomException catch (_) {
       state = state.copyWith(feedStatus: FeedStatus.error);
       rethrow;

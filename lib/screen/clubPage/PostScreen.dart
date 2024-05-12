@@ -95,7 +95,7 @@ class PostScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreatePostScreen()));
+              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {},)));
         },
         child: Icon(Icons.add),
       ),
