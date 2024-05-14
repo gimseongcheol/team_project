@@ -73,7 +73,9 @@ class _CommentScreenState extends State<CommentScreen> {
       bottomNavigationBar: Container(
         margin:
         EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        color: Colors.black54,
+        color: _themeManager.themeMode == ThemeMode.dark
+            ? Colors.white70
+            : Colors.black54,
         child: Form(
           key: _formKey,
           child: Row(
