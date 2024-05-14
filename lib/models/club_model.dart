@@ -15,10 +15,12 @@ class ClubModel {
   final String fullComment;
   final List<String> profileImageUrl;
   final int commentCount;
+  final int feedCount;
   final int noticeCount;
   final String depart;
   //final int followersCount;
   final List<String> likes;
+  final int likeCount;
 
   const ClubModel({
     required this.uid,
@@ -34,9 +36,11 @@ class ClubModel {
     required this.fullComment,
     required this.profileImageUrl,
     required this.commentCount,
+    required this.feedCount,
     required this.noticeCount,
     required this.depart,
     required this.likes,
+    required this.likeCount,
   });
 
 
@@ -57,9 +61,11 @@ class ClubModel {
       'fullComment' : this.fullComment,
       'profileImageUrl': this.profileImageUrl,
       'commentCount': this.commentCount,
+      'feedCount': this.feedCount,
       'noticeCount' : this.noticeCount,
       'depart' : this.depart,
       'likes': this.likes,
+      'likeCount': this.likeCount,
     };
   }
 
@@ -78,14 +84,16 @@ class ClubModel {
       fullComment: map['fullComment'],
       profileImageUrl: List<String>.from(map['profileImageUrl']),
       commentCount: map['commentCount'],
+      feedCount: map['feedCount'],
       noticeCount: map['noticeCount'],
       depart: map['depart'],
       likes: List<String>.from(map['likes']),
+      likeCount: map['likeCount'],
     );
   }
 
   @override
   String toString() {
-    return 'ClubModel{uid: $uid, clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, ShortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount, noticeCount : $noticeCount, depart : $depart, likes: $likes}';
+    return 'ClubModel{uid: $uid, clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, shortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount,feedCount: $feedCount, noticeCount : $noticeCount, depart : $depart, likes: $likes, likeCount : $likeCount}';
   }
 }

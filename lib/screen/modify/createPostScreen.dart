@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/screen/clubPage/PostScreen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
@@ -24,9 +25,15 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final List<String> _files = [];
   final TextEditingController _textEditingController = TextEditingController();
-  final TextEditingController _contentEditingController = TextEditingController();
+  final TextEditingController _contentEditingController =
+      TextEditingController();
 
-
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _contentEditingController.dispose();
+    super.dispose();
+  }
 
   Future<List<String>> selectImages() async {
     List<XFile> images = await ImagePicker().pickMultiImage(
@@ -89,12 +96,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }).toList();
   }
 
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    _contentEditingController.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
@@ -160,42 +161,42 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Divider(),
             Center(
               child: Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          InkWell(
-                            onTap: feedStatus == FeedStatus.submitting
-                                ? null
-                                : () async {
-                                    final _images = await selectImages();
-                                    setState(() {
-                                      _files.addAll(_images);
-                                    });
-                                  },
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: _themeManager.themeMode == ThemeMode.dark
-                                    ? Colors.white24
-                                    : Colors.grey[300],
-                                borderRadius: BorderRadius.circular(0.0),
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                size: 40.0,
-                                color: _themeManager.themeMode == ThemeMode.dark
-                                    ? Colors.white70
-                                    : Colors.black,
-                              ),
-                            ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: feedStatus == FeedStatus.submitting
+                            ? null
+                            : () async {
+                                final _images = await selectImages();
+                                setState(() {
+                                  _files.addAll(_images);
+                                });
+                              },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.white24
+                                : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(0.0),
                           ),
-                          ...selectedImageList(),
-                        ],
+                          child: Icon(
+                            Icons.add,
+                            size: 40.0,
+                            color: _themeManager.themeMode == ThemeMode.dark
+                                ? Colors.white70
+                                : Colors.black,
+                          ),
+                        ),
                       ),
-                    ),
+                      ...selectedImageList(),
+                    ],
                   ),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 13.0, top: 8.0),
@@ -312,11 +313,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ElevatedButton(
               onPressed: (_files.length == 0 ||
                       feedStatus == FeedStatus.submitting ||
-                  _textEditingController.text.isEmpty ||
-                  _contentEditingController.text.isEmpty)
+                      _textEditingController.text.isEmpty ||
+                      _contentEditingController.text.isEmpty)
                   ? null
                   : () async {
                       Navigator.of(context).pop();
+
                       try {
                         FocusScope.of(context).unfocus();
 

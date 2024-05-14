@@ -59,7 +59,7 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
       PostScreen(), // 게시글 화면
       ScheduleScreen(), //달력 화면
       NoticeScreen(), //공지 화면
-      CommentScreen(), //댓글 화면
+      CommentScreen(clubId: clubModel.clubId), //댓글 화면
     ];
     return Scaffold(
       appBar: AppBar(

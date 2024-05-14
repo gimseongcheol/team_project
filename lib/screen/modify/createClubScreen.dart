@@ -570,7 +570,7 @@ class _CreateClubScreenState extends State<CreateClubScreen> {
                               //uid: uid,
                             );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('게시물을 등록했습니다.')),
+                          SnackBar(content: Text('동아리 등록했습니다.')),
                         );
                         widget.onClubUploaded();
                       } on CustomException catch (e) {

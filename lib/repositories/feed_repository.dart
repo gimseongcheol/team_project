@@ -20,14 +20,10 @@ class FeedRepository {
     String? clubId,
   }) async {
     try {
-      // QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-      //     .collection('feeds')
-      //     .where('uid', isEqualTo: uid)
-      //     .orderBy('createAt', descending: true)
-      //     .get();
-      // 새로운 코드
       // snapshot 을 생성하기 위한 query 생성
       Query<Map<String, dynamic>> query = await firebaseFirestore
+          .collection('clubs')
+          .doc(clubId)
           .collection('feeds')
           .orderBy('createAt', descending: true);
       // uid 가 null 이 아닐 경우(특정 유저의 피드를 가져올 경우) query에 조건 추가
@@ -67,15 +63,14 @@ class FeedRepository {
     List<String> imageUrls = [];
     try {
       WriteBatch batch = firebaseFirestore.batch();
-
+      //v1을 사용하여 feedId랜덤 지정
       String feedId = Uuid().v1();
 
       //firestore 문서 참조
-      DocumentReference<Map<String, dynamic>> feedDocRef =
-      firebaseFirestore.collection('feeds').doc(feedId);
-
       DocumentReference<Map<String, dynamic>> clubDocRef =
       firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> feedDocRef =
+      clubDocRef.collection('feeds').doc(feedId);
       //firestorage 참조
       Reference ref = firebaseStorage.ref().child('feeds').child(feedId);
 
@@ -94,37 +89,21 @@ class FeedRepository {
         'clubId': clubId,
         'feedId': feedId,
         'desc': desc,
+        'title': title,
         'imageUrls': imageUrls,
         'likes': [],
         'likeCount': 0,
-        'commentCount': 0,
         'createAt': Timestamp.now(),
         'writer': clubModel,
       });
 
-      //await feedDocRef.set(feedModel.toMap(userDocRef: userDocRef));
       batch.set(feedDocRef, feedModel.toMap(clubDocRef: clubDocRef));
 
-      /*
-    await feedDocRef.set({'uid': uid,
-      'feedId': feedId,
-      'desc': desc,
-      'imageUrls': imageUrls,
-      'likes': [],
-      'likeCount': 0,
-      'commentcount': 0,
-      'createAt': Timestamp.now(),
-      'writer': userDocref,}});
-     */
+      batch.update(clubDocRef, {
+        'feedCount': FieldValue.increment(1),
+      });
 
-      // await userDocRef.update({
-      //   'feedCount': FieldValue.increment(1),
-      // });
-      //batch.update(clubDocRef, {
-      //  'feedCount': FieldValue.increment(1),
-      //});
-
-      batch.commit();
+      await batch.commit();
       return feedModel;
     } on FirebaseException catch (e) {
       _deleteImage(imageUrls);

@@ -109,6 +109,7 @@ class ClubRepository {
         'noticeCount': 0,
         'depart': depart,
         'likes': [],
+        'likeCount': 0,
       });
 
       batch.set(clubDocRef, clubModel.toMap(userDocRef: userDocRef));

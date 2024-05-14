@@ -10,6 +10,8 @@ as myAuthProvider;
 import 'package:team_project/providers/auth/auth_state.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/providers/comment/comment_provider.dart';
+import 'package:team_project/providers/comment/comment_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
 import 'package:team_project/providers/notice/notice_provider.dart';
@@ -20,6 +22,7 @@ import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/club_repository.dart';
+import 'package:team_project/repositories/comment_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/notice_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
@@ -55,6 +58,17 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<ProfileRepository>(
+          create: (context) => ProfileRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
+        Provider<ClubRepository>(
+          create: (context) => ClubRepository(
+            firebaseStorage: FirebaseStorage.instance,
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         Provider<FeedRepository>(
           create: (context) => FeedRepository(
             firebaseStorage: FirebaseStorage.instance,
@@ -67,14 +81,8 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
-        Provider<ProfileRepository>(
-          create: (context) => ProfileRepository(
-            firebaseFirestore: FirebaseFirestore.instance,
-          ),
-        ),
-        Provider<ClubRepository>(
-          create: (context) => ClubRepository(
-            firebaseStorage: FirebaseStorage.instance,
+        Provider<CommentRepository>(
+          create: (context) => CommentRepository(
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
@@ -88,17 +96,20 @@ class MyApp extends StatelessWidget {
         StateNotifierProvider<UserProvider, UserState>(
           create: (context) => UserProvider(),
         ),
-        StateNotifierProvider<FeedProvider, FeedState>(
-          create: (context) => FeedProvider(),
-        ),
         StateNotifierProvider<ProfileProvider, ProfileState>(
           create: (context) => ProfileProvider(),
+        ),
+        StateNotifierProvider<ClubProvider, ClubState>(
+          create: (context) => ClubProvider(),
+        ),
+        StateNotifierProvider<FeedProvider, FeedState>(
+          create: (context) => FeedProvider(),
         ),
         StateNotifierProvider<NoticeProvider, NoticeState>(
           create: (context) => NoticeProvider(),
         ),
-        StateNotifierProvider<ClubProvider, ClubState>(
-          create: (context) => ClubProvider(),
+        StateNotifierProvider<CommentProvider, CommentState>(
+          create: (context) => CommentProvider(),
         ),
       ],
       child: MaterialApp(

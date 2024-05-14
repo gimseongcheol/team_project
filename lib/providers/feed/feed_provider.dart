@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
@@ -9,7 +10,7 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
   FeedProvider() : super(FeedState.init());
 
   Future<void> getFeedList() async {
-    try{
+    try {
       state = state.copyWith(feedStatus: FeedStatus.fetching);
 
       List<FeedModel> feedList = await read<FeedRepository>().getFeedList();
@@ -18,8 +19,7 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
         feedList: feedList,
         feedStatus: FeedStatus.success,
       );
-
-    }on CustomException catch (_) {
+    } on CustomException catch (_) {
       state = state.copyWith(feedStatus: FeedStatus.error);
       rethrow;
     }
@@ -27,8 +27,8 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
 
   Future<void> uploadFeed({
     required List<String> files,
-    required String desc,
     required String title,
+    required String desc,
   }) async {
     try {
       state = state.copyWith(feedStatus: FeedStatus.submitting);
@@ -40,7 +40,9 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
         title: title,
         clubId: clubId,
       );
-      state = state.copyWith(feedStatus: FeedStatus.success,
+      //상태관리 갱신
+      state = state.copyWith(
+          feedStatus: FeedStatus.success,
           //새롭게 생성된 게시물 갱신
           feedList: [feedModel, ...state.feedList]);
     } on CustomException catch (_) {

@@ -10,7 +10,6 @@ class FeedModel {
   final String title;
   final List<String> imageUrls;
   final List<String> likes;
-  final int commentCount;
   final int likeCount;
   final Timestamp createAt;
   final ClubModel writer;
@@ -22,7 +21,6 @@ class FeedModel {
     required this.title,
     required this.imageUrls,
     required this.likes,
-    required this.commentCount,
     required this.likeCount,
     required this.createAt,
     required this.writer,
@@ -38,7 +36,6 @@ class FeedModel {
       'title': this.title,
       'imageUrls': this.imageUrls,
       'likes': this.likes,
-      'commentCount': this.commentCount,
       'likeCount': this.likeCount,
       'createAt': this.createAt,
       'writer': clubDocRef,
@@ -53,7 +50,6 @@ class FeedModel {
       title: map['title'],
       imageUrls: List<String>.from(map['imageUrls']),
       likes: List<String>.from(map['likes']),
-      commentCount: map['commentCount'],
       likeCount: map['likeCount'],
       createAt: map['createAt'],
       writer: map['writer'],
@@ -62,6 +58,6 @@ class FeedModel {
 
   @override
   String toString() {
-    return 'FeedModel{clubId: $clubId, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, commentCount: $commentCount, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
+    return 'FeedModel{clubId: $clubId, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
   }
 }
