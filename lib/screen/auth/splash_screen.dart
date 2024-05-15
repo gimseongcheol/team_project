@@ -19,7 +19,7 @@ class SplashScreen extends StatelessWidget {
               ? MainForm()//MainScreen()
               : SigninScreen(),
         ),
-        (route) => route.isFirst,
+            (route) => route.isFirst,
       );
     });
     return Scaffold(

@@ -10,6 +10,7 @@ import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/Post.dart';
 
 class PostScreen extends StatelessWidget {
+
   final List<Post> posts = [
     Post(
       //imageUrl: 'assets/post_image1.jpeg',
@@ -95,7 +96,7 @@ class PostScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {},)));
+              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {})));
         },
         child: Icon(Icons.add),
       ),

@@ -4,7 +4,8 @@ import 'package:team_project/models/user_model.dart';
 
 
 class FeedModel {
-  final String clubId;
+  final String uid;
+  //final String clubId;
   final String feedId;
   final String desc;
   final String title;
@@ -12,10 +13,11 @@ class FeedModel {
   final List<String> likes;
   final int likeCount;
   final Timestamp createAt;
-  final ClubModel writer;
+  final UserModel writer;
 
   const FeedModel({
-    required this.clubId,
+    required this.uid,
+    //required this.clubId,
     required this.feedId,
     required this.desc,
     required this.title,
@@ -27,10 +29,11 @@ class FeedModel {
   });
 
   Map<String, dynamic> toMap({
-    required DocumentReference<Map<String, dynamic>> clubDocRef,
+    required DocumentReference<Map<String, dynamic>> userDocRef,
   }) {
     return {
-      'clubId': this.clubId,
+      'uid': this.uid,
+      //'clubId': this.clubId,
       'feedId': this.feedId,
       'desc': this.desc,
       'title': this.title,
@@ -38,13 +41,14 @@ class FeedModel {
       'likes': this.likes,
       'likeCount': this.likeCount,
       'createAt': this.createAt,
-      'writer': clubDocRef,
+      'writer': userDocRef,
     };
   }
 
   factory FeedModel.fromMap(Map<String, dynamic> map) {
     return FeedModel(
-      clubId: map['clubId'],
+      uid: map['uid'],
+      //clubId: map['clubId'],
       feedId: map['feedId'],
       desc: map['desc'],
       title: map['title'],
@@ -58,6 +62,6 @@ class FeedModel {
 
   @override
   String toString() {
-    return 'FeedModel{clubId: $clubId, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
+    return 'FeedModel{uid: $uid, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
   }
 }

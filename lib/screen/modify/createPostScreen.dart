@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/clubPage/PostScreen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +27,7 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final List<String> _files = [];
   final TextEditingController _textEditingController = TextEditingController();
-  final TextEditingController _contentEditingController =
-      TextEditingController();
+  final TextEditingController _contentEditingController = TextEditingController();
 
   @override
   void dispose() {
@@ -159,44 +160,46 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
             ),
             Divider(),
-            Center(
-              child: Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: feedStatus == FeedStatus.submitting
-                            ? null
-                            : () async {
-                                final _images = await selectImages();
-                                setState(() {
-                                  _files.addAll(_images);
-                                });
-                              },
-                        child: Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            color: _themeManager.themeMode == ThemeMode.dark
-                                ? Colors.white24
-                                : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(0.0),
-                          ),
-                          child: Icon(
-                            Icons.add,
-                            size: 40.0,
-                            color: _themeManager.themeMode == ThemeMode.dark
-                                ? Colors.white70
-                                : Colors.black,
+            Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: feedStatus == FeedStatus.submitting
+                              ? null
+                              : () async {
+                            final _images = await selectImages();
+                            setState(() {
+                              _files.addAll(_images);
+                            });
+                          },
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white24
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(0.0),
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              size: 40.0,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white70
+                                  : Colors.black,
+                            ),
                           ),
                         ),
-                      ),
-                      ...selectedImageList(),
-                    ],
+                        ...selectedImageList(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.only(left: 13.0, top: 8.0),
@@ -317,11 +320,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       _contentEditingController.text.isEmpty)
                   ? null
                   : () async {
-                      Navigator.of(context).pop();
-
+                  Navigator.of(context).pop();
                       try {
                         FocusScope.of(context).unfocus();
-
                         // uploadFeed 메서드의 실행이 완료될 때까지 기다림
                         await context.read<FeedProvider>().uploadFeed(
                               files: _files,

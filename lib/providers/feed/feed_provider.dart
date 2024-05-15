@@ -12,7 +12,6 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
   Future<void> getFeedList() async {
     try {
       state = state.copyWith(feedStatus: FeedStatus.fetching);
-
       List<FeedModel> feedList = await read<FeedRepository>().getFeedList();
 
       state = state.copyWith(
@@ -33,12 +32,12 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
     try {
       state = state.copyWith(feedStatus: FeedStatus.submitting);
 
-      String clubId = read<ClubModel>().clubId;
+      String uid = read<User>().uid;
       FeedModel feedModel = await read<FeedRepository>().uploadFeed(
         files: files,
         desc: desc,
         title: title,
-        clubId: clubId,
+        uid: uid,
       );
       //상태관리 갱신
       state = state.copyWith(

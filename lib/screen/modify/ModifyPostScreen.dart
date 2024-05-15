@@ -71,7 +71,7 @@ class ModifyPostScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    CreatePostScreen(onFeedUploaded: () {},)), // CreatePostScreen으로 이동
+                    CreatePostScreen(onFeedUploaded: () {})), // CreatePostScreen으로 이동
           );
         },
         child: Icon(Icons.add, color: Colors.black),
