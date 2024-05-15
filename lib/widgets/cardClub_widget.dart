@@ -22,74 +22,7 @@ class CardClubWidget extends StatefulWidget {
 class _CardClubWidgetState extends State<CardClubWidget> {
   final ScrollController _scrollController = ScrollController();
   final CarouselController carouselController = CarouselController();
-  int _indicatorIndex = 0;
 
-  Widget _imageZoomInOutWidget(String profileImageUrl) {
-    //터치했을 때 보이는 이미지
-    return GestureDetector(
-      onTap: () {
-        showGeneralDialog(
-          context: context,
-          pageBuilder: (context, _, __) {
-            //확대
-            return InteractiveViewer(
-              //다시 클릭시 화면 닫힘
-              child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: ExtendedImage.network(profileImageUrl)),
-            );
-          },
-        );
-      },
-      //이미지
-      child: ExtendedImage.network(
-        profileImageUrl,
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.fill,
-      ),
-    );
-  }
-
-//이미지 슬라이더
-  Widget _imageSliderWidget(List<String> profileImageUrl) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          carouselController: carouselController,
-          items: profileImageUrl.map((url) => _imageZoomInOutWidget(url)).toList(),
-          options: CarouselOptions(
-            viewportFraction: 1.0,
-            height: MediaQuery.of(context).size.height * 0.35,
-            onPageChanged: (index, reason) {
-              _indicatorIndex = index;
-            },
-          ),
-        ),
-        //이미지 수에 따라 동그라미 추가
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: profileImageUrl.asMap().keys.map((e) {
-                return Container(
-                  width: 8,
-                  height: 8,
-                  margin:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white
-                        .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        )
-      ],
-    );
-  }
   @override
   Widget build(BuildContext context) {
     ClubModel clubModel = widget.clubModel;
@@ -124,11 +57,11 @@ class _CardClubWidgetState extends State<CardClubWidget> {
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
                 image: clubModel.profileImageUrl == null ||
-                        clubModel.profileImageUrl!.isEmpty
+                    clubModel.profileImageUrl!.isEmpty
                     ? ExtendedAssetImageProvider(
-                        'assets/images/university_circle.jpg') as ImageProvider
+                    'assets/images/university_circle.jpg') as ImageProvider
                     : ExtendedNetworkImageProvider(
-                        clubModel.profileImageUrl[clubModel.profileImageUrl.length-1]),
+                    clubModel.profileImageUrl[clubModel.profileImageUrl.length-1]),
                 fit: BoxFit.cover,
               ),
             ),

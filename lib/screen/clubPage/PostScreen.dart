@@ -3,18 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/models/club_model.dart';
+import 'package:team_project/models/user_model.dart';
+import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/Post.dart';
 
-class PostScreen extends StatefulWidget {
-  final ClubModel clubModel;
-
-  PostScreen({super.key, required this.clubModel});
-  @override
-  State<PostScreen> createState() => _PostScreen();
-}
-class _PostScreen extends State<PostScreen> {
+class PostScreen extends StatelessWidget {
   final List<Post> posts = [
     Post(
       //imageUrl: 'assets/post_image1.jpeg',
@@ -33,9 +28,6 @@ class _PostScreen extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
-    ClubModel clubModel = widget.clubModel;
-    User? currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,14 +92,13 @@ class _PostScreen extends State<PostScreen> {
           ),
         ],
       ),
-      // 현재 사용자가 있고, 그 사용자의 UID가 'clubModel.writer'와 같은 경우에만 FloatingActionButton 활성화
-      floatingActionButton: currentUser != null && currentUser.uid == clubModel.writer.uid ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreatePostScreen()));
+              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {},)));
         },
         child: Icon(Icons.add),
-      ): null,
+      ),
     );
   }
 }
@@ -161,13 +152,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // 그림자 위치 조정
-                    ),
-                  ], // 다크 모드에서는 그림자 효과 제거
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), // 그림자 위치 조정
+              ),
+            ], // 다크 모드에서는 그림자 효과 제거
           ),
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -179,7 +170,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   Text(
                     '게시일: ${DateFormat('yyyy.MM.dd').format(widget.post.date)}',
                     style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: [
@@ -261,13 +252,13 @@ class PostItem extends StatelessWidget {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),

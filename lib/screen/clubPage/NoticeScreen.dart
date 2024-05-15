@@ -6,14 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 
-class NoticeScreen extends StatefulWidget {
-  final ClubModel clubModel;
-
-  NoticeScreen({super.key, required this.clubModel});
-  @override
-  State<NoticeScreen> createState() => _NoticeScreen();
-}
-class _NoticeScreen extends State<NoticeScreen> {
+class NoticeScreen extends StatelessWidget {
   final List<Notice> notices = [
     Notice(
       imageUrl: 'assets/notice_image1.jpg',
@@ -32,9 +25,6 @@ class _NoticeScreen extends State<NoticeScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
-    ClubModel clubModel = widget.clubModel;
-    User? currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -99,6 +89,14 @@ class _NoticeScreen extends State<NoticeScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
                       color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: NoticeItem(notice: notices[index]),
                   ),
@@ -108,14 +106,13 @@ class _NoticeScreen extends State<NoticeScreen> {
           ),
         ],
       ),
-      // 현재 사용자가 있고, 그 사용자의 UID가 'clubModel.writer'와 같은 경우에만 FloatingActionButton 활성화
-      floatingActionButton: currentUser != null && currentUser.uid == clubModel.writer.uid ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => CreateNoticeScreen()));
         },
-        child: Icon(Icons.add),
-      ): null,
+        child: Icon(Icons.add, color: Colors.black),
+      ),
     );
   }
 }
@@ -168,18 +165,18 @@ class _NoticeDetailScreenState extends State<NoticeDetailScreen> {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // 그림자 위치 조정
-                    ),
-                  ], // 다크 모드에서는 그림자 효과 제거
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), // 그림자 위치 조정
+              ),
+            ], // 다크 모드에서는 그림자 효과 제거
           ),
           padding: EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ //widget.notice.date
+            children: [
               SizedBox(height: 8.0),
               Text(
                 '게시일: ${DateFormat('yyyy.MM.dd').format(widget.notice.date)}',
@@ -269,13 +266,13 @@ class NoticeItem extends StatelessWidget {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),

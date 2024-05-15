@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mime/mime.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/feed_model.dart';
-import 'package:team_project/models/user_model.dart';
 import 'package:uuid/uuid.dart';
 
 class FeedRepository {
@@ -18,22 +17,18 @@ class FeedRepository {
   });
 
   Future<List<FeedModel>> getFeedList({
-    String? uid,
-}) async {
+    String? clubId,
+  }) async {
     try {
-      // QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-      //     .collection('feeds')
-      //     .where('uid', isEqualTo: uid)
-      //     .orderBy('createAt', descending: true)
-      //     .get();
-      // 새로운 코드
       // snapshot 을 생성하기 위한 query 생성
       Query<Map<String, dynamic>> query = await firebaseFirestore
+          .collection('clubs')
+          .doc(clubId)
           .collection('feeds')
           .orderBy('createAt', descending: true);
       // uid 가 null 이 아닐 경우(특정 유저의 피드를 가져올 경우) query에 조건 추가
-      if(uid != null){
-        query = query.where('uid', isEqualTo: uid);
+      if(clubId != null){
+        query = query.where('clubId', isEqualTo: clubId);
       }
       // query 를 실행하여 snapshot 생성
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
@@ -41,9 +36,9 @@ class FeedRepository {
         Map<String, dynamic> data = e.data();
         DocumentReference<Map<String, dynamic>> writerDocRef = data['writer'];
         DocumentSnapshot<Map<String, dynamic>> writerSnapshot =
-            await writerDocRef.get();
-        UserModel userModel = UserModel.fromMap(writerSnapshot.data()!);
-        data['writer'] = userModel;
+        await writerDocRef.get();
+        ClubModel clubModel = ClubModel.fromMap(writerSnapshot.data()!);
+        data['writer'] = clubModel;
         return FeedModel.fromMap(data);
       }).toList());
     } on FirebaseException catch (e) {
@@ -59,23 +54,23 @@ class FeedRepository {
     }
   }
 
-  Future<void> uploadFeed({
+  Future<FeedModel> uploadFeed({
     required List<String> files,
     required String desc,
-    required String uid,
+    required String title,
+    required String clubId,
   }) async {
     List<String> imageUrls = [];
     try {
       WriteBatch batch = firebaseFirestore.batch();
-
+      //v1을 사용하여 feedId랜덤 지정
       String feedId = Uuid().v1();
 
       //firestore 문서 참조
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
       DocumentReference<Map<String, dynamic>> feedDocRef =
-          firebaseFirestore.collection('feeds').doc(feedId);
-
-      DocumentReference<Map<String, dynamic>> userDocRef =
-          firebaseFirestore.collection('users').doc(uid);
+      clubDocRef.collection('feeds').doc(feedId);
       //firestorage 참조
       Reference ref = firebaseStorage.ref().child('feeds').child(feedId);
 
@@ -86,45 +81,30 @@ class FeedRepository {
         return await taskSnapshot.ref.getDownloadURL();
       }).toList());
 
-      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-          await userDocRef.get();
-      UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
+      DocumentSnapshot<Map<String, dynamic>> clubSnapshot =
+      await clubDocRef.get();
+      ClubModel clubModel = ClubModel.fromMap(clubSnapshot.data()!);
 
       FeedModel feedModel = FeedModel.fromMap({
-        'uid': uid,
+        'clubId': clubId,
         'feedId': feedId,
         'desc': desc,
+        'title': title,
         'imageUrls': imageUrls,
         'likes': [],
         'likeCount': 0,
-        'commentCount': 0,
         'createAt': Timestamp.now(),
-        'writer': userModel,
+        'writer': clubModel,
       });
 
-      //await feedDocRef.set(feedModel.toMap(userDocRef: userDocRef));
-      batch.set(feedDocRef, feedModel.toMap(userDocRef: userDocRef));
+      batch.set(feedDocRef, feedModel.toMap(clubDocRef: clubDocRef));
 
-      /*
-    await feedDocRef.set({'uid': uid,
-      'feedId': feedId,
-      'desc': desc,
-      'imageUrls': imageUrls,
-      'likes': [],
-      'likeCount': 0,
-      'commentcount': 0,
-      'createAt': Timestamp.now(),
-      'writer': userDocref,}});
-     */
-
-      // await userDocRef.update({
-      //   'feedCount': FieldValue.increment(1),
-      // });
-      batch.update(userDocRef, {
+      batch.update(clubDocRef, {
         'feedCount': FieldValue.increment(1),
       });
 
-      batch.commit();
+      await batch.commit();
+      return feedModel;
     } on FirebaseException catch (e) {
       _deleteImage(imageUrls);
       throw CustomException(

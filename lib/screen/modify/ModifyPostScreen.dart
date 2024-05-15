@@ -71,7 +71,7 @@ class ModifyPostScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    CreatePostScreen()), // CreatePostScreen으로 이동
+                    CreatePostScreen(onFeedUploaded: () {},)), // CreatePostScreen으로 이동
           );
         },
         child: Icon(Icons.add, color: Colors.black),
@@ -127,13 +127,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // 그림자 위치 조정
-                    ),
-                  ], // 다크 모드에서는 그림자 효과 제거 => 아니 왜 만든걸 다크모드에서 제거시켜 이 시발
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), // 그림자 위치 조정
+              ),
+            ], // 다크 모드에서는 그림자 효과 제거 => 아니 왜 만든걸 다크모드에서 제거시켜 이 시발
           ),
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -145,7 +145,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   Text(
                     '게시일: ${DateFormat('yyyy.MM.dd').format(widget.post.date)}',
                     style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: [
@@ -246,13 +246,13 @@ class PostItem extends StatelessWidget {
             boxShadow: _themeManager.themeMode == ThemeMode.dark
                 ? null
                 : [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),

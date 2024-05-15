@@ -8,8 +8,6 @@ import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
-import 'package:provider/provider.dart';
-import 'package:team_project/theme/theme_constants.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

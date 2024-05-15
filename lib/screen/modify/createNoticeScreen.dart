@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/theme/theme_manager.dart';
 
 class CreateNoticeScreen extends StatefulWidget {
   @override
@@ -158,7 +158,7 @@ class _CreateNostScreenState extends State<CreateNoticeScreen> {
                       : Colors.black87,
                 ),
                 prefixIcon:
-                    Icon(Icons.text_snippet_outlined, color: Colors.black),
+                Icon(Icons.text_snippet_outlined, color: Colors.black),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                       color: _themeManager.themeMode == ThemeMode.dark
@@ -205,7 +205,7 @@ class _CreateNostScreenState extends State<CreateNoticeScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white70,
+                primary: Colors.white70,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
@@ -214,7 +214,7 @@ class _CreateNostScreenState extends State<CreateNoticeScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: _themeManager.themeMode == ThemeMode.dark
+                primary: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),
