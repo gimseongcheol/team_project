@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/models/club_model.dart';
-import 'package:team_project/models/user_model.dart';
-import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/Post.dart';
@@ -37,7 +35,6 @@ class _PostScreen extends State<PostScreen> {
     final _themeManager = Provider.of<ThemeManager>(context);
     ClubModel clubModel = widget.clubModel;
     User? currentUser = FirebaseAuth.instance.currentUser;
-
 
     return Scaffold(
       body: Column(

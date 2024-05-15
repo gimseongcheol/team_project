@@ -1,10 +1,15 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/user_model.dart';
+import '../../providers/profile/profile_state.dart';
+import '../../utils/logger.dart';
 
 class DescriptionScreen extends StatefulWidget {
   final ClubModel clubModel;
@@ -28,7 +33,7 @@ class Comment {
 
 class _DescriptionScreenState extends State<DescriptionScreen> {
   bool _isLiked = false; //나중에 initState로 빼내서 눌렀었는지 확인해야함.
-  int _likeCount = 0; //firebase에서 들고와야함
+  int _likeCount = 0; //firebase에서 들고와야함 //현재 사용안함 일단은 냅두고
   bool _isReported = false;
   List<Comment> comments = [];
   TextEditingController commentController = TextEditingController();
@@ -108,6 +113,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
     ClubModel clubModel = widget.clubModel;
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    ProfileState profileState = context.watch<ProfileState>();
+    // 프로필을 확인하려는 유저의 정보
+    UserModel userModel = profileState.userModel;
+    //UserModel userModel = context.read<ProfileState>().userModel;
+    logger.d(context.watch<ProfileState>().userModel);
 
     return SingleChildScrollView(
       child: Column(
@@ -139,16 +150,16 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                         Icon(
                           Icons.favorite,
                           color: _isLiked
-                              ? Colors.pinkAccent
+                              ? Colors.red
                               : Theme.of(context).iconTheme.color,
                         ),
                         SizedBox(width: 4.0),
                         Text(
-                          '$_likeCount',
+                          '${clubModel.likes.length}',
                           style: TextStyle(
                               fontSize: 16.0,
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color),
+                              color: Colors.black,
+                          ),
                         ),
                       ],
                     ),

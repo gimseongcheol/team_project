@@ -1,5 +1,4 @@
 import 'package:extended_image/extended_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/user_model.dart';
@@ -8,9 +7,7 @@ as myAuthProvider;
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_state.dart';
-import 'package:team_project/screen/auth/editsign_screen.dart';
 import 'package:team_project/screen/auth/search_password2.dart';
-import 'package:team_project/screen/auth/signup_screen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/utils/logger.dart';
