@@ -1,3 +1,5 @@
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +7,13 @@ import 'createPostScreen.dart';
 import 'revise_post_screen.dart';
 import 'package:provider/provider.dart';
 
-class ModifyPostScreen extends StatelessWidget {
+class ModifyPostScreen extends StatefulWidget {
+
+  @override
+  State<ModifyPostScreen> createState() => _ModifyPostScreenState();
+}
+
+class _ModifyPostScreenState extends State<ModifyPostScreen> {
   final List<Post> posts = [
     //=> 이것도 파이어베이스에서 불러와서 작업하면 됨.
     Post(
@@ -71,7 +79,8 @@ class ModifyPostScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    CreatePostScreen(onFeedUploaded: () {})), // CreatePostScreen으로 이동
+                    MainForm()
+            ), // CreatePostScreen으로 이동
           );
         },
         child: Icon(Icons.add, color: Colors.black),

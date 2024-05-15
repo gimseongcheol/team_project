@@ -14,10 +14,12 @@ import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final VoidCallback onFeedUploaded;
+  final String clubId;
 
   const CreatePostScreen({
     super.key,
     required this.onFeedUploaded,
+    required this.clubId,
   });
 
   @override
@@ -320,7 +322,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       _contentEditingController.text.isEmpty)
                   ? null
                   : () async {
-                  Navigator.of(context).pop();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostScreen(clubId: widget.clubId)
+                    ));
                       try {
                         FocusScope.of(context).unfocus();
                         // uploadFeed 메서드의 실행이 완료될 때까지 기다림
@@ -328,6 +334,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               files: _files,
                               desc: _textEditingController.text,
                               title: _contentEditingController.text,
+                              clubId : widget.clubId,
                             );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('게시물을 등록했습니다.')),

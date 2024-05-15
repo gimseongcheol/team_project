@@ -28,6 +28,7 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
     required List<String> files,
     required String title,
     required String desc,
+    required String clubId,
   }) async {
     try {
       state = state.copyWith(feedStatus: FeedStatus.submitting);
@@ -38,6 +39,7 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
         desc: desc,
         title: title,
         uid: uid,
+        clubId: clubId,
       );
       //상태관리 갱신
       state = state.copyWith(

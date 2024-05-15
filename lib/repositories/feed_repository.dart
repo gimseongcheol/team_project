@@ -18,26 +18,29 @@ class FeedRepository {
   });
 
   Future<List<FeedModel>> getFeedList({
-    String? uid,
+    String? clubId,
   }) async {
     try {
-      // QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-      //     .collection('feeds')
-      //     .where('uid', isEqualTo: uid)
-      //     .orderBy('createAt', descending: true)
-      //     .get();
+      //QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
+      //    .collection('clubs')
+      //    .doc(clubId)
+      //    .collection('comments')
+      //    .orderBy('createdAt', descending: true)
+      //    .get();
       Query<Map<String, dynamic>> query = await firebaseFirestore
+          .collection('clubs')
+          .doc(clubId)
           .collection('feeds')
           .orderBy('createAt', descending: true);
-      if(uid != null){
-        query = query.where('uid', isEqualTo: uid);
+      if (clubId != null) {
+        query = query.where('clubId', isEqualTo: clubId);
       }
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       return await Future.wait(snapshot.docs.map((e) async {
         Map<String, dynamic> data = e.data();
         DocumentReference<Map<String, dynamic>> writerDocRef = data['writer'];
         DocumentSnapshot<Map<String, dynamic>> writerSnapshot =
-        await   writerDocRef.get();
+            await writerDocRef.get();
         UserModel userModel = UserModel.fromMap(writerSnapshot.data()!);
         data['writer'] = userModel;
         return FeedModel.fromMap(data);
@@ -60,18 +63,28 @@ class FeedRepository {
     required String desc,
     required String title,
     required String uid,
+    required String clubId,
   }) async {
     List<String> imageUrls = [];
     try {
       WriteBatch batch = firebaseFirestore.batch();
 
       String feedId = Uuid().v1();
-      //firestore 문서 참조
-      DocumentReference<Map<String, dynamic>> feedDocRef =
-      firebaseFirestore.collection('feeds').doc(feedId);
-
-      DocumentReference<Map<String, dynamic>> userDocRef =
+      /*
+       DocumentReference<Map<String, dynamic>> writerDocRef =
       firebaseFirestore.collection('users').doc(uid);
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> commentDocRef =
+      clubDocRef.collection('comments').doc(commentId);
+       */
+      //firestore 문서 참조
+      DocumentReference<Map<String, dynamic>> userDocRef =
+          firebaseFirestore.collection('users').doc(uid);
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+          firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> feedDocRef =
+      clubDocRef.collection('feeds').doc(feedId);
       //firestorage 참조
       Reference ref = firebaseStorage.ref().child('feeds').child(feedId);
 
@@ -83,11 +96,12 @@ class FeedRepository {
       }).toList());
 
       DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-      await userDocRef.get();
+          await userDocRef.get();
       UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
 
       FeedModel feedModel = FeedModel.fromMap({
         'uid': uid,
+        'clubId': clubId,
         'feedId': feedId,
         'desc': desc,
         'title': title,

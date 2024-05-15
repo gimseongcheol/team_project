@@ -9,7 +9,15 @@ import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/Post.dart';
 
-class PostScreen extends StatelessWidget {
+class PostScreen extends StatefulWidget {
+  final String clubId;
+
+  const PostScreen({super.key, required this.clubId});
+  @override
+  State<PostScreen> createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen> {
 
   final List<Post> posts = [
     Post(
@@ -96,7 +104,7 @@ class PostScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {})));
+              MaterialPageRoute(builder: (context) => CreatePostScreen(onFeedUploaded: () {},clubId: widget.clubId,)));
         },
         child: Icon(Icons.add),
       ),

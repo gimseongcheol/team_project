@@ -5,7 +5,7 @@ import 'package:team_project/models/user_model.dart';
 
 class FeedModel {
   final String uid;
-  //final String clubId;
+  final String clubId;
   final String feedId;
   final String desc;
   final String title;
@@ -17,7 +17,7 @@ class FeedModel {
 
   const FeedModel({
     required this.uid,
-    //required this.clubId,
+    required this.clubId,
     required this.feedId,
     required this.desc,
     required this.title,
@@ -33,7 +33,7 @@ class FeedModel {
   }) {
     return {
       'uid': this.uid,
-      //'clubId': this.clubId,
+      'clubId': this.clubId,
       'feedId': this.feedId,
       'desc': this.desc,
       'title': this.title,
@@ -48,7 +48,7 @@ class FeedModel {
   factory FeedModel.fromMap(Map<String, dynamic> map) {
     return FeedModel(
       uid: map['uid'],
-      //clubId: map['clubId'],
+      clubId: map['clubId'],
       feedId: map['feedId'],
       desc: map['desc'],
       title: map['title'],
@@ -62,6 +62,6 @@ class FeedModel {
 
   @override
   String toString() {
-    return 'FeedModel{uid: $uid, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
+    return 'FeedModel{uid: $uid,clubId: $clubId, feedId: $feedId, desc: $desc,title: $title, imageUrls: $imageUrls, likes: $likes, likeCount: $likeCount, createAt: $createAt, writer: $writer}';
   }
 }
