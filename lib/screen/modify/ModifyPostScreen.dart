@@ -38,7 +38,7 @@ class ModifyPostScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '게시글 갯수: ${posts.length}',
+              '게시글 개수: ${posts.length}',
               style: TextStyle(color: Colors.white, fontSize: 14.0),
             ),
           ),
