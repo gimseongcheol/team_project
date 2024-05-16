@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mime/mime.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
-import 'package:team_project/models/club_model.dart';
-import 'package:team_project/models/feed_model.dart';
 import 'package:team_project/models/notice_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:uuid/uuid.dart';
@@ -21,32 +19,29 @@ class NoticeRepository {
   });
 
   Future<List<NoticeModel>> getNoticeList({
-    String? uid,
+    required String clubId,
   }) async {
     try {
-      // QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-      //     .collection('feeds')
-      //     .where('uid', isEqualTo: uid)
-      //     .orderBy('createAt', descending: true)
-      //     .get();
-      // 새로운 코드
-      // snapshot 을 생성하기 위한 query 생성
+      //QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
+      //    .collection('clubs')
+      //    .doc(clubId)
+      //    .collection('comments')
+      //    .orderBy('createdAt', descending: true)
+      //    .get();
       Query<Map<String, dynamic>> query = await firebaseFirestore
+          .collection('clubs')
+          .doc(clubId)
           .collection('notices')
           .orderBy('createAt', descending: true);
-      // uid 가 null 이 아닐 경우(특정 유저의 피드를 가져올 경우) query에 조건 추가
-      if (uid != null) {
-        query = query.where('uid', isEqualTo: uid);
-      }
-      // query 를 실행하여 snapshot 생성
+
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       return await Future.wait(snapshot.docs.map((e) async {
         Map<String, dynamic> data = e.data();
         DocumentReference<Map<String, dynamic>> writerDocRef = data['writer'];
         DocumentSnapshot<Map<String, dynamic>> writerSnapshot =
         await writerDocRef.get();
-        ClubModel clubModel = ClubModel.fromMap(writerSnapshot.data()!);
-        data['writer'] = clubModel.clubName;
+        UserModel userModel = UserModel.fromMap(writerSnapshot.data()!);
+        data['writer'] = userModel;
         return NoticeModel.fromMap(data);
       }).toList());
     } on FirebaseException catch (e) {
@@ -64,8 +59,9 @@ class NoticeRepository {
 
   Future<NoticeModel> uploadNotice({
     required List<String> files,
-    required String title,
     required String desc,
+    required String title,
+    required String uid,
     required String clubId,
   }) async {
     List<String> imageUrls = [];
@@ -73,13 +69,21 @@ class NoticeRepository {
       WriteBatch batch = firebaseFirestore.batch();
 
       String noticeId = Uuid().v1();
-
-      //firestore 문서 참조
-      DocumentReference<Map<String, dynamic>> noticeDocRef =
-      firebaseFirestore.collection('notices').doc(noticeId);
-
+      /*
+       DocumentReference<Map<String, dynamic>> writerDocRef =
+      firebaseFirestore.collection('users').doc(uid);
       DocumentReference<Map<String, dynamic>> clubDocRef =
       firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> commentDocRef =
+      clubDocRef.collection('comments').doc(commentId);
+       */
+      //firestore 문서 참조
+      DocumentReference<Map<String, dynamic>> userDocRef =
+      firebaseFirestore.collection('users').doc(uid);
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> noticeDocRef =
+      clubDocRef.collection('notices').doc(noticeId);
       //firestorage 참조
       Reference ref = firebaseStorage.ref().child('notices').child(noticeId);
 
@@ -90,40 +94,25 @@ class NoticeRepository {
         return await taskSnapshot.ref.getDownloadURL();
       }).toList());
 
-      DocumentSnapshot<Map<String, dynamic>> clubSnapshot =
-      await clubDocRef.get();
-      ClubModel clubModel = ClubModel.fromMap(clubSnapshot.data()!);
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+      await userDocRef.get();
+      UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
 
       NoticeModel noticeModel = NoticeModel.fromMap({
+        'uid': uid,
         'clubId': clubId,
-        'feedId': noticeId,
+        'noticeId': noticeId,
         'desc': desc,
+        'title': title,
         'imageUrls': imageUrls,
         'likes': [],
         'likeCount': 0,
-        'commentCount': 0,
         'createAt': Timestamp.now(),
-        'writer': clubModel,
+        'writer': userModel,
       });
 
-      //await feedDocRef.set(feedModel.toMap(userDocRef: userDocRef));
-      batch.set(noticeDocRef, noticeModel.toMap(clubDocRef: clubDocRef));
+      batch.set(noticeDocRef, noticeModel.toMap(userDocRef: userDocRef));
 
-      /*
-    await feedDocRef.set({'uid': uid,
-      'feedId': feedId,
-      'desc': desc,
-      'imageUrls': imageUrls,
-      'likes': [],
-      'likeCount': 0,
-      'commentcount': 0,
-      'createAt': Timestamp.now(),
-      'writer': userDocref,}});
-     */
-
-      // await userDocRef.update({
-      //   'feedCount': FieldValue.increment(1),
-      // });
       batch.update(clubDocRef, {
         'noticeCount': FieldValue.increment(1),
       });

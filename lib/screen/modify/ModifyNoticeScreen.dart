@@ -1,3 +1,4 @@
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -67,7 +68,7 @@ class ModifyNoticeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CreateNoticeScreen()),
+            MaterialPageRoute(builder: (context) => MainForm()),
           );
         },
         child: Icon(Icons.add, color: Colors.black),

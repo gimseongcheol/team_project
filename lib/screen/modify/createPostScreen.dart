@@ -332,8 +332,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         // uploadFeed 메서드의 실행이 완료될 때까지 기다림
                         await context.read<FeedProvider>().uploadFeed(
                               files: _files,
-                              desc: _textEditingController.text,
-                              title: _contentEditingController.text,
+                              desc: _contentEditingController.text,
+                              title: _textEditingController.text,
                               clubId : widget.clubId,
                             );
                         ScaffoldMessenger.of(context).showSnackBar(

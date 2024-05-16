@@ -11,18 +11,19 @@ import 'package:team_project/repositories/notice_repository.dart';
 class NoticeProvider extends StateNotifier<NoticeState> with LocatorMixin {
   NoticeProvider() : super(NoticeState.init());
 
-  Future<void> getNoticeList() async {
-    try{
+  Future<void> getNoticeList({
+    required String clubId,
+  }) async {
+    try {
       state = state.copyWith(noticeStatus: NoticeStatus.fetching);
-
-      List<NoticeModel> noticeList = await read<NoticeRepository>().getNoticeList();
+      List<NoticeModel> noticeList =
+      await read<NoticeRepository>().getNoticeList(clubId: clubId);
 
       state = state.copyWith(
         noticeList: noticeList,
         noticeStatus: NoticeStatus.success,
       );
-
-    }on CustomException catch (_) {
+    } on CustomException catch (_) {
       state = state.copyWith(noticeStatus: NoticeStatus.error);
       rethrow;
     }
@@ -32,18 +33,24 @@ class NoticeProvider extends StateNotifier<NoticeState> with LocatorMixin {
     required List<String> files,
     required String title,
     required String desc,
+    required String clubId,
   }) async {
     try {
       state = state.copyWith(noticeStatus: NoticeStatus.submitting);
 
-      String clubId = read<ClubModel>().clubId;
-      await read<NoticeRepository>().uploadNotice(
+      String uid = read<User>().uid;
+      NoticeModel noticeModel = await read<NoticeRepository>().uploadNotice(
         files: files,
-        title: title,
         desc: desc,
+        title: title,
+        uid: uid,
         clubId: clubId,
       );
-      state = state.copyWith(noticeStatus: NoticeStatus.success);
+      //상태관리 갱신
+      state = state.copyWith(
+          noticeStatus: NoticeStatus.success,
+          //새롭게 생성된 게시물 갱신
+          noticeList: [noticeModel, ...state.noticeList]);
     } on CustomException catch (_) {
       state = state.copyWith(noticeStatus: NoticeStatus.error);
       rethrow;

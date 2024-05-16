@@ -58,7 +58,7 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
       DescriptionScreen(clubModel: clubModel), //동아리 메인 화면
       PostScreen(clubId: widget.clubModel.clubId), // 게시글 화면
       ScheduleScreen(), //달력 화면
-      NoticeScreen(), //공지 화면
+      NoticeScreen(clubId: widget.clubModel.clubId), //공지 화면
       CommentScreen(clubId: clubModel.clubId), //댓글 화면
     ];
     return Scaffold(

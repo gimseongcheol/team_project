@@ -23,19 +23,11 @@ class DescriptionScreen extends StatefulWidget {
   State<DescriptionScreen> createState() => _DescriptionScreenState();
 }
 
-class Comment {
-  final String text;
-  final String author;
-  final DateTime date;
-
-  Comment({required this.text, required this.author, required this.date});
-}
 
 class _DescriptionScreenState extends State<DescriptionScreen> {
   bool _isLiked = false; //나중에 initState로 빼내서 눌렀었는지 확인해야함.
   int _likeCount = 0; //firebase에서 들고와야함 //현재 사용안함 일단은 냅두고
   bool _isReported = false;
-  List<Comment> comments = [];
   TextEditingController commentController = TextEditingController();
   final CarouselController carouselController = CarouselController();
   int _indicatorIndex = 0;
@@ -107,16 +99,16 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     );
   }
 
-  final controller = PageController(viewportFraction: 0.8, keepPage: true);
+  //final controller = PageController(viewportFraction: 0.8, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
     ClubModel clubModel = widget.clubModel;
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    ProfileState profileState = context.watch<ProfileState>();
+    //User? currentUser = FirebaseAuth.instance.currentUser;
+    //ProfileState profileState = context.watch<ProfileState>();
     // 프로필을 확인하려는 유저의 정보
-    UserModel userModel = profileState.userModel;
+    //UserModel userModel = profileState.userModel;
     //UserModel userModel = context.read<ProfileState>().userModel;
     logger.d(context.watch<ProfileState>().userModel);
 
@@ -210,12 +202,12 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                 ? Color(0xFF444444)
                 : Colors.white,
             title: Text(
-              '동아리 분류',
+              '동아리 분류 (' + clubModel.clubType+')',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text(clubModel.clubType,
+            subtitle: Text(clubModel.depart,
                 style: TextStyle(
                     color: Theme.of(context).textTheme.bodyText1!.color)),
           ),

@@ -1,22 +1,21 @@
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:team_project/models/feed_model.dart';
+import 'package:team_project/models/notice_model.dart';
 import 'package:team_project/theme/theme_manager.dart';
 
-class PostDetailScreen extends StatefulWidget {
-  final FeedModel feedModel;
+class NoticeDetailsScreen extends StatefulWidget {
+  final NoticeModel noticeModel;
 
-  const PostDetailScreen({super.key, required this.feedModel});
+  const NoticeDetailsScreen({super.key, required this.noticeModel});
   @override
-  State<PostDetailScreen> createState() => _PostDetailScreenState();
+  State<NoticeDetailsScreen> createState() => _NoticeDetailsScreenState();
 }
-class _PostDetailScreenState extends State<PostDetailScreen> {
-  bool _isLiked = false;
-  int _likeCount = 0;
+class _NoticeDetailsScreenState extends State<NoticeDetailsScreen> {
   int _indicatorIndex = 0;
   final CarouselController carouselController = CarouselController();
 
@@ -89,12 +88,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
-    FeedModel feedModel = widget.feedModel;
+    NoticeModel noticeModel = widget.noticeModel;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          feedModel.title,
+          noticeModel.title,
           style: TextStyle(
             fontFamily: 'Dongle',
             color: Colors.white, // 텍스트 색상을 하얀색으로 지정
@@ -139,39 +138,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(feedModel.createAt.toDate())}',
+                    '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(noticeModel.createAt.toDate())}',
                     style:
                     TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        color: _isLiked ? Colors.blue : null,
-                        onPressed: () {
-                          setState(() {
-                            _isLiked = !_isLiked;
-                            if (_isLiked) {
-                              _likeCount++;
-                            } else {
-                              _likeCount--;
-                            }
-                          });
-                        },
-                      ),
-                      Text(
-                        '$_likeCount',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
                   ),
                 ],
               ),
               SizedBox(height: 8.0),
-              _imageSliderWidget(feedModel.imageUrls),
+              _imageSliderWidget(noticeModel.imageUrls),
               SizedBox(height: 8.0),
               Text(
-                widget.feedModel.desc,
+                widget.noticeModel.desc,
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
               ),
             ],

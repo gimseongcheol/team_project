@@ -22,7 +22,6 @@ class CommentScreen extends StatefulWidget {
 }
 
 class _CommentScreenState extends State<CommentScreen> {
-  List<Comment> comments = [];
   TextEditingController commentController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final CommentProvider commentProvider;
