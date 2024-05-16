@@ -9,10 +9,13 @@ import 'package:team_project/repositories/feed_repository.dart';
 class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
   FeedProvider() : super(FeedState.init());
 
-  Future<void> getFeedList() async {
+  Future<void> getFeedList({
+    required String clubId,
+}) async {
     try {
       state = state.copyWith(feedStatus: FeedStatus.fetching);
-      List<FeedModel> feedList = await read<FeedRepository>().getFeedList();
+      List<FeedModel> feedList =
+      await read<FeedRepository>().getFeedList(clubId: clubId);
 
       state = state.copyWith(
         feedList: feedList,

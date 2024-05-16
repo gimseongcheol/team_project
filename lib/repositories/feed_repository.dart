@@ -18,7 +18,7 @@ class FeedRepository {
   });
 
   Future<List<FeedModel>> getFeedList({
-    String? clubId,
+    required String clubId,
   }) async {
     try {
       //QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
@@ -32,9 +32,7 @@ class FeedRepository {
           .doc(clubId)
           .collection('feeds')
           .orderBy('createAt', descending: true);
-      if (clubId != null) {
-        query = query.where('clubId', isEqualTo: clubId);
-      }
+
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       return await Future.wait(snapshot.docs.map((e) async {
         Map<String, dynamic> data = e.data();
@@ -130,7 +128,7 @@ class FeedRepository {
       // await userDocRef.update({
       //   'feedCount': FieldValue.increment(1),
       // });
-      batch.update(userDocRef, {
+      batch.update(clubDocRef, {
         'feedCount': FieldValue.increment(1),
       });
 
