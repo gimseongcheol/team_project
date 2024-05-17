@@ -20,9 +20,7 @@ class EditClub extends StatefulWidget {
 
 class _EditClubState extends State<EditClub>
     with AutomaticKeepAliveClientMixin<EditClub> {
-  final ScrollController _scrollController = ScrollController();
   late final ClubProvider clubProvider;
-  late TabController _tabController;
 
   @override
   bool get wantKeepAlive => true;

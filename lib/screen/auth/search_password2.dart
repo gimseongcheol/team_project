@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:team_project/screen/auth/editsign_screen.dart';
 import 'package:team_project/screen/auth/signin_screen.dart';
 import 'package:team_project/screen/mainPage/editProfile.dart';
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:validators/validators.dart';
 
 class ForgotPasswordScreen2 extends StatefulWidget {
@@ -39,7 +40,7 @@ class _ForgotPasswordScreenState2 extends State<ForgotPasswordScreen2> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditProfile(),
+                  builder: (context) => MainForm(),
                 ),
               );
             },
