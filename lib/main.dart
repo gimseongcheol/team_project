@@ -14,6 +14,8 @@ import 'package:team_project/providers/comment/comment_provider.dart';
 import 'package:team_project/providers/comment/comment_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/like/like_provider.dart';
+import 'package:team_project/providers/like/like_state.dart';
 import 'package:team_project/providers/notice/notice_provider.dart';
 import 'package:team_project/providers/notice/notice_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
@@ -24,6 +26,7 @@ import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/repositories/comment_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
+import 'package:team_project/repositories/like_repository.dart';
 import 'package:team_project/repositories/notice_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
 import 'package:team_project/screen/auth/splash_screen.dart';
@@ -69,6 +72,11 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<LikeRepository>(
+          create: (context) => LikeRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         Provider<FeedRepository>(
           create: (context) => FeedRepository(
             firebaseStorage: FirebaseStorage.instance,
@@ -101,6 +109,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<ClubProvider, ClubState>(
           create: (context) => ClubProvider(),
+        ),
+        StateNotifierProvider<LikeProvider, LikeState>(
+          create: (context) => LikeProvider(),
         ),
         StateNotifierProvider<FeedProvider, FeedState>(
           create: (context) => FeedProvider(),

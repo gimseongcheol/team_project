@@ -15,7 +15,123 @@ class ClubRepository {
     required this.firebaseStorage,
     required this.firebaseFirestore,
   });
+  Future<void> deleteClub({
+    required ClubModel clubModel,
+  }) async {
+    try {
+      WriteBatch batch = firebaseFirestore.batch();
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubModel.clubId);
+      DocumentReference<Map<String, dynamic>> writerDocRef =
+      firebaseFirestore.collection('users').doc(clubModel.uid);
 
+      // 해당 게시물에 좋아요를 누른 users 문서의 likes 필드에서 feedId 삭제
+      List<String> likes = await clubDocRef
+          .get()
+          .then((value) => List<String>.from(value.data()!['likes']));
+
+      likes.forEach((uid) {
+        batch.update(firebaseFirestore.collection('users').doc(uid), {
+          'likes': FieldValue.arrayRemove([clubModel.clubId]),
+        });
+      });
+
+      // 해당 게시물의 comments 컬렉션의 docs 를 삭제
+      QuerySnapshot<Map<String, dynamic>> commentQuerySnapshot =
+      await clubDocRef.collection('comments').get();
+      for (var doc in commentQuerySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // feeds 컬렉션에서 문서 삭제
+      batch.delete(clubDocRef);
+
+      // 게시물 작성자의 users 문서에서 feedCount 1 감소
+      batch.update(writerDocRef, {
+        'feedCount': FieldValue.increment(-1),
+      });
+
+      // storage 의 이미지 삭제
+      clubModel.profileImageUrl.forEach((element) async {
+        await firebaseStorage.refFromURL(element).delete();
+      });
+
+      batch.commit();
+    } on FirebaseException catch (e) {
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
+
+
+  Future<ClubModel> likeClub({
+    required String clubId,
+    required List<String> clubLikes,
+    required String uid,
+    required List<String> userLikes,
+  }) async {
+    try {
+      DocumentReference<Map<String, dynamic>> userDocRef =
+      firebaseFirestore.collection('users').doc(uid);
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
+
+      // 게시물을 좋아하는 유저 목록에 uid 가 포함되어 있는지 확인
+      // 포함되어 있다면 좋아요 취소
+      // 게시물의 likes 필드에서 uid 삭제
+      // 게시물의 likeCount 를 1 감소
+
+      // 유저가 좋아하는 게시물 목록에 feedId 가 포함되어 있는지 확인
+      // 포함되어 있다면 좋아요 취소
+      // 유저의 likes 필드에서 feedId 삭제
+      await firebaseFirestore.runTransaction((transaction) async {
+        bool isClubContains = clubLikes.contains(uid);
+
+        transaction.update(clubDocRef, {
+          'likes': isClubContains
+              ? FieldValue.arrayRemove([uid])
+              : FieldValue.arrayUnion([uid]),
+          'likeCount': isClubContains
+              ? FieldValue.increment(-1)
+              : FieldValue.increment(1),
+        });
+
+        transaction.update(userDocRef, {
+          'likes': userLikes.contains(clubId)
+              ? FieldValue.arrayRemove([clubId])
+              : FieldValue.arrayUnion([clubId]),
+        });
+      });
+
+      Map<String, dynamic> clubMapData =
+      await clubDocRef.get().then((value) => value.data()!);
+
+      DocumentReference<Map<String, dynamic>> writerDocRef =
+      clubMapData['writer'];
+      Map<String, dynamic> userMapData =
+      await writerDocRef.get().then((value) => value.data()!);
+      UserModel userModel = UserModel.fromMap(userMapData);
+      clubMapData['writer'] = userModel;
+      return ClubModel.fromMap(clubMapData);
+    } on FirebaseException catch (e) {
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
   Future<List<ClubModel>> getClubList({
     String? uid,
   }) async {

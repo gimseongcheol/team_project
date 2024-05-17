@@ -3,16 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
-import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/feed_model.dart';
-import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
-import 'package:team_project/providers/profile/profile_state.dart';
-import 'package:team_project/screen/clubPage/post_screen_detail.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
-import 'package:team_project/widgets/Post.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/postItem_widget.dart';
 
