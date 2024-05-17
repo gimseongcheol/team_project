@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class AboutExplain extends StatelessWidget {
@@ -29,11 +30,16 @@ class AboutExplain extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                decoration: BoxDecoration(
-                  color: Colors.lime,
-                ),
                 width: 50,
                 height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: DecorationImage(
+                    image: ExtendedAssetImageProvider(
+                        'assets/images/university.png') as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               SizedBox(width: 5),
               Text('디쿠동', style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w400),)
