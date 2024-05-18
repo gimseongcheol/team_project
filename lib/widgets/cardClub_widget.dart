@@ -20,7 +20,6 @@ class CardClubWidget extends StatefulWidget {
 }
 
 class _CardClubWidgetState extends State<CardClubWidget> {
-  final ScrollController _scrollController = ScrollController();
   final CarouselController carouselController = CarouselController();
 
   @override
