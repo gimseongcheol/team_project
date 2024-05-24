@@ -41,7 +41,7 @@ class _CommentCardWidgetState extends State<CommentCardWidget> {
               RichText(
                   text: TextSpan(children: [
                 TextSpan(
-                  text: writer.name,
+                  text: writer.userid +' '+ writer.name,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: _themeManager.themeMode == ThemeMode.dark

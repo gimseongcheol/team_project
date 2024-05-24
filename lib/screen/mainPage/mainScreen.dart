@@ -137,7 +137,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildColorContainers() {
     return List.generate(
       5,
-      (index) => Card(
+          (index) => Card(
         elevation: 4,
         child: Container(
           decoration: BoxDecoration(
@@ -222,9 +222,9 @@ class _MainScreenState extends State<MainScreen> {
             Icons.call,
             size: 30,
             color:
-                Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                    ? Color(0xFF2DC764)
-                    : Colors.black,
+            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                ? Color(0xFF2DC764)
+                : Colors.black,
           ),
           title: Text(
             title,
@@ -232,9 +232,9 @@ class _MainScreenState extends State<MainScreen> {
               fontSize: 20,
               fontWeight: FontWeight.w200,
               color:
-                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                      ? Color(0xFF2DC764)
-                      : Colors.black,
+              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                  ? Color(0xFF2DC764)
+                  : Colors.black,
             ),
           ),
           subtitle: Text(
@@ -242,9 +242,9 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(
               fontSize: 17,
               color:
-                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                      ? Color(0xFF2DC764)
-                      : Colors.black,
+              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                  ? Color(0xFF2DC764)
+                  : Colors.black,
             ),
           ),
           shape: RoundedRectangleBorder(

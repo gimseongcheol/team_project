@@ -2,12 +2,15 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
 as myAuthProvider;
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
+import 'package:team_project/screen/clubPage/CommentScreen.dart';
 import 'package:team_project/screen/mainPage/editProfile.dart';
 import 'package:team_project/screen/mainPage/editClub.dart';
 import 'package:team_project/screen/mainPage/eidtSubscribeClub.dart';
@@ -28,13 +31,7 @@ class _MainFormState extends State<MainForm> {
 
   int _selectedPage = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Widget> _pageOptions = [
-    MainScreen(),
-    EditProfile(),
-    SubClub(),
-    EditClub(),
-    EditComment(),
-  ];
+
   void initState(){
     super.initState();
     _getProfile();
@@ -42,9 +39,9 @@ class _MainFormState extends State<MainForm> {
   final List<String> _appbarNameList = [
     '메인 화면',
     '개인정보 수정',
-    '관심 동아리',
-    '만든 동아리 수정',
-    '댓글 수정',
+    '구독한 동아리',
+    '만든 동아리',
+    '작성한 댓글',
   ];
 
   List<Map<String, dynamic>> _bottomItems1 = [
@@ -73,7 +70,14 @@ class _MainFormState extends State<MainForm> {
   Widget build(BuildContext context) {
     UserModel userModel = context.read<ProfileState>().userModel;
     User? user = FirebaseAuth.instance.currentUser;
-
+    final clubList = context.read<ClubState>().clubList;
+    final List<Widget> _pageOptions = [
+      MainScreen(),
+      EditProfile(),
+      SubClub(),
+      EditClub(),
+      EditComment(),
+    ];
     final _themeManager = Provider.of<ThemeManager>(context);
     return Scaffold(
       key: _scaffoldKey,

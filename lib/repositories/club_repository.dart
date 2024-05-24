@@ -36,6 +36,16 @@ class ClubRepository {
         });
       });
 
+      QuerySnapshot<Map<String, dynamic>> feedQuerySnapshot =
+      await clubDocRef.collection('feeds').get();
+      for (var doc in feedQuerySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      QuerySnapshot<Map<String, dynamic>> noticeQuerySnapshot =
+      await clubDocRef.collection('notices').get();
+      for (var doc in noticeQuerySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
       // 해당 게시물의 comments 컬렉션의 docs 를 삭제
       QuerySnapshot<Map<String, dynamic>> commentQuerySnapshot =
       await clubDocRef.collection('comments').get();
@@ -48,7 +58,7 @@ class ClubRepository {
 
       // 게시물 작성자의 users 문서에서 feedCount 1 감소
       batch.update(writerDocRef, {
-        'feedCount': FieldValue.increment(-1),
+        'clubCount': FieldValue.increment(-1),
       });
 
       // storage 의 이미지 삭제

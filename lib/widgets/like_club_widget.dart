@@ -31,24 +31,6 @@ class _LikeCardClubWidgetState extends State<LikeCardClubWidget> {
   final CarouselController carouselController = CarouselController();
   bool isAnimating = false;
 
-  Future<void> _likeClub() async {
-    if (context.read<ClubState>().clubStatus == ClubStatus.submitting) {
-      return;
-    }
-    try {
-      isAnimating = true;
-      ClubModel newClubModel = await context.read<ClubProvider>().likeClub(
-        clubId: widget.clubModel.clubId,
-        clubLikes: widget.clubModel.likes,
-      );
-
-      context.read<LikeProvider>().likeClub(newClubModel: newClubModel);
-
-      await context.read<UserProvider>().getUserInfo();
-    } on CustomException catch (e) {
-      errorDialogWidget(context, e);
-    }
-  }
   @override
   Widget build(BuildContext context) {
     ClubModel clubModel = widget.clubModel;

@@ -1,246 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/models/comment_model.dart';
+import 'package:team_project/providers/club/club_provider.dart';
+import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/providers/comment/comment_provider.dart';
+import 'package:team_project/providers/comment/comment_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/widgets/comment_widget.dart';
+import 'package:team_project/widgets/edit_cardClub.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class EditComment extends StatefulWidget {
+
   @override
-  _EditCommentState createState() => _EditCommentState();
+  State<EditComment> createState() => _EditCommentState();
 }
 
-class _EditCommentState extends State<EditComment> {
-  late List<Slidable> _items;
-  final ScrollController _scrollController = ScrollController();
+class _EditCommentState extends State<EditComment>
+    with AutomaticKeepAliveClientMixin<EditComment> {
+  late final ClubProvider clubProvider;
+  late final CommentProvider commentProvider;
+  late List<String> clubIds;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _items = [
-      _buildListTile('동아리1', '내가 쓴 댓글 내용'),
-      _buildListTile('동아리2', '내가 쓴 댓글 내용'),
-    ];
+    commentProvider = context.read<CommentProvider>();
+    _getCommentList();
   }
 
-  Slidable _buildListTile(String title, String subtitle) {
-    return Slidable(
-      child: Column(
-        children: [
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: BorderSide(width: 1),
-            ),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              tileColor: Colors.white,
-              leading: Container(
-                width: 40,
-                height: 80,
-                color: Colors.greenAccent,
-              ),
-              title: Text(
-                title,
-                style: TextStyle(color: Colors.black),
-              ),
-              subtitle: Text(
-                subtitle,
-                style: TextStyle(color: Colors.black),
-              ),
-              trailing: PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert,color: Colors.black),
-                color: Colors.white,
-                onSelected: (value) {
-                  switch (value) {
-                    case 'editComment':
-                      break;
-                    case 'deleteComment':
-                      break;
-                  }
-                },
-                itemBuilder: (BuildContext context) => [
-                  PopupMenuItem<String>(
-                    value: 'editComment',
-                    child: TextButton(
-                      child: Text(
-                        '수정하기',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () => _fixDialog(context, '수정'),
-                    ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'deleteComment',
-                    child: TextButton(
-                      child: Text(
-                        '삭제하기',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () => _showdialog(context, '삭제'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  Future<void> _getCommentList() async {
+    try {
+      final clubList = context.read<ClubState>().clubList;
+      for (var club in clubList) {
+        await commentProvider.getCommentList(clubId: club.clubId);
+      }
+    } on CustomException catch (e) {
+      errorDialogWidget(context, e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 8),
-              child: Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: '검색하세요.',
-                    hintStyle: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 17,
-                      color: Colors.black87,
-                    ),
-                    suffixIcon: Icon(Icons.search, color: Colors.black),
-                  ),
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: Scrollbar(
-                controller: _scrollController,
-                thickness: 7,
-                child: ListView(
-                  children: _items,
-                ),
-              ),
-            ),
-          ],
+    super.build(context);
+    CommentState commentState = context.watch<CommentState>();
+    List<CommentModel> allComments = commentState.commentList;
+    ClubState clubState = context.watch<ClubState>();
+    final clubList = context.read<ClubState>().clubList;
+
+    // 현재 사용자가 작성한 댓글만 필터링
+    final currentUser = context.watch<User>();
+    List<CommentModel> userComments = allComments.where((comment) => comment.uid == currentUser.uid).toList();
+
+    return SafeArea(
+      // Refresh
+      child: RefreshIndicator(
+        onRefresh: _getCommentList,
+        child: ListView.builder(
+          itemCount: userComments.length,
+          itemBuilder: (context, index) {
+            CommentModel commentModel = userComments[index];
+            // Finding the associated ClubModel for each comment
+            ClubModel? clubModel = clubList.firstWhere(
+                  (club) => club.clubId == commentModel.clubId,
+              orElse: () => ClubModel(uid: clubList[index].uid, clubId: clubList[index].clubId, clubType: clubList[index].clubType, clubName: clubList[index].clubName, writer: clubList[index].writer, createAt: clubList[index].createAt, presidentName: clubList[index].presidentName, professorName: clubList[index].professorName, call: clubList[index].call, shortComment: clubList[index].shortComment, fullComment: clubList[index].fullComment, profileImageUrl: clubList[index].profileImageUrl, commentCount: clubList[index].commentCount, feedCount: clubList[index].feedCount, noticeCount: clubList[index].noticeCount, depart: clubList[index].depart, likes: clubList[index].likes, likeCount: clubList[index].likeCount),
+            );
+
+            return CommentCardClubWidget(clubModel: clubModel,commentModel: commentModel);
+          },
         ),
       ),
-    );
-  }
-
-  Future<dynamic> _showdialog(BuildContext context, String text) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                ? Color(0xFF212121)
-                : Colors.white,
-        title: Text(
-          '$text' + '하기',
-          style: TextStyle(
-              color:
-                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                      ? Colors.white
-                      : Colors.black),
-        ),
-        content: Text(
-          '$text' + '하시겠습니까?',
-          style: TextStyle(
-              color:
-                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                      ? Colors.white
-                      : Colors.black),
-        ),
-        actions: [
-          ElevatedButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.white70,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                '아니요',
-                style: TextStyle(color: Colors.black),
-              )),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Provider.of<ThemeManager>(context).themeMode ==
-                        ThemeMode.dark
-                    ? Color(0xff1c213a)
-                    : Color(0xff1e2b67),
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                '예',
-                style: TextStyle(color: Colors.white),
-              )),
-        ],
-      ),
-    );
-  }
-
-  Future<dynamic> _fixDialog(BuildContext context, String text) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        backgroundColor:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                ? Color(0xFF212121)
-                : Colors.white,
-        title: Text(
-          '$text' + '하기',
-          style: TextStyle(
-              color:
-                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                      ? Colors.white
-                      : Colors.black),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: '댓글내용',
-                  hintStyle: TextStyle(color: Colors.black),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                            ? Colors.black
-                            : Color(0xFF2195F2)), // 선택된 색상
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white70,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('취소', style: TextStyle(color: Colors.black),)),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                    ? Color(0xff1c213a)
-                    : Color(0xff1e2b67),
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('확인', style: TextStyle(color: Colors.white),)),
-        ],
-      ),
-    );
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
     );
   }
 }

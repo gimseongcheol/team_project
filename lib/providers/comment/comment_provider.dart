@@ -1,5 +1,6 @@
 import 'package:state_notifier/state_notifier.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/comment_model.dart';
 import 'package:team_project/providers/comment/comment_state.dart';
 import 'package:team_project/repositories/comment_repository.dart';
@@ -7,6 +8,28 @@ import 'package:team_project/repositories/comment_repository.dart';
 class CommentProvider extends StateNotifier<CommentState> with LocatorMixin {
   CommentProvider() : super(CommentState.init());
 
+  Future<void> deleteComment({
+    required ClubModel clubModel,
+    required CommentModel commentModel,
+  }) async {
+    state = state.copyWith(commentStatus: CommentStatus.submitting);
+
+    try {
+      await read<CommentRepository>().deleteComment(clubModel: clubModel, commentModel: commentModel);
+
+      List<CommentModel> newCommentList = state.commentList
+          .where((element) => element.commentId != commentModel.commentId)
+          .toList();
+
+      state = state.copyWith(
+        commentStatus: CommentStatus.success,
+        commentList: newCommentList,
+      );
+    } on CustomException catch (_) {
+      state = state.copyWith(commentStatus: CommentStatus.error);
+      rethrow;
+    }
+  }
   Future<void> getCommentList({
     required String clubId,
   }) async {

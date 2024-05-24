@@ -72,7 +72,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  '게시글 갯수: ${noticeList.length}',
+                  '공지글 갯수: ${noticeList.length}',
                   style: TextStyle(fontSize: 14.0),
                 ),
               ),

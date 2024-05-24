@@ -2,13 +2,16 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
+import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/modify/ModifyClubScreen.dart';
 import 'package:team_project/screen/modify/ModifyNoticeScreen.dart';
 import 'package:team_project/screen/modify/ModifyPostScreen.dart';
 import 'package:team_project/theme/theme_manager.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class EditCardClubWidget extends StatefulWidget {
   final ClubModel clubModel;
@@ -29,6 +32,7 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
   Widget build(BuildContext context) {
     ClubModel clubModel = widget.clubModel;
     final _themeManager = Provider.of<ThemeManager>(context);
+    final clubProvider = Provider.of<ClubProvider>(context);
 
 //동아리 타입과 부서 조건문 짜야함
     return GestureDetector(
@@ -95,18 +99,16 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
                       MaterialPageRoute(
                           builder: (context) => ModifyClubScreen()));
                   break;
-                case 'managePosts':
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ModifyPostScreen()));
                   break;
-                case 'manageNotices':
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ModifyNoticeScreen()));
-                  break;
+                 case 'delClub':
+                   _showDeleteDialog(context, clubProvider, clubModel);
+                   break;
+                // case 'manageNotices':
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => ModifyNoticeScreen()));
+                //   break;
               }
             },
             itemBuilder: (BuildContext context) => [
@@ -118,9 +120,9 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
                 ),
               ),
               PopupMenuItem<String>(
-                value: 'managePosts',
+                value: 'delClub',
                 child: Text(
-                  '게시글 관리하기',
+                  '동아리 삭제',
                   style: TextStyle(color: Colors.black),
                 ),
               ),
@@ -137,4 +139,29 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
       ),
     );
   }
+}
+
+void _showDeleteDialog(BuildContext context, ClubProvider clubProvider, ClubModel clubModel) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        child: TextButton(
+          child: Text(
+            '삭제',
+            style: TextStyle(color: Colors.red),
+          ),
+          onPressed: () async {
+            try {
+              await clubProvider.deleteClub(clubModel: clubModel);
+              Navigator.pop(context);
+            } on CustomException catch (e) {
+              // Show error dialog
+              errorDialogWidget(context, e);
+            }
+          },
+        ),
+      );
+    },
+  );
 }

@@ -112,7 +112,7 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
               isAnimating: isAnimating,
               child: Icon(
                 Icons.favorite,
-                color: Colors.red,
+                color: Colors.redAccent,
                 size: 100,
               ),
               onEnd: () => setState(() {
