@@ -5,13 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_provider.dart';
-import 'package:team_project/providers/club/club_state.dart';
-import 'package:team_project/providers/like/like_provider.dart';
-import 'package:team_project/providers/user/user_provider.dart';
+import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
-import 'package:team_project/screen/modify/ModifyClubScreen.dart';
-import 'package:team_project/screen/modify/ModifyNoticeScreen.dart';
-import 'package:team_project/screen/modify/ModifyPostScreen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
@@ -35,7 +30,7 @@ class _LikeCardClubWidgetState extends State<LikeCardClubWidget> {
   Widget build(BuildContext context) {
     ClubModel clubModel = widget.clubModel;
     final _themeManager = Provider.of<ThemeManager>(context);
-
+    final clubProvider = Provider.of<ClubProvider>(context);
 //동아리 타입과 부서 조건문 짜야함
     return GestureDetector(
       onTap: () {
@@ -107,7 +102,7 @@ class _LikeCardClubWidgetState extends State<LikeCardClubWidget> {
                     '삭제하기',
                     style: TextStyle(color: Colors.black),
                   ),
-                  onPressed: () => _showdialog(context),
+                  onPressed: () => _showdialog(context,clubProvider,clubModel),
                 ),
               ),
             ],
@@ -117,46 +112,77 @@ class _LikeCardClubWidgetState extends State<LikeCardClubWidget> {
     );
   }
 }
-Future<dynamic> _showdialog(BuildContext context) {
+Future<void> _showdialog(
+    BuildContext context, ClubProvider clubProvider, ClubModel clubModel) {
   return showDialog(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      backgroundColor:
-      Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-          ? Color(0xFF212121)
-          : Colors.white,
-      title: Text(
-        '재확인',
-        style: TextStyle(
-            color:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+    builder: (context) {
+      final themeManager = Provider.of<ThemeManager>(context);
+      return AlertDialog(
+        backgroundColor: themeManager.themeMode == ThemeMode.dark
+            ? Color(0xFF212121)
+            : Colors.white,
+        title: Text(
+          '재확인',
+          style: TextStyle(
+            color: themeManager.themeMode == ThemeMode.dark
                 ? Colors.white
-                : Colors.black),
-      ),
-      content: Text(
-        '삭제하시겠습니까?',
-        style: TextStyle(
-            color:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                : Colors.black,
+          ),
+        ),
+        content: Text(
+          '삭제하시겠습니까?',
+          style: TextStyle(
+            color: themeManager.themeMode == ThemeMode.dark
                 ? Colors.white
-                : Colors.black),
-      ),
-      actions: [
-        ElevatedButton(
+                : Colors.black,
+          ),
+        ),
+        actions: [
+          ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white70,
             ),
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('아니요', style: TextStyle(color: Colors.black),)),
-        ElevatedButton(
+            child: Text('아니요', style: TextStyle(color: Colors.black)),
+          ),
+          ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+              backgroundColor: themeManager.themeMode == ThemeMode.dark
                   ? Color(0xff1c213a)
                   : Color(0xff1e2b67),
             ),
+            onPressed: () async {
+              try {
+                await clubProvider.cancelLike(
+                    clubModel: clubModel);
+                Navigator.of(context).pop();
+              } on CustomException catch (e) {
+                _showErrorDialog(context, e);
+              }
+            },
+            child: Text('예', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showErrorDialog(BuildContext context, CustomException e) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text(e.message),
+        actions: [
+          ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('예', style: TextStyle(color: Colors.white))),
-      ],
-    ),
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
   );
 }

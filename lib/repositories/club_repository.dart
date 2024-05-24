@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
@@ -15,6 +15,45 @@ class ClubRepository {
     required this.firebaseStorage,
     required this.firebaseFirestore,
   });
+  Future<void> cancelLike({
+    required ClubModel clubModel,
+}) async {
+    try {
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentReference clubDocRef = FirebaseFirestore.instance
+          .collection('clubs')
+          .doc(clubModel.clubId);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentSnapshot clubSnapshot = await transaction.get(clubDocRef);
+
+        if (!clubSnapshot.exists) {
+          throw Exception("해당 동아리가 존재하지 않습니다!");
+        }
+
+        List<dynamic> likes = clubSnapshot['likes'];
+        int likeCount = clubSnapshot['likeCount'];
+
+        if (likes.contains(currentUserId)) {
+          transaction.update(clubDocRef, {
+            'likes': FieldValue.arrayRemove([currentUserId]),
+            'likeCount': likeCount - 1,
+          });
+        }
+      });
+    } on FirebaseException catch (e) {
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
+
   Future<void> deleteClub({
     required ClubModel clubModel,
   }) async {

@@ -10,6 +10,27 @@ import 'package:flutter_state_notifier/flutter_state_notifier.dart';
 class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
   ClubProvider() : super(ClubState.init());
 
+  Future<void> cancelLike({
+    required ClubModel clubModel,
+  }) async {
+    state = state.copyWith(clubStatus: ClubStatus.submitting);
+
+    try {
+      await read<ClubRepository>().cancelLike(clubModel: clubModel);
+
+      List<ClubModel> newClubList = state.clubList
+          .where((element) => element.clubId != clubModel.clubId)
+          .toList();
+
+      state = state.copyWith(
+        clubStatus: ClubStatus.success,
+        clubList: newClubList,
+      );
+    } on CustomException catch (_) {
+      state = state.copyWith(clubStatus: ClubStatus.error);
+      rethrow;
+    }
+  }
   Future<void> deleteClub({
     required ClubModel clubModel,
   }) async {
