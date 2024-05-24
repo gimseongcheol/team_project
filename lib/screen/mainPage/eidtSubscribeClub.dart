@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,9 @@ class _SubClubState extends State<SubClub> with AutomaticKeepAliveClientMixin<Su
     super.build(context);
     ClubState clubState = context.watch<ClubState>();
     List<ClubModel> clubList = clubState.clubList;
+    final currentUser = context.watch<User>();
+    List<ClubModel> filteredClubList = clubList.where((club) => club.likes.contains(currentUser.uid)).toList();
+
     return SafeArea(
       //새로고침
       child: RefreshIndicator(
@@ -52,13 +56,12 @@ class _SubClubState extends State<SubClub> with AutomaticKeepAliveClientMixin<Su
           _getClubList();
         },
         child: ListView.builder(
-          itemCount: clubList.length,
+          itemCount: filteredClubList.length,
           itemBuilder: (context, index){
-            return LikeCardClubWidget(clubModel: clubList[index]);
+            return LikeCardClubWidget(clubModel: filteredClubList[index]);
           },
         ),
       ),
     );
   }
-
 }
