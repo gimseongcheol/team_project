@@ -5,7 +5,7 @@ import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
-as myAuthProvider;
+    as myAuthProvider;
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_provider.dart';
@@ -21,6 +21,7 @@ import 'package:team_project/screen/mainPage/aboutExplain.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainForm extends StatefulWidget {
   @override
@@ -28,14 +29,14 @@ class MainForm extends StatefulWidget {
 }
 
 class _MainFormState extends State<MainForm> {
-
   int _selectedPage = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void initState(){
+  void initState() {
     super.initState();
     _getProfile();
   }
+
   final List<String> _appbarNameList = [
     '메인 화면',
     '개인정보 수정',
@@ -58,10 +59,10 @@ class _MainFormState extends State<MainForm> {
     });
   }
 
-  Future<void> _getProfile()async{
-    try{
+  Future<void> _getProfile() async {
+    try {
       await context.read<UserProvider>().getUserInfo();
-    }on CustomException catch(e){
+    } on CustomException catch (e) {
       errorDialogWidget(context, e);
     }
   }
@@ -131,7 +132,7 @@ class _MainFormState extends State<MainForm> {
                 backgroundColor: Colors.white,
                 backgroundImage: userModel.profileImage == null
                     ? ExtendedAssetImageProvider('assets/images/profile.png')
-                as ImageProvider
+                        as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
               ),
               otherAccountsPictures: [
@@ -173,7 +174,7 @@ class _MainFormState extends State<MainForm> {
                   : Icons.account_circle_rounded,
               user != null && user.isAnonymous ? "회원가입하기" : "인증 완료",
               Colors.black12,
-                  () {
+              () {
                 // 클릭 이벤트 처리하는 함수 람다 전달
                 if (user != null && user.isAnonymous) {
                   // 익명 로그인 유저인 경우에만 회원가입화면으로 이동
@@ -189,9 +190,23 @@ class _MainFormState extends State<MainForm> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AboutExplain()));
             }),
-            _buildDrawerCard(Icons.output, '로그아웃', Colors.black12, () async {
-              await context.read<myAuthProvider.AuthProvider>().signOut();
-            }),
+            _buildDrawerCard(
+              Icons.output,
+              '로그아웃',
+              Colors.black12,
+              () async {
+                await context.read<myAuthProvider.AuthProvider>().signOut();
+              },
+            ),
+            _buildPhoneContainer(
+              title: '총 학생회',
+              phoneNumber: '053) 850-2910',
+            ),
+            SizedBox(height: 5),
+            _buildPhoneContainer(
+              title: '총 동아리 연합회',
+              phoneNumber: '053) 850-2930',
+            ),
           ],
         ),
       ),
@@ -233,8 +248,8 @@ class _MainFormState extends State<MainForm> {
                         item["icon"],
                         color: _selectedPage == index
                             ? _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white
-                            : Colors.black
+                                ? Colors.white
+                                : Colors.black
                             : Colors.white,
                       ),
                       SizedBox(height: 2), // 아이콘과 텍스트 사이의 간격 조정
@@ -242,10 +257,10 @@ class _MainFormState extends State<MainForm> {
                         item["text"],
                         style: TextStyle(
                           color: _selectedPage ==
-                              index //여기서 라이트모드일때 선택안한 아이콘이 하얀색이었으면 하는데...
+                                  index //여기서 라이트모드일때 선택안한 아이콘이 하얀색이었으면 하는데...
                               ? _themeManager.themeMode == ThemeMode.dark
-                              ? Colors.white
-                              : Colors.black
+                                  ? Colors.white
+                                  : Colors.black
                               : Colors.white,
                         ),
                       ),
@@ -286,14 +301,61 @@ class _MainFormState extends State<MainForm> {
       title: Text(title,
           style: TextStyle(
               color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Colors.white
-                  : Colors.black)),
+                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                      ? Colors.white
+                      : Colors.black)),
       onTap: onTap,
       trailing: Icon(Icons.navigate_next,
           color: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
               ? Colors.white
               : Colors.black),
+    );
+  }
+  Widget _buildPhoneContainer({
+    required String title,
+    required String phoneNumber,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        launch('tel:${phoneNumber}'); //여기 에러가 뜸 권한부여인지 아직 미정 좀더 확인해야함.
+      },
+      child: Card(
+        elevation: 3,
+        child: ListTile(
+          leading: Icon(
+            Icons.call,
+            size: 30,
+            color:
+            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                ? Color(0xFF2DC764)
+                : Colors.black,
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w200,
+              color:
+              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                  ? Color(0xFF2DC764)
+                  : Colors.black,
+            ),
+          ),
+          subtitle: Text(
+            phoneNumber,
+            style: TextStyle(
+              fontSize: 17,
+              color:
+              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                  ? Color(0xFF2DC764)
+                  : Colors.black,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+      ),
     );
   }
 }

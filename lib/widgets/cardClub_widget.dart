@@ -85,4 +85,4 @@ class _CardClubWidgetState extends State<CardClubWidget> {
       ),
     );
   }
-}
+  }

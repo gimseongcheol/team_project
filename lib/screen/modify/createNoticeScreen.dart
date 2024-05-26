@@ -309,7 +309,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white70,
+                backgroundColor : Colors.white70,
               ),
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),

@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/Post.dart';
-import 'package:team_project/screen/clubPage/PostScreen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -42,7 +42,6 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
@@ -69,7 +68,6 @@ class _MainScreenState extends State<MainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-
                     Image.asset(
                       'assets/images/university_main_logo.png',
                       height: 60,
@@ -83,32 +81,90 @@ class _MainScreenState extends State<MainScreen> {
             Row(
               children: [SizedBox(width: 7), _buildCategoryText('동아리 최신 게시글')],
             ),
-            Scrollbar(
-              controller: _scrollController,
-              child: _buildHorizontalListView(_buildColorContainers()),
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 1, color: Colors.black),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text('제목1'),
+                    tileColor: Colors.white60,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 1, color: Colors.grey),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text('제목2'),
+                    tileColor: Colors.white60,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 1, color: Colors.grey),
+                      bottom: BorderSide(width: 1, color: Colors.black),
+                    ),
+                  ),
+                  child: ListTile(
+                    title: Text('제목3'),
+                    tileColor: Colors.white60,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                  ),
+                ),
+                Divider(
+                  thickness: 1,
+                  color: Colors.white,
+                ),
+              ],
             ),
             SizedBox(height: 15),
             Row(
               children: [SizedBox(width: 7), _buildCategoryText('한주간 인기 게시글')],
             ),
-            Scrollbar(
-              controller: _scrollController,
-              child: _buildHorizontalListView(_buildColorContainers()),
+            Column(
+              children: [
+                ListTile(
+                  title: Text('제목1'),
+                  tileColor: Colors.yellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    side: BorderSide(color: Colors.black, width: 1),
+                  ),
+                ),
+                ListTile(
+                  title: Text('제목1'),
+                  tileColor: Colors.yellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    side: BorderSide(color: Colors.black, width: 1),
+                  ),
+                ),
+                ListTile(
+                  title: Text('제목1'),
+                  tileColor: Colors.yellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    side: BorderSide(color: Colors.black, width: 1),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 15),
-            Row(
-              children: [SizedBox(width: 7), _buildCategoryText('전화 번호')],
-            ),
-            SizedBox(height: 10),
-            _buildPhoneContainer(
-              title: '총 학생회',
-              phoneNumber: '053) 850-2910',
-            ),
-            SizedBox(height: 5),
-            _buildPhoneContainer(
-              title: '총 동아리 연합회',
-              phoneNumber: '053) 850-2930',
-            ),
           ],
         ),
       ),
@@ -137,7 +193,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildColorContainers() {
     return List.generate(
       5,
-          (index) => Card(
+      (index) => Card(
         elevation: 4,
         child: Container(
           decoration: BoxDecoration(
@@ -152,7 +208,7 @@ class _MainScreenState extends State<MainScreen> {
                   borderRadius: BorderRadius.circular(15),
                   child: ListTile(
                     tileColor: Provider.of<ThemeManager>(context).themeMode ==
-                        ThemeMode.dark
+                            ThemeMode.dark
                         ? Color(0xFFFFFF9F)
                         : Colors.yellow[200],
                     title: Text(
@@ -175,7 +231,7 @@ class _MainScreenState extends State<MainScreen> {
                 padding: EdgeInsets.only(left: 15),
                 decoration: BoxDecoration(
                   color: Provider.of<ThemeManager>(context).themeMode ==
-                      ThemeMode.dark
+                          ThemeMode.dark
                       ? Color(0xFFFFFF9F)
                       : Colors.yellow[200],
                   borderRadius: BorderRadius.only(
@@ -207,51 +263,5 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildPhoneContainer({
-    required String title,
-    required String phoneNumber,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        launch('tel:${phoneNumber}'); //여기 에러가 뜸 권한부여인지 아직 미정 좀더 확인해야함.
-      },
-      child: Card(
-        elevation: 3,
-        child: ListTile(
-          leading: Icon(
-            Icons.call,
-            size: 30,
-            color:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                ? Color(0xFF2DC764)
-                : Colors.black,
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w200,
-              color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Color(0xFF2DC764)
-                  : Colors.black,
-            ),
-          ),
-          subtitle: Text(
-            phoneNumber,
-            style: TextStyle(
-              fontSize: 17,
-              color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Color(0xFF2DC764)
-                  : Colors.black,
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-      ),
-    );
-  }
+
 }
