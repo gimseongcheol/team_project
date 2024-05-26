@@ -28,7 +28,7 @@ class FeedRepository {
       //    .orderBy('createdAt', descending: true)
       //    .get();
       Query<Map<String, dynamic>> query = await firebaseFirestore
-          .collection('clubs')
+          .collection('feeds')
           .orderBy('createAt', descending: true);
 
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
