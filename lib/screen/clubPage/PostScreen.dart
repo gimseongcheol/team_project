@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/feed_model.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
@@ -84,8 +86,9 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
               child: ListView.builder(
                 itemCount: feedList.length,
                 itemBuilder: (context, index) {
-                  return PostItem(
-                    feedModel: feedList[index],
+                  if(widget.clubId == feedList[index].clubId)
+                    return PostItem(
+                      feedModel: feedList[index],
                   );
                 },
               ),
