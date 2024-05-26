@@ -2,16 +2,27 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/feed_model.dart';
 import 'package:team_project/models/user_model.dart';
+import 'package:team_project/providers/feed/feed_provider.dart';
+import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/like/feed_like_provider.dart';
+import 'package:team_project/providers/user/user_provider.dart';
+import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/widgets/avatar_widget.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
+import 'package:team_project/widgets/heart_anime_widget.dart';
 
 class FeedCardWidget extends StatefulWidget {
   final FeedModel feedModel;
+  final bool isProfile;
 
   const FeedCardWidget({
     super.key,
     required this.feedModel,
+    this.isProfile = false,
   });
 
   @override
@@ -21,85 +32,124 @@ class FeedCardWidget extends StatefulWidget {
 class _FeedCardWidgetState extends State<FeedCardWidget> {
   final CarouselController carouselController = CarouselController();
   int _indicatorIndex = 0;
+  bool isAnimating = false;
 
   Widget _imageZoomInOutWidget(String imageUrl) {
-    //터치했을 때 보이는 이미지
     return GestureDetector(
       onTap: () {
         showGeneralDialog(
           context: context,
           pageBuilder: (context, _, __) {
-            //확대
             return InteractiveViewer(
-              //다시 클릭시 화면 닫힘
               child: GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: ExtendedImage.network(imageUrl)),
+                onTap: () => Navigator.of(context).pop(),
+                child: ExtendedImage.network(imageUrl),
+              ),
             );
           },
         );
       },
-      //이미지
       child: ExtendedImage.network(
         imageUrl,
         width: MediaQuery.of(context).size.width,
-        fit: BoxFit.contain
+        fit: BoxFit.contain,
       ),
     );
   }
 
-//이미지 슬라이더
   Widget _imageSliderWidget(List<String> imageUrls) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          carouselController: carouselController,
-          items: imageUrls.map((url) => _imageZoomInOutWidget(url)).toList(),
-          options: CarouselOptions(
-            viewportFraction: 1.0,
-            height: MediaQuery.of(context).size.height * 0.35,
-            onPageChanged: (index, reason) {
-              _indicatorIndex = index;
-            },
-          ),
-        ),
-        //이미지 수에 따라 동그라미 추가
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: imageUrls.asMap().keys.map((e) {
-                return Container(
-                  width: 8,
-                  height: 8,
-                  margin:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white
-                        .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
-                  ),
-                );
-              }).toList(),
+    return GestureDetector(
+      onDoubleTap: () async {
+        await _likeFeed();
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CarouselSlider(
+            carouselController: carouselController,
+            items: imageUrls.map((url) => _imageZoomInOutWidget(url)).toList(),
+            options: CarouselOptions(
+              viewportFraction: 1.0,
+              height: MediaQuery.of(context).size.height * 0.35,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _indicatorIndex = index;
+                });
+              },
             ),
           ),
-        )
-      ],
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: imageUrls.asMap().keys.map((e) {
+                  return Container(
+                    width: 8,
+                    height: 8,
+                    margin:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white
+                          .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          Opacity(
+            opacity: isAnimating ? 1 : 0,
+            child: HeartAnimationWidget(
+              isAnimating: isAnimating,
+              child: Icon(
+                Icons.favorite,
+                color: Colors.white,
+                size: 100,
+              ),
+              onEnd: () => setState(() {
+                isAnimating = false;
+              }),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<void> _likeFeed() async {
+    if (context.read<FeedState>().feedStatus == FeedStatus.submitting) {
+      return;
+    }
+    try {
+      isAnimating = true;
+      FeedModel newFeedModel = await context.read<FeedProvider>().likeFeed(
+        feedId: widget.feedModel.feedId,
+        feedLikes: widget.feedModel.likes,
+      );
+
+
+      context.read<FeedLikeProvider>().likeFeed(newFeedModel: newFeedModel);
+
+      await context.read<UserProvider>().getUserInfo();
+    } on CustomException catch (e) {
+      errorDialogWidget(context, e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    String currentUserId = context.read<UserState>().userModel.uid;
     FeedModel feedModel = widget.feedModel;
     UserModel userModel = feedModel.writer;
+    bool isLike = feedModel.likes.contains(currentUserId);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //이미지 위 기능(프로필, 더보기)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
@@ -112,23 +162,69 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.more_vert),
-                ),
+                if (currentUserId == feedModel.uid)
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child: TextButton(
+                              child: Text(
+                                '삭제',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () async {
+                                try {
+                                  // 삭제 로직
+                                  await context
+                                      .read<FeedProvider>()
+                                      .deleteFeed(feedModel: feedModel);
+
+                                  context
+                                      .read<FeedLikeProvider>()
+                                      .deleteFeed(feedId: feedModel.feedId);
+
+
+                                  // await context
+                                  //     .read<FeedProvider>().getFeedList();
+
+                                  Navigator.pop(context);
+                                } on CustomException catch (e) {
+                                  errorDialogWidget(context, e);
+                                }
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.more_vert),
+                  ),
               ],
             ),
           ),
-          //이미지슬라이더 불러오기
           _imageSliderWidget(feedModel.imageUrls),
-          //좋아요 댓글기능
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             child: Row(
               children: [
-                Icon(
-                  Icons.favorite_border,
-                  color: Colors.white,
+                GestureDetector(
+                  onTap: () async {
+                    await _likeFeed();
+                  },
+                  child: HeartAnimationWidget(
+                    isAnimating: isAnimating,
+                    child: isLike
+                        ? Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
+                        : Icon(
+                      Icons.favorite_border,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 5),
                 Text(
@@ -146,7 +242,6 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
               ],
             ),
           ),
-          //게시글
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Text(

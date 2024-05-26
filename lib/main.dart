@@ -14,6 +14,8 @@ import 'package:team_project/providers/comment/comment_provider.dart';
 import 'package:team_project/providers/comment/comment_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/like/feed_like_provider.dart';
+import 'package:team_project/providers/like/feed_like_state.dart';
 import 'package:team_project/providers/like/like_provider.dart';
 import 'package:team_project/providers/like/like_state.dart';
 import 'package:team_project/providers/notice/notice_provider.dart';
@@ -27,6 +29,7 @@ import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
 import 'package:team_project/repositories/club_repository.dart';
 import 'package:team_project/repositories/comment_repository.dart';
+import 'package:team_project/repositories/feed_like_repository.dart';
 import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/like_repository.dart';
 import 'package:team_project/repositories/notice_repository.dart';
@@ -80,6 +83,11 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<FeedLikeRepository>(
+          create: (context) => FeedLikeRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         Provider<FeedRepository>(
           create: (context) => FeedRepository(
             firebaseStorage: FirebaseStorage.instance,
@@ -120,6 +128,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<LikeProvider, LikeState>(
           create: (context) => LikeProvider(),
+        ),
+        StateNotifierProvider<FeedLikeProvider, FeedLikeState>(
+          create: (context) => FeedLikeProvider(),
         ),
         StateNotifierProvider<FeedProvider, FeedState>(
           create: (context) => FeedProvider(),
