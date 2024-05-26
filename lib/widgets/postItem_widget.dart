@@ -118,7 +118,7 @@ class _PostItemState extends State<PostItem> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
-                                '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(feedModel.createAt.toDate())}',
+                                '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(feedModel.createAt.toDate().add(Duration(hours: 9)))}',
                                 style: TextStyle(
                                     fontSize: 12.0, color: Colors.black),
                               ),

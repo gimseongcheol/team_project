@@ -1,172 +1,116 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/feed_model.dart';
+import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/providers/feed/feed_provider.dart';
+import 'package:team_project/providers/feed/feed_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/Post.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
+import 'package:team_project/widgets/post_card_widget.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMixin<MainScreen> {
   bool _isMoved = false;
   final ScrollController _scrollController = ScrollController();
+  late final FeedProvider feedProvider;
+
+  @override
+  bool get wantKeepAlive => true;
   late Timer _timer;
-  final List<Post> posts = [
-    Post(
-      //imageUrl: 'assets/post_image1.jpeg',
-      title: '동아리 쫑파티',
-      content: '새학기를 맞아 개최한 쫑파티에서 많은 추억을 쌓으셨나요?',
-      date: DateTime.now(),
-    ),
-  ];
 
   @override
   void initState() {
     super.initState();
-    // initState()에서 타이머 설정
     _timer = Timer.periodic(Duration(seconds: 5), (timer) {
       setState(() {
         _isMoved = !_isMoved;
       });
     });
+    feedProvider = context.read<FeedProvider>();
+    _getFeedList();
   }
 
   @override
   void dispose() {
-    // dispose()에서 타이머 취소
     _timer.cancel();
     super.dispose();
+  }
+
+  void _getFeedList() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final clubList = context.read<ClubState>().clubList;
+        for (var club in clubList) {
+          await feedProvider.getFeedList(clubId: club.clubId);
+        }
+      } on CustomException catch (e) {
+        errorDialogWidget(context, e);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    super.build(context);
+    FeedState feedState = context.watch<FeedState>();
+    List<FeedModel> feedList = feedState.feedList;
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isMoved = !_isMoved;
-                });
-              },
-              child: AnimatedContainer(
-                duration: Duration(seconds: 8),
-                curve: Curves.linear,
-                transform: Matrix4.translationValues(
-                  _isMoved ? MediaQuery.of(context).size.width - 150 : 0,
-                  0,
-                  0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Image.asset(
-                      'assets/images/university_main_logo.png',
-                      height: 60,
-                      width: 200,
-                    ),
-                  ],
-                ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 10),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isMoved = !_isMoved;
+              });
+            },
+            child: AnimatedContainer(
+              duration: Duration(seconds: 8),
+              curve: Curves.linear,
+              transform: Matrix4.translationValues(
+                _isMoved ? MediaQuery.of(context).size.width - 150 : 0,
+                0,
+                0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/university_main_logo.png',
+                    height: 60,
+                    width: 200,
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 15),
-            Row(
-              children: [SizedBox(width: 7), _buildCategoryText('동아리 최신 게시글')],
+          ),
+          SizedBox(height: 15),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                _getFeedList();
+              },
+              child: ListView.builder(
+                itemCount: feedList.length,
+                itemBuilder: (context, index) {
+                  return FeedCardWidget(feedModel: feedList[index]);
+                },
+              ),
             ),
-            Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(width: 1, color: Colors.black),
-                    ),
-                  ),
-                  child: ListTile(
-                    title: Text('제목1'),
-                    tileColor: Colors.white60,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(width: 1, color: Colors.grey),
-                    ),
-                  ),
-                  child: ListTile(
-                    title: Text('제목2'),
-                    tileColor: Colors.white60,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(width: 1, color: Colors.grey),
-                      bottom: BorderSide(width: 1, color: Colors.black),
-                    ),
-                  ),
-                  child: ListTile(
-                    title: Text('제목3'),
-                    tileColor: Colors.white60,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ),
-                ),
-                Divider(
-                  thickness: 1,
-                  color: Colors.white,
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-            Row(
-              children: [SizedBox(width: 7), _buildCategoryText('한주간 인기 게시글')],
-            ),
-            Column(
-              children: [
-                ListTile(
-                  title: Text('제목1'),
-                  tileColor: Colors.yellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
-                    side: BorderSide(color: Colors.black, width: 1),
-                  ),
-                ),
-                ListTile(
-                  title: Text('제목1'),
-                  tileColor: Colors.yellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
-                    side: BorderSide(color: Colors.black, width: 1),
-                  ),
-                ),
-                ListTile(
-                  title: Text('제목1'),
-                  tileColor: Colors.yellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
-                    side: BorderSide(color: Colors.black, width: 1),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -177,91 +121,4 @@ class _MainScreenState extends State<MainScreen> {
       style: TextStyle(fontFamily: 'YeongdeokSea', fontSize: 23),
     );
   }
-
-  Widget _buildHorizontalListView(List<Widget> children) {
-    //Post들고와서 작업하도록 수정하기
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      height: 100,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: children,
-      ),
-    );
-  }
-
-  List<Widget> _buildColorContainers() {
-    return List.generate(
-      5,
-      (index) => Card(
-        elevation: 4,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.yellow[200],
-          ),
-          width: 180.0,
-          child: Column(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: ListTile(
-                    tileColor: Provider.of<ThemeManager>(context).themeMode ==
-                            ThemeMode.dark
-                        ? Color(0xFFFFFF9F)
-                        : Colors.yellow[200],
-                    title: Text(
-                      '${index + 1} 게시글 제목',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black),
-                    ),
-                    subtitle: Text(
-                      '게시글 글',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 15),
-                decoration: BoxDecoration(
-                  color: Provider.of<ThemeManager>(context).themeMode ==
-                          ThemeMode.dark
-                      ? Color(0xFFFFFF9F)
-                      : Colors.yellow[200],
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                  ),
-                ),
-                child: LikeCount(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget LikeCount() {
-    return Row(
-      children: [
-        Icon(
-          Icons.thumb_up_alt_outlined,
-          color: Colors.black,
-        ),
-        Text(
-          '0',
-          style: TextStyle(color: Colors.black),
-        ),
-      ],
-    );
-  }
-
-
 }
