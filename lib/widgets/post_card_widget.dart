@@ -43,7 +43,7 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
       child: ExtendedImage.network(
         imageUrl,
         width: MediaQuery.of(context).size.width,
-        fit: BoxFit.fill,
+        fit: BoxFit.contain
       ),
     );
   }
