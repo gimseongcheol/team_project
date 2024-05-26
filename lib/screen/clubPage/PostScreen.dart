@@ -64,45 +64,6 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 60.0,
-              child: TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: _themeManager.themeMode == ThemeMode.dark
-                      ? Colors.white24
-                      : Colors.white,
-                  hintText: '게시글 검색',
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 17,
-                    color: _themeManager.themeMode == ThemeMode.dark
-                        ? Colors.black
-                        : Colors.black87,
-                  ),
-                  suffixIcon: Icon(
-                    Icons.search,
-                    color: _themeManager.themeMode == ThemeMode.dark
-                        ? Colors.black
-                        : Colors.black87,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white
-                            : Color(0xff2195f2),
-                        width: 1),
-                  ),
-                ),
-                onChanged: (value) {
-                  // 검색 기능 추가. => 나중에 추가할것.
-                },
-              ),
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

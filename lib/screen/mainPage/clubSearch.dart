@@ -4,10 +4,14 @@ import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/providers/search/search_provider.dart';
+import 'package:team_project/providers/search/search_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/modify/ModifyClubScreen.dart';
 import 'package:team_project/screen/modify/createClubScreen.dart';
+import 'package:team_project/utils/debounce.dart';
+import 'package:team_project/utils/logger.dart';
 import 'package:team_project/widgets/cardClub_widget.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
@@ -21,6 +25,7 @@ class _ClubSearchState extends State<ClubSearch>
   late final ClubProvider clubProvider;
   late TabController _tabController;
   final TextEditingController departmentList = TextEditingController();
+  final Debounce debounce = Debounce(milliseconds: 500);
 
   @override
   bool get wantKeepAlive => true;
@@ -54,6 +59,7 @@ class _ClubSearchState extends State<ClubSearch>
     super.initState();
     clubProvider = context.read<ClubProvider>();
     _getClubList();
+    _clearSearchState();
   }
 
   void _getClubList() {
@@ -65,13 +71,19 @@ class _ClubSearchState extends State<ClubSearch>
       }
     });
   }
-
+  void _clearSearchState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SearchProvider>().clear();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     super.build(context);
     ClubState clubState = context.watch<ClubState>();
     List<ClubModel> clubList = clubState.clubList;
     final _themeManager = Provider.of<ThemeManager>(context);
+    List<ClubModel> clubModelList = context.watch<SearchState>().clubModelList;
+    logger.d(context.watch<SearchState>().clubModelList);
 
     return Scaffold(
           appBar: AppBar(
@@ -162,6 +174,17 @@ class _ClubSearchState extends State<ClubSearch>
                                         width: 1),
                                   ),
                                 ),
+                                onChanged: (value) {
+                                  debounce.run(() async {
+                                    if (value.trim().isNotEmpty) {
+                                      await context
+                                          .read<SearchProvider>()
+                                          .searchClub(keyword: value);
+                                    } else {
+                                      _clearSearchState();
+                                    }
+                                  });
+                                },
                               ),
                             ),
                           ),

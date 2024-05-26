@@ -20,6 +20,8 @@ import 'package:team_project/providers/notice/notice_provider.dart';
 import 'package:team_project/providers/notice/notice_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
+import 'package:team_project/providers/search/search_provider.dart';
+import 'package:team_project/providers/search/search_state.dart';
 import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/repositories/auth_repository.dart';
@@ -29,6 +31,7 @@ import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/like_repository.dart';
 import 'package:team_project/repositories/notice_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
+import 'package:team_project/repositories/search_repository.dart';
 import 'package:team_project/screen/auth/splash_screen.dart';
 import 'package:team_project/theme/theme_constants.dart';
 import 'package:team_project/theme/theme_manager.dart';
@@ -94,6 +97,11 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<SearchRepository>(
+          create: (context) => SearchRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         StreamProvider<User?>(
           create: (context) => FirebaseAuth.instance.authStateChanges(),
           initialData: null,
@@ -121,6 +129,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<CommentProvider, CommentState>(
           create: (context) => CommentProvider(),
+        ),
+        StateNotifierProvider<SearchProvider, SearchState>(
+          create: (context) => SearchProvider(),
         ),
       ],
       child: MaterialApp(

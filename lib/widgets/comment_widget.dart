@@ -77,6 +77,7 @@ class _CommentCardClubWidgetState extends State<CommentCardClubWidget> {
               color: _themeManager.themeMode == ThemeMode.dark
                   ? Colors.white70
                   : Colors.black,
+              fontSize: 17,
             ),
           ),
           subtitle: Text(
@@ -85,6 +86,7 @@ class _CommentCardClubWidgetState extends State<CommentCardClubWidget> {
               color: _themeManager.themeMode == ThemeMode.dark
                   ? Colors.white70
                   : Colors.black,
+              fontSize: 12,
             ),
           ),
           trailing: PopupMenuButton<String>(

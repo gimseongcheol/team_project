@@ -29,8 +29,6 @@ class FeedRepository {
       //    .get();
       Query<Map<String, dynamic>> query = await firebaseFirestore
           .collection('clubs')
-          .doc(clubId)
-          .collection('feeds')
           .orderBy('createAt', descending: true);
 
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
@@ -80,9 +78,10 @@ class FeedRepository {
       DocumentReference<Map<String, dynamic>> userDocRef =
           firebaseFirestore.collection('users').doc(uid);
       DocumentReference<Map<String, dynamic>> clubDocRef =
-          firebaseFirestore.collection('clubs').doc(clubId);
+      firebaseFirestore.collection('clubs').doc(clubId);
       DocumentReference<Map<String, dynamic>> feedDocRef =
-      clubDocRef.collection('feeds').doc(feedId);
+          firebaseFirestore.collection('feeds').doc(feedId);
+
       //firestorage 참조
       Reference ref = firebaseStorage.ref().child('feeds').child(feedId);
 

@@ -47,13 +47,14 @@ class _CommentCardWidgetState extends State<CommentCardWidget> {
                     color: _themeManager.themeMode == ThemeMode.dark
                         ? Colors.white70
                         : Colors.black,
+                    fontSize: 12,
                   ),
                 ),
                 WidgetSpan(child: SizedBox(width: 10)),
                 TextSpan(
                   text: commentModel.comment,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 17,
                     fontWeight: FontWeight.w400,
                     color: _themeManager.themeMode == ThemeMode.dark
                         ? Colors.white70
