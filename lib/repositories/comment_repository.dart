@@ -22,7 +22,7 @@ class CommentRepository {
 
       // 주어진 commentId에 해당하는 댓글을 삭제합니다.
       DocumentReference<Map<String, dynamic>> commentDocRef =
-      clubDocRef.collection('comments').doc(commentModel.commentId);
+      firebaseFirestore.collection('comments').doc(commentModel.commentId);
       batch.delete(commentDocRef);
 
       // 해당 댓글이 삭제되었으므로, clubDocRef의 commentCount를 1 감소시킵니다.
@@ -49,8 +49,6 @@ class CommentRepository {
   }) async {
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-          .collection('clubs')
-          .doc(clubId)
           .collection('comments')
           .orderBy('createdAt', descending: true)
           .get();
@@ -91,7 +89,7 @@ class CommentRepository {
       DocumentReference<Map<String, dynamic>> clubDocRef =
       firebaseFirestore.collection('clubs').doc(clubId);
       DocumentReference<Map<String, dynamic>> commentDocRef =
-      clubDocRef.collection('comments').doc(commentId);
+      firebaseFirestore.collection('comments').doc(commentId);
 
       await firebaseFirestore.runTransaction((transaction) async {
         transaction.set(commentDocRef, {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/comment_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/comment/comment_provider.dart';
 import 'package:team_project/providers/comment/comment_state.dart';
@@ -64,8 +65,10 @@ class _CommentScreenState extends State<CommentScreen> {
         child: ListView.builder(
           itemCount: commentState.commentList.length,
           itemBuilder: (context, index) {
-            return CommentCardWidget(
-                commentModel: commentState.commentList[index]);
+            if (commentState.commentList[index].clubId == widget.clubId) {
+              return CommentCardWidget(
+                  commentModel: commentState.commentList[index]);
+            }
           },
         ),
       ),
