@@ -52,6 +52,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
     NoticeState noticeState = context.watch<NoticeState>();
     List<NoticeModel> noticeList = noticeState.noticeList;
 
+
     //if (feedState.feedStatus == FeedStatus.fetching) {
     //  return Center(
     //    child: CircularProgressIndicator(),

@@ -15,6 +15,116 @@ class ClubRepository {
     required this.firebaseStorage,
     required this.firebaseFirestore,
   });
+
+  Future<ClubModel> updateClub({
+    required List<String> files,
+    required String clubName,
+    required String professorName,
+    required String presidentName,
+    required String shortComment,
+    required String fullComment,
+    required String clubType,
+    required String depart,
+    required String call,
+    required String uid,
+    required String clubId,
+  }) async {
+    List<String> profileImageUrl = [];
+    try {
+      WriteBatch batch = firebaseFirestore.batch();
+
+      // Firestore document references
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
+      DocumentReference<Map<String, dynamic>> userDocRef =
+      firebaseFirestore.collection('users').doc(uid); // Access user information
+
+      // Firestorage reference
+      Reference ref = firebaseStorage.ref().child('clubs').child(clubId);
+
+      // Get existing club document
+      DocumentSnapshot<Map<String, dynamic>> clubSnapshot = await clubDocRef.get();
+      if (!clubSnapshot.exists) {
+        throw CustomException(code: 'NotFound', message: 'Club not found');
+      }
+
+      // Get existing profile image URLs
+      List<String> existingProfileImageUrls = List<String>.from(clubSnapshot.data()!['profileImageUrl']);
+
+      // Delete existing profile images
+      for (String url in existingProfileImageUrls) {
+        await firebaseStorage.refFromURL(url).delete();
+      }
+
+      // Upload new profile images and get their URLs
+      profileImageUrl = await Future.wait(files.map((e) async {
+        String imageId = Uuid().v1();
+        TaskSnapshot taskSnapshot = await ref.child(imageId).putFile(File(e));
+        return await taskSnapshot.ref.getDownloadURL();
+      }).toList());
+
+      // Get user information
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot = await userDocRef.get();
+      UserModel userModel = UserModel.fromMap(userSnapshot.data()!);
+
+      // Update the club document
+      batch.update(clubDocRef, {
+        'clubName': clubName,
+        'clubType': clubType,
+        'presidentName': presidentName,
+        'professorName': professorName,
+        'call': call,
+        'shortComment': shortComment,
+        'fullComment': fullComment,
+        'profileImageUrl': profileImageUrl,
+        'depart': depart,
+      });
+
+      batch.update(userDocRef, {
+        'clubCount': FieldValue.increment(1),
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Return the updated club model
+      ClubModel clubModel = ClubModel.fromMap({
+        'uid': uid,
+        'clubId': clubId,
+        'clubName': clubName,
+        'clubType': clubType,
+        'writer': userModel,
+        'createAt': clubSnapshot.data()!['createAt'], // Maintain existing createAt
+        'presidentName': presidentName,
+        'professorName': professorName,
+        'call': call,
+        'shortComment': shortComment,
+        'fullComment': fullComment,
+        'profileImageUrl': profileImageUrl,
+        'commentCount': clubSnapshot.data()!['commentCount'] ?? 0, // Maintain existing commentCount
+        'feedCount': clubSnapshot.data()!['feedCount'] ?? 0, // Maintain existing feedCount
+        'noticeCount': clubSnapshot.data()!['noticeCount'] ?? 0, // Maintain existing noticeCount
+        'depart': depart,
+        'likes': clubSnapshot.data()!['likes'] ?? [],
+        'likeCount': clubSnapshot.data()!['likeCount'] ?? 0,
+      });
+
+      return clubModel;
+    } on FirebaseException catch (e) {
+      _deleteImage(profileImageUrl);
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      _deleteImage(profileImageUrl);
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
+
   Future<void> cancelLike({
     required ClubModel clubModel,
 }) async {

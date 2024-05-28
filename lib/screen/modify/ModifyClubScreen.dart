@@ -1,28 +1,119 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
+import 'package:team_project/providers/club/club_provider.dart';
+import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/screen/clubPage/Event.dart';
+import 'package:team_project/screen/mainPage/editClub.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class ModifyClubScreen extends StatefulWidget {
+  final VoidCallback onModifyClub;
+  final ClubModel clubModel;
+
+  const ModifyClubScreen({
+    super.key,
+    required this.onModifyClub,
+    required this.clubModel,
+  });
+
   @override
-  _ModifyClubScreenState createState() => _ModifyClubScreenState();
-}
-
-class Comment {
-  final String text;
-  final String author;
-  final DateTime date; //이 데이터도 firebase에서 가져와야한다.
-
-  Comment({required this.text, required this.author, required this.date});
+  State<ModifyClubScreen> createState() => _ModifyClubScreenState();
 }
 
 class _ModifyClubScreenState extends State<ModifyClubScreen> {
-  List<String> imagePaths = []; //firebase에서 들고오는 건가!
+  final List<String> imagePaths = [];
   String? _selectedClubType;
+  String? _selectDepartment;
+  final TextEditingController selectedClubType = TextEditingController();
+  final TextEditingController selectedDepartment = TextEditingController();
+  final TextEditingController clubNameController = TextEditingController();
+  final TextEditingController presidentNameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController professorNameController = TextEditingController();
+  final TextEditingController shortIntroController = TextEditingController();
+  final TextEditingController fullIntroController = TextEditingController();
+  final List<String> _files = [];
 
-  TextEditingController _eventController =
-      TextEditingController(); // 이벤트 텍스트 컨트롤러 추가
+  @override
+  void dispose() {
+    clubNameController.dispose();
+    presidentNameController.dispose();
+    phoneNumberController.dispose();
+    professorNameController.dispose();
+    shortIntroController.dispose();
+    fullIntroController.dispose();
+    selectedClubType.dispose();
+    selectedDepartment.dispose();
+    super.dispose();
+  }
+
+  Future<List<String>> selectImages() async {
+    List<XFile> images = await ImagePicker().pickMultiImage(
+      maxHeight: 100,
+      maxWidth: 100,
+    );
+    return images.map((e) => e.path).toList();
+  }
+
+  List<Widget> selectedImageList() {
+    final clubStatus = context.watch<ClubState>().clubStatus;
+    return _files.map((data) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Stack(
+          // Position the delete icon on top of the image
+          children: [
+            Container(
+              width: 100.0,
+              height: 100.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Image.file(
+                File(data),
+                fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: 100,
+              ),
+            ),
+            Positioned(
+              top: 1,
+              right: 1,
+              child: InkWell(
+                onTap: clubStatus == ClubStatus.submitting
+                    ? null
+                    : () {
+                  setState(() {
+                    _files.remove(data);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                  height: 20,
+                  width: 20,
+                  child: Icon(
+                    color: Colors.black.withOpacity(0.6),
+                    size: 20,
+                    Icons.highlight_remove_outlined,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
 
   Map<DateTime, List<Event>> _selectedEvents = {}; // _selectedEvents 변수 추가
 
@@ -41,16 +132,35 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clubStatus = context.watch<ClubState>().clubStatus;
     final _themeManager = Provider.of<ThemeManager>(context);
+    final List<String> _departmentList = <String>[
+      '프란치스코칼리지',
+      '글로벌비즈니스대학',
+      '신학대학',
+      '바이오메디대학',
+      '공과대학',
+      '반도체대학',
+      '소프트웨어융합대학',
+      '의과대학',
+      '간호대학',
+      '약학대학',
+      '사회과학대학',
+      '사범대학',
+      '음악공연예술대학',
+      '디자인대학',
+      '유스티아노자유대학',
+    ];
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          '동아리 수정 화면',
-          style: const TextStyle(
+          '동아리 생성 화면',
+          style: TextStyle(
             fontFamily: 'Dongle',
             fontSize: 35,
-            fontWeight: FontWeight.w200, // 텍스트 색상을 하얀색으로 지정
+            color: Colors.white, // 텍스트 색상을 하얀색으로 지정
           ),
         ),
         leading: IconButton(
@@ -67,22 +177,21 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             children: [
               TextButton(
                 onPressed: () {
-                  _showConfirmationDialog(context);
+                  _showConfirmationDialog(context, widget.clubModel.clubId);
                 },
                 child: Row(
                   children: [
                     Icon(
                       Icons.save,
-                      color: Colors.white, // 아이콘 색상 변경
+                      color: Colors.white, // 아이콘 색상을 하얀색으로 지정
                     ),
                     SizedBox(width: 4), // 아이콘과 텍스트 사이 간격 추가
                     Text(
                       '저장',
                       style: TextStyle(
                         fontFamily: 'Dongle',
-                        fontSize: 30,
-                        fontWeight: FontWeight.w200,
-                        color: Colors.white,
+                        color: Colors.white, // 텍스트 색상을 하얀색으로 지정
+                        fontSize: 30.0,
                       ),
                     ),
                   ],
@@ -100,7 +209,6 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             Center(
               child: Text(
                 '사진을 추가하려면 + 아이콘을 눌러주세요!',
-                //이것도 스타일 변경 필요 Dongle? 통덕? new? 찾아야겠네. 아님 그냥 가던가
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
@@ -108,72 +216,40 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             // "+" 버튼과 이미지들을 표시할 영역
             Row(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    _addImage();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        size: 40.0,
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.grey[600]
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-                // 이미지들을 표시합니다.
                 Expanded(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: imagePaths.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Stack(
-                            // 삭제 아이콘 위치를 두려고 -> 그림위의 아이콘
-                            children: [
-                              Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Image.asset(
-                                  imagePaths[index],
-                                  width: 100.0,
-                                  height: 100.0,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: Icon(Icons.delete,
-                                      color: Colors.black), // 아이콘 색상 검은색으로 설정
-                                  onPressed: () {
-                                    _removeImage(index);
-                                  },
-                                ),
-                              ),
-                            ],
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: clubStatus == ClubStatus.submitting
+                              ? null
+                              : () async {
+                            final _images = await selectImages();
+                            setState(() {
+                              _files.addAll(_images);
+                            });
+                          },
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white24
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(0.0),
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              size: 40.0,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white70
+                                  : Colors.black,
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                        ...selectedImageList(),
+                      ],
                     ),
                   ),
                 ),
@@ -183,7 +259,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 13.0, top: 8.0),
               child: Text(
-                '사진 개수 : ${imagePaths.length}개',
+                '사진 개수 : ${_files.length}개',
                 style: TextStyle(
                   fontSize: 12.0,
                   color: _themeManager.themeMode == ThemeMode.dark
@@ -202,18 +278,43 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             Divider(),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
-                '동아리 종류를 선택하세요',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold,
-                ),
+              const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '동아리 종류를 선택하세요',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (_selectedClubType == '과동아리')
+                    DropdownButton(
+                      //선택시 내부 색상 변경이 가능한지 확인하기
+                        hint: const Text('학부 선택'),
+                        value: _selectDepartment,
+                        items: _departmentList.map((String item) {
+                          return DropdownMenuItem<String>(
+                            child: Text('$item'),
+                            value: item,
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectDepartment = value;
+                            selectedDepartment.text = value ?? '';
+                          });
+                        }),
+                ],
               ),
             ),
             RadioListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               tileColor: _themeManager.themeMode == ThemeMode.dark
-                  ? Colors.black12
+                  ? Color(0xff505050)
                   : Colors.white,
               title: Text(
                 '중앙동아리',
@@ -228,13 +329,21 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
               onChanged: (value) {
                 setState(() {
                   _selectedClubType = value as String?;
+                  selectedClubType.text = value ?? '중앙동아리';
+                  selectedDepartment.text = value ?? '';
                 });
               },
-              activeColor: Color(0xFF2195F2), // 선택된 색상
+              activeColor: _themeManager.themeMode == ThemeMode.dark
+                  ? Colors.white
+                  : Color(0xFF2195F2), // 선택된 색상
             ),
+            SizedBox(height: 4),
             RadioListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               tileColor: _themeManager.themeMode == ThemeMode.dark
-                  ? Colors.black12
+                  ? Color(0xff505050)
                   : Colors.white,
               title: Text(
                 '과동아리',
@@ -249,24 +358,33 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
               onChanged: (value) {
                 setState(() {
                   _selectedClubType = value as String?;
+                  selectedClubType.text = value ?? '과동아리';
                 });
               },
-              activeColor: Color(0xFF2195F2), // 선택된 색상
+              activeColor: _themeManager.themeMode == ThemeMode.dark
+                  ? Colors.white
+                  : Color(0xFF2195F2), // 선택된 색상
             ),
+            SizedBox(height: 4),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: clubNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '동아리 이름을 입력합니다.',
+                labelText: '동아리 명',
                 prefixIcon: Icon(
                   Icons.home,
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -274,61 +392,77 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: presidentNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '회장 이름을 입력합니다.',
+                labelText: '회장 이름',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.number,
+              controller: phoneNumberController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '전화번호를 입력합니다.',
+                labelText: '연락처',
                 prefixIcon: Icon(Icons.phone),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.name,
+              controller: professorNameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '담당교수 이름을 입력합니다.',
+                labelText: '담당 교수',
                 prefixIcon: Icon(Icons.account_circle),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: shortIntroController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '한줄 소개를 입력합니다.',
+                labelText: '한줄 소개',
                 prefixIcon: Icon(Icons.textsms_outlined),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
@@ -338,16 +472,21 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
             SizedBox(height: 16.0),
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: fullIntroController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.black12
                     : Colors.white,
                 border: OutlineInputBorder(),
-                labelText: '동아리 소개를 입력합니다.',
+                labelText: '동아리 소개',
                 prefixIcon: Icon(Icons.text_snippet_outlined),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2195F2)), // 선택된 색상
+                  borderSide: BorderSide(
+                    color: _themeManager.themeMode == ThemeMode.dark
+                        ? Colors.black
+                        : Color(0xFF2195F2),
+                  ),
                 ),
               ),
             ),
@@ -357,54 +496,8 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
     );
   }
 
-  // 이미지를 추가하는 메서드입니다.
-  void _addImage() {
-    setState(() {
-      imagePaths.add('assets/example_image.jpg');
-    });
-  }
-
-  // 이미지를 삭제하는 메서드입니다.
-  void _removeImage(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final _themeManager = Provider.of<ThemeManager>(context);
-        return AlertDialog(
-          backgroundColor: _themeManager.themeMode == ThemeMode.dark
-              ? Color(0xFF212121)
-              : Colors.white,
-          title: Text('이미지 삭제'),
-          content: Text('이미지를 삭제하시겠습니까?'),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  imagePaths.removeAt(index); // 이미지 삭제
-                });
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff1e2b67), // 확인 버튼 색상
-              ),
-              child: Text('확인', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // 다이얼로그 닫기
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
-              child: Text('취소', style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context, String clubId) {
+    final clubStatus = context.read<ClubState>().clubStatus;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -414,7 +507,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
               ? Color(0xFF212121)
               : Colors.white,
           title: Text(
-            "수정내용 저장",
+            "동아리 생성",
             style: TextStyle(
                 color: _themeManager.themeMode == ThemeMode.dark
                     ? Colors.white
@@ -427,7 +520,7 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
                 Padding(
                   padding: EdgeInsets.all(4),
                   child: Text(
-                    "수정내용을 저장하시겠습니까?",
+                    "동아리를 생성하시겠습니까?",
                     style: TextStyle(
                       color: _themeManager.themeMode == ThemeMode.dark
                           ? Colors.white
@@ -452,18 +545,47 @@ class _ModifyClubScreenState extends State<ModifyClubScreen> {
               child: Text("취소", style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: (_files.length == 0 ||
+                  clubStatus == ClubStatus.submitting ||
+                  _selectedClubType == null)
+                  ? null
+                  : () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditClub(),
+                    ));
+                try {
+                  FocusScope.of(context).unfocus();
+
+                  await context.read<ClubProvider>().updateClub(
+                    files: _files,
+                    clubName: clubNameController.text,
+                    professorName: professorNameController.text,
+                    call: phoneNumberController.text,
+                    shortComment: shortIntroController.text,
+                    fullComment: fullIntroController.text,
+                    presidentName: presidentNameController.text,
+                    depart: selectedDepartment.text,
+                    clubType: selectedClubType.text,
+                    clubId: clubId,
+
+                    //uid: uid,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('동아리 등록했습니다.')),
+                  );
+                  widget.onModifyClub();
+                } on CustomException catch (e) {
+                  errorDialogWidget(context, e);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
                     : Color(0xff1e2b67),
               ),
-              child: Text(
-                "저장",
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text("생성", style: TextStyle(color: Colors.white)),
             ),
           ],
         );

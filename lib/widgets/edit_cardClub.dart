@@ -97,7 +97,9 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ModifyClubScreen()));
+                          builder: (context) => ModifyClubScreen(clubModel: clubModel,onModifyClub: () {
+
+                          },)));
                   break;
                   break;
                  case 'delClub':
@@ -115,7 +117,7 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
               PopupMenuItem<String>(
                 value: 'editInfo',
                 child: Text(
-                  '정보 수정하기',
+                  '동아리 수정',
                   style: TextStyle(color: Colors.black),
                 ),
               ),
@@ -129,7 +131,7 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
               PopupMenuItem<String>(
                 value: 'manageNotices',
                 child: Text(
-                  '공지 관리하기',
+                  '공지사항 관리',
                   style: TextStyle(color: Colors.black),
                 ),
               ),

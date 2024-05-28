@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/feed_model.dart';
+import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/modify/createPostScreen.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
@@ -48,9 +50,12 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final _themeManager = Provider.of<ThemeManager>(context);
+    //UserModel currentUserModel = context.read<UserState>().userModel;
     FeedState feedState = context.watch<FeedState>();
     List<FeedModel> feedList = feedState.feedList;
+    List<FeedModel> filteredFeedList = feedList
+        .where((feed) => feed.clubId == widget.clubId)
+        .toList();
 
     //if (feedState.feedStatus == FeedStatus.fetching) {
     //  return Center(
@@ -72,7 +77,7 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  '게시글 갯수: ${feedList.length}',
+                  '게시글 갯수: ${filteredFeedList.length}',
                   style: TextStyle(fontSize: 14.0),
                 ),
               ),
