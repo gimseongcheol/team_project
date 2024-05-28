@@ -138,7 +138,7 @@ class _NoticeDetailsScreenState extends State<NoticeDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(noticeModel.createAt.toDate())}',
+                    '게시일: ${DateFormat('yyyy-MM-dd HH:mm').format(noticeModel.createAt.toDate().add(Duration(hours: 9)))}',
                     style:
                     TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                   ),

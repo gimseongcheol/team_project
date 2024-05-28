@@ -1,34 +1,112 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/notice_model.dart';
+import 'package:team_project/providers/notice/notice_provider.dart';
+import 'package:team_project/providers/notice/notice_state.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'ModifyNoticeScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/theme/theme_manager.dart';
 
 class ReviseNoticeScreen extends StatefulWidget {
-  final Notice notice;
+  final VoidCallback onEditNoticeUploaded;
+  final NoticeModel noticeModel;
+  final String clubId;
 
-  ReviseNoticeScreen({required this.notice});
+  const ReviseNoticeScreen({
+    super.key,
+    required this.onEditNoticeUploaded,
+    required this.noticeModel,
+    required this.clubId,
+  });
 
   @override
-  _RevisePostScreenState createState() => _RevisePostScreenState();
+  State<ReviseNoticeScreen> createState() => _ReviseNoticeScreenState();
 }
 
 //-> 이것도 굳이 화면을 따로 만들지 말고 체크해서 작업할수 있게 하는 방법으로 하면 좋을듯 check를 해서 data가 있으면 가져오거나 혹은 없으면 백지상태로 작업할수 있게.
-class _RevisePostScreenState extends State<ReviseNoticeScreen> {
+class _ReviseNoticeScreenState extends State<ReviseNoticeScreen> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
-  bool _hasImage = false;
+  final List<String> _files = [];
 
   @override
-  void initState() {
-    super.initState();
-    _titleController.text = widget.notice.title;
-    _contentController.text = widget.notice.content;
-    //_hasImage = widget.notice.imageUrl != null;
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+
+  Future<List<String>> selectImages() async {
+    List<XFile> images = await ImagePicker().pickMultiImage(
+      maxHeight: 100,
+      maxWidth: 100,
+    );
+    return images.map((e) => e.path).toList();
+  }
+
+  List<Widget> selectedImageList() {
+    final noticeStatus = context.watch<NoticeState>().noticeStatus;
+    return _files.map((data) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Stack(
+          // Position the delete icon on top of the image
+          children: [
+            Container(
+              width: 100.0,
+              height: 100.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Image.file(
+                File(data),
+                fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: 100,
+              ),
+            ),
+            Positioned(
+              top: 1,
+              right: 1,
+              child: InkWell(
+                onTap: noticeStatus == NoticeStatus.submitting
+                    ? null
+                    : () {
+                        setState(() {
+                          _files.remove(data);
+                        });
+                      },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                  height: 20,
+                  width: 20,
+                  child: Icon(
+                    color: Colors.black.withOpacity(0.6),
+                    size: 20,
+                    Icons.highlight_remove_outlined,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
+    final noticeStatus = context.watch<NoticeState>().noticeStatus;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -80,73 +158,59 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Divider(),
-            Center(
-              child: Text(
-                '사진을 추가하려면 + 아이콘을 눌러주세요!',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Divider(),
-            SizedBox(height: 16.0),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  if (!_hasImage) {
-                    _addImage();
-                  } else {
-                    _showDeleteConfirmationDialog(context);
-                  }
-                },
-                child: Stack(
-                  children: [
-                    SizedBox(height: 16.0),
-                    Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white24
-                            : Colors.black54,
-                        borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      child: _hasImage
-                          ? Container(
-                              //widget.notice.imageUrl,
-                              width: 100.0,
-                              height: 100.0,
-                              //fit: BoxFit.cover,
+            Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: noticeStatus == NoticeStatus.submitting
+                              ? null
+                              : () async {
+                                  final _images = await selectImages();
+                                  setState(() {
+                                    _files.addAll(_images);
+                                  });
+                                },
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
                               color: _themeManager.themeMode == ThemeMode.dark
                                   ? Colors.white24
-                                  : Colors.white54,
-                            )
-                          : Container(),
-                    ),
-                    _hasImage
-                        ? Positioned(
-                            right: 0,
-                            top: 0,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: _themeManager.themeMode == ThemeMode.dark
-                                    ? Colors.white70
-                                    : Colors.black,
-                              ),
-                              onPressed: () {
-                                _showDeleteConfirmationDialog(context);
-                              },
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(0.0),
                             ),
-                          )
-                        : Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Icon(Icons.add),
+                            child: Icon(
+                              Icons.add,
+                              size: 40.0,
+                              color: _themeManager.themeMode == ThemeMode.dark
+                                  ? Colors.white70
+                                  : Colors.black,
+                            ),
                           ),
-                  ],
+                        ),
+                        ...selectedImageList(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 13.0, top: 8.0),
+              child: Text(
+                '사진 개수 : ${_files.length}개',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: _themeManager.themeMode == ThemeMode.dark
+                      ? Colors.white70
+                      : Colors.black,
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
             Divider(),
             Center(
               child: Text(
@@ -157,6 +221,7 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
             Divider(),
             SizedBox(height: 16.0),
             TextFormField(
+              controller: _titleController,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 filled: true,
@@ -164,15 +229,11 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
                     ? Colors.white24
                     : Colors.grey[100],
                 border: OutlineInputBorder(),
-                labelText: '제목을 입력합니다.',
+                hintText: '제목을 입력합니다.',
                 labelStyle: TextStyle(
                   color: _themeManager.themeMode == ThemeMode.dark
                       ? Colors.black
                       : Colors.black87,
-                ),
-                prefixIcon: Icon(
-                  Icons.text_fields,
-                  color: Colors.black
                 ),
                 focusedBorder: OutlineInputBorder(
                   //focus라 이벤트 처리시 발생하는 색상
@@ -185,6 +246,7 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
             ),
             SizedBox(height: 16.0),
             TextFormField(
+              controller: _contentController,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 filled: true,
@@ -192,14 +254,8 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
                     ? Colors.white24
                     : Colors.grey[100],
                 border: OutlineInputBorder(),
-                labelText: '내용을 입력합니다.',
+                hintText: '내용을 입력합니다.',
                 labelStyle: TextStyle(
-                  color: _themeManager.themeMode == ThemeMode.dark
-                      ? Colors.black
-                      : Colors.black87,
-                ),
-                prefixIcon: Icon(
-                  Icons.text_snippet_outlined,
                   color: _themeManager.themeMode == ThemeMode.dark
                       ? Colors.black
                       : Colors.black87,
@@ -220,12 +276,13 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
   }
 
   void _showConfirmationDialog(BuildContext context) {
+    final noticeStatus = context.read<NoticeState>().noticeStatus;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         final _themeManager = Provider.of<ThemeManager>(context);
         return AlertDialog(
-          backgroundColor:  _themeManager.themeMode == ThemeMode.dark
+          backgroundColor: _themeManager.themeMode == ThemeMode.dark
               ? Color(0xFF212121)
               : Colors.white,
           title: Text(
@@ -246,19 +303,36 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
           ),
           actions: <Widget>[
             ElevatedButton(
-              onPressed: () {
-                setState(() {});
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white70,
-              ),
-              child: Text("취소", style: TextStyle(color: Colors.black)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: (_files.length == 0 ||
+                      noticeStatus == NoticeStatus.submitting ||
+                      _titleController.text.isEmpty ||
+                      _contentController.text.isEmpty)
+                  ? null
+                  : () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ModifyNoticeScreen(clubId: widget.clubId),
+                          ));
+                      try {
+                        FocusScope.of(context).unfocus();
+                        // uploadNotice 메서드의 실행이 완료될 때까지 기다림
+                        await context.read<NoticeProvider>().updateNotice(
+                              files: _files,
+                              desc: _contentController.text,
+                              title: _titleController.text,
+                              clubId: widget.clubId,
+                              noticeId: widget.noticeModel.noticeId,
+                            );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('게시물을 등록했습니다.')),
+                        );
+                        widget.onEditNoticeUploaded();
+                      } on CustomException catch (e) {
+                        errorDialogWidget(context, e);
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)
@@ -270,22 +344,6 @@ class _RevisePostScreenState extends State<ReviseNoticeScreen> {
         );
       },
     );
-  }
-
-  void _addImage() {
-    // 이미지 추가 기능 구현 => 파베에 추가를 진행해야함. 저장시 처리하던지 아니면 realtime으로 진행을 하면됨 좋을 대로 작업할것
-    print('이미지 추가');
-    setState(() {
-      _hasImage = true;
-    });
-  }
-
-  void _removeImage() {
-    // 이미지 삭제 기능 구현 => 파베에서 삭제 같이 진행해야함. 위에 작성한 텍스트 처럼 같이 진해하면 됨.
-    print('이미지 삭제');
-    setState(() {
-      _hasImage = false;
-    });
   }
 
   void _saveChanges(BuildContext context) {

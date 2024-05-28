@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:team_project/theme/theme_manager.dart';
 
 class ScheduleScreen extends StatefulWidget {
+  String clubId;
+
+  ScheduleScreen({super.key, required this.clubId});
+
   @override
   _ScheduleScreenState createState() => _ScheduleScreenState();
 }

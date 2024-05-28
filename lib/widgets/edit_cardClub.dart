@@ -103,12 +103,12 @@ class _EditCardClubWidgetState extends State<EditCardClubWidget> {
                  case 'delClub':
                    _showDeleteDialog(context, clubProvider, clubModel);
                    break;
-                // case 'manageNotices':
-                //   Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => ModifyNoticeScreen()));
-                //   break;
+                 case 'manageNotices':
+                   Navigator.push(
+                       context,
+                       MaterialPageRoute(
+                           builder: (context) => ModifyNoticeScreen(clubId: clubModel.clubId,)));
+                   break;
               }
             },
             itemBuilder: (BuildContext context) => [
