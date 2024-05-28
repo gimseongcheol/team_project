@@ -99,7 +99,7 @@ class _LikeCardClubWidgetState extends State<LikeCardClubWidget> {
                 value: 'cancelLike',
                 child: TextButton(
                   child: Text(
-                    '삭제하기',
+                    '구독취소',
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () => _showdialog(context,clubProvider,clubModel),
