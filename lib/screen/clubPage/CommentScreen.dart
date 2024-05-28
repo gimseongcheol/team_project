@@ -67,7 +67,11 @@ class _CommentScreenState extends State<CommentScreen> {
           itemBuilder: (context, index) {
             if (commentState.commentList[index].clubId == widget.clubId) {
               return CommentCardWidget(
-                  commentModel: commentState.commentList[index]);
+                commentModel: commentState.commentList[index],
+              );
+            } else {
+              // 클럽 ID가 일치하지 않으면 빈 컨테이너 반환
+              return SizedBox.shrink();
             }
           },
         ),
