@@ -6,6 +6,7 @@ import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/search/search_provider.dart';
 import 'package:team_project/providers/search/search_state.dart';
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/modify/ModifyClubScreen.dart';
@@ -90,7 +91,8 @@ class _ClubSearchState extends State<ClubSearch>
             leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white, size: 25),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MainForm()));
               },
             ),
             title: Text(
