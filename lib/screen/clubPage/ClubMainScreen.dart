@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/DescriptionScreen.dart';
 import 'package:team_project/screen/clubPage/PostScreen.dart';
@@ -49,10 +50,10 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
     final List<String> _appbarNameList = [
       //이거 나중에 동아리명 받아서 작업해야해서 ${}이 방식으로 수정.
       clubModel.clubName,
-      clubModel.clubName +' 게시글',
-      clubModel.clubName+' 일정',
-      clubModel.clubName+' 공지사항',
-      clubModel.clubName+' 댓글',
+      clubModel.clubName + ' 게시글',
+      clubModel.clubName + ' 일정',
+      clubModel.clubName + ' 공지사항',
+      clubModel.clubName + ' 댓글',
     ];
     List<Widget> _screens = [
       DescriptionScreen(clubModel: clubModel), //동아리 메인 화면
@@ -82,6 +83,10 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
             Navigator.pop(context);
           },
         ),
+        actions: [IconButton(onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainForm()));
+        }, icon: Icon(Icons.home))],
       ),
       body: _screens[_selectedPage],
       bottomNavigationBar: SafeArea(
@@ -120,8 +125,8 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
                         item["icon"],
                         color: _selectedPage == index
                             ? _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white
-                            : Colors.black
+                                ? Colors.white
+                                : Colors.black
                             : Colors.white,
                       ),
                       SizedBox(height: 2),
@@ -130,8 +135,8 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
                         style: TextStyle(
                           color: _selectedPage == index
                               ? _themeManager.themeMode == ThemeMode.dark
-                              ? Colors.white
-                              : Colors.black
+                                  ? Colors.white
+                                  : Colors.black
                               : Colors.white,
                         ),
                       ),

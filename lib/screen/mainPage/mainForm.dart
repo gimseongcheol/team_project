@@ -135,12 +135,6 @@ class _MainFormState extends State<MainForm> {
                         as ImageProvider
                     : ExtendedNetworkImageProvider(userModel.profileImage!),
               ),
-              otherAccountsPictures: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  //나중에 backgroundImage이용해서 사진 지정.
-                ),
-              ],
               accountName: Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
@@ -190,6 +184,18 @@ class _MainFormState extends State<MainForm> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AboutExplain()));
             }),
+            SizedBox(height: 5),
+            _buildPhoneContainer(
+              title: '총 학생회',
+              phoneNumber: '053) 850-2910',
+              color: Colors.black12,
+            ),
+            SizedBox(height: 5),
+            _buildPhoneContainer(
+              title: '총 동아리 연합회',
+              phoneNumber: '053) 850-2930',
+              color: Colors.black12,
+            ),
             _buildDrawerCard(
               Icons.output,
               '로그아웃',
@@ -197,15 +203,6 @@ class _MainFormState extends State<MainForm> {
               () async {
                 await context.read<myAuthProvider.AuthProvider>().signOut();
               },
-            ),
-            _buildPhoneContainer(
-              title: '총 학생회',
-              phoneNumber: '053) 850-2910',
-            ),
-            SizedBox(height: 5),
-            _buildPhoneContainer(
-              title: '총 동아리 연합회',
-              phoneNumber: '053) 850-2930',
             ),
           ],
         ),
@@ -311,51 +308,38 @@ class _MainFormState extends State<MainForm> {
               : Colors.black),
     );
   }
+
   Widget _buildPhoneContainer({
     required String title,
     required String phoneNumber,
+    required Color color,
   }) {
-    return GestureDetector(
+    return ListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      tileColor: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+          ? color
+          : Colors.white,
+      leading: Icon(
+        Icons.call,
+        color: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+            ? Colors.white
+            : Colors.black,
+      ),
+      title: Text(title,
+          style: TextStyle(
+              color:
+                  Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+                      ? Colors.white
+                      : Colors.black)),
+      trailing: Icon(Icons.navigate_next,
+          color: Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
+              ? Colors.white
+              : Colors.black),
       onTap: () {
         launch('tel:${phoneNumber}'); //여기 에러가 뜸 권한부여인지 아직 미정 좀더 확인해야함.
       },
-      child: Card(
-        elevation: 3,
-        child: ListTile(
-          leading: Icon(
-            Icons.call,
-            size: 30,
-            color:
-            Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                ? Color(0xFF2DC764)
-                : Colors.black,
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w200,
-              color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Color(0xFF2DC764)
-                  : Colors.black,
-            ),
-          ),
-          subtitle: Text(
-            phoneNumber,
-            style: TextStyle(
-              fontSize: 17,
-              color:
-              Provider.of<ThemeManager>(context).themeMode == ThemeMode.dark
-                  ? Color(0xFF2DC764)
-                  : Colors.black,
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-      ),
     );
   }
 }

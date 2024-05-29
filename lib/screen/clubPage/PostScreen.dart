@@ -111,7 +111,7 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
                         clubId: widget.clubId,
                       )));
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.black),
       ),
     );
   }

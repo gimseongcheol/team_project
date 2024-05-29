@@ -14,6 +14,8 @@ import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/widgets/avatar_widget.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/heart_anime_widget.dart';
+import 'package:team_project/theme/theme_manager.dart';
+import 'package:team_project/theme/theme_constants.dart';
 
 class FeedCardWidget extends StatefulWidget {
   final FeedModel feedModel;
@@ -144,6 +146,7 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
     FeedModel feedModel = widget.feedModel;
     UserModel userModel = feedModel.writer;
     bool isLike = feedModel.likes.contains(currentUserId);
+    final _themeManager = Provider.of<ThemeManager>(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -172,7 +175,7 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
                             child: TextButton(
                               child: Text(
                                 '삭제',
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(color: Colors.black),
                               ),
                               onPressed: () async {
                                 try {
@@ -217,12 +220,12 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
                     isAnimating: isAnimating,
                     child: isLike
                         ? Icon(
-                      Icons.favorite,
-                      color: Colors.red,
+                      Icons.thumb_up,
+                      color: Colors.black,
                     )
                         : Icon(
-                      Icons.favorite_border,
-                      color: Colors.white,
+                      Icons.thumb_up_alt_outlined,
+                      color: Colors.black,
                     ),
                   ),
                 ),

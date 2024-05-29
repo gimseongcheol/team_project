@@ -60,7 +60,6 @@ class _MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
-    final _themeManager = Provider.of<ThemeManager>(context);
     super.build(context);
     FeedState feedState = context.watch<FeedState>();
     List<FeedModel> feedList = feedState.feedList;

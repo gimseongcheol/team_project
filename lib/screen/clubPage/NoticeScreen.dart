@@ -106,7 +106,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
                     clubId: widget.clubId,
                   )));
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.black,),
       ),
     );
   }
