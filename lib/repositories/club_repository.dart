@@ -107,6 +107,8 @@ class ClubRepository {
         'depart': depart,
         'likes': clubSnapshot.data()!['likes'] ?? [],
         'likeCount': clubSnapshot.data()!['likeCount'] ?? 0,
+        'reports': clubSnapshot.data()!['reports'] ?? [],
+        'reportCount': clubSnapshot.data()!['reportCount'] ?? 0,
       });
 
       return clubModel;
@@ -184,6 +186,16 @@ class ClubRepository {
           'likes': FieldValue.arrayRemove([clubModel.clubId]),
         });
       });
+      // 해당 게시물에 좋아요를 누른 users 문서의 likes 필드에서 feedId 삭제
+      List<String> reports = await clubDocRef
+          .get()
+          .then((value) => List<String>.from(value.data()!['reports']));
+
+      reports.forEach((uid) {
+        batch.update(firebaseFirestore.collection('users').doc(uid), {
+          'reports': FieldValue.arrayRemove([clubModel.clubId]),
+        });
+      });
 
       QuerySnapshot<Map<String, dynamic>> feedQuerySnapshot =
       await clubDocRef.collection('feeds').get();
@@ -228,7 +240,67 @@ class ClubRepository {
       );
     }
   }
+  Future<ClubModel> reportClub({
+    required String clubId,
+    required List<String> clubReports,
+    required String uid,
+    required List<String> userReports,
+  }) async {
+    try {
+      DocumentReference<Map<String, dynamic>> userDocRef =
+      firebaseFirestore.collection('users').doc(uid);
+      DocumentReference<Map<String, dynamic>> clubDocRef =
+      firebaseFirestore.collection('clubs').doc(clubId);
 
+      // 게시물을 좋아하는 유저 목록에 uid 가 포함되어 있는지 확인
+      // 포함되어 있다면 좋아요 취소
+      // 게시물의 likes 필드에서 uid 삭제
+      // 게시물의 likeCount 를 1 감소
+
+      // 유저가 좋아하는 게시물 목록에 feedId 가 포함되어 있는지 확인
+      // 포함되어 있다면 좋아요 취소
+      // 유저의 likes 필드에서 feedId 삭제
+      await firebaseFirestore.runTransaction((transaction) async {
+        bool isClubContains = clubReports.contains(uid);
+
+        transaction.update(clubDocRef, {
+          'reports': isClubContains
+              ? FieldValue.arrayRemove([uid])
+              : FieldValue.arrayUnion([uid]),
+          'reportCount': isClubContains
+              ? FieldValue.increment(-1)
+              : FieldValue.increment(1),
+        });
+
+        transaction.update(userDocRef, {
+          'reports': userReports.contains(clubId)
+              ? FieldValue.arrayRemove([clubId])
+              : FieldValue.arrayUnion([clubId]),
+        });
+      });
+
+      Map<String, dynamic> clubMapData =
+      await clubDocRef.get().then((value) => value.data()!);
+
+      DocumentReference<Map<String, dynamic>> writerDocRef =
+      clubMapData['writer'];
+      Map<String, dynamic> userMapData =
+      await writerDocRef.get().then((value) => value.data()!);
+      UserModel userModel = UserModel.fromMap(userMapData);
+      clubMapData['writer'] = userModel;
+      return ClubModel.fromMap(clubMapData);
+    } on FirebaseException catch (e) {
+      throw CustomException(
+        code: e.code,
+        message: e.message!,
+      );
+    } catch (e) {
+      throw CustomException(
+        code: 'Exception',
+        message: e.toString(),
+      );
+    }
+  }
 
   Future<ClubModel> likeClub({
     required String clubId,
@@ -385,6 +457,8 @@ class ClubRepository {
         'depart': depart,
         'likes': [],
         'likeCount': 0,
+        'reports': [],
+        'reportCount': 0,
       });
 
       batch.set(clubDocRef, clubModel.toMap(userDocRef: userDocRef));

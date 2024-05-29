@@ -8,6 +8,7 @@ import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/like/like_provider.dart';
+import 'package:team_project/providers/report/report_provider.dart';
 import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
@@ -144,13 +145,30 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
     }
   }
   //final controller = PageController(viewportFraction: 0.8, keepPage: true);
+  Future<void> _reportClub() async {
+    if (context.read<ClubState>().clubStatus == ClubStatus.submitting) {
+      return;
+    }
+    try {
+      ClubModel newClubModel = await context.read<ClubProvider>().reportClub(
+        clubId: widget.clubModel.clubId,
+        clubReports: widget.clubModel.reports,
+      );
 
+      context.read<ReportProvider>().reportClub(newClubModel: newClubModel);
+
+      await context.read<UserProvider>().getUserInfo();
+    } on CustomException catch (e) {
+      errorDialogWidget(context, e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     String currentUserId = context.read<UserState>().userModel.uid;
     final _themeManager = Provider.of<ThemeManager>(context);
     ClubModel clubModel = widget.clubModel;
     bool isLike = clubModel.likes.contains(currentUserId);
+    bool isReport = clubModel.reports.contains(currentUserId);
 
     //User? currentUser = FirebaseAuth.instance.currentUser;
     //ProfileState profileState = context.watch<ProfileState>();
@@ -215,27 +233,29 @@ class _DescriptionScreenState extends State<DescriptionScreen> {
                   width: MediaQuery.of(context).size.width / 2 -
                       20, // 화면의 절반 크기로 설정
                   child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isReported = !_isReported;
-                      });
-                    },
+                    onPressed: () async{
+                      await _reportClub();
+                      },
                     icon: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.report,
-                          color: _isReported
-                              ? Colors.red
-                              : Theme.of(context).iconTheme.color,
+                        isReport
+                            ? Icon(
+                          Icons.report_problem,
+                          color: Colors.red,
+                        )
+                            : Icon(
+                          Icons.report_problem_outlined,
+                          color: Theme.of(context).iconTheme.color,
                         ),
+
                         SizedBox(width: 4.0),
                         Text(
-                          '동아리 신고',
+                          clubModel.reportCount.toString(),
                           style: TextStyle(
                               fontSize: 16.0,
                               color:
-                                  Theme.of(context).textTheme.bodyText1!.color),
+                              Theme.of(context).textTheme.bodyText1!.color),
                         ),
                       ],
                     ),

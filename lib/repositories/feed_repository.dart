@@ -128,18 +128,28 @@ class FeedRepository {
     }
   }
   Future<List<FeedModel>> getFeedList({
-    required String clubId,
+    String? uid,
+    String? feedId,
+    required int feedLength,
   }) async {
     try {
-      //QuerySnapshot<Map<String, dynamic>> snapshot = await firebaseFirestore
-      //    .collection('clubs')
-      //    .doc(clubId)
-      //    .collection('comments')
-      //    .orderBy('createdAt', descending: true)
-      //    .get();
+      // 전체 피드 검색
       Query<Map<String, dynamic>> query = await firebaseFirestore
           .collection('feeds')
-          .orderBy('createAt', descending: true);
+      //.where('uid',  isEqualTo: uid) // firebase 업데이트로 인해 사용 불가
+          .orderBy('createAt', descending: true)
+          .limit(feedLength);
+
+      // uid 가 null 이 아닐 경우(특정 유저의 피드를 가져올 경우) 조건 추가
+      if (uid != null) {
+        query = query.where('uid', isEqualTo: uid);
+      }
+
+      if (feedId != null) {
+        DocumentSnapshot<Map<String, dynamic>> startDocRef =
+        await firebaseFirestore.collection('feeds').doc(feedId).get();
+        query = query.startAfterDocument(startDocRef);
+      }
 
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       return await Future.wait(snapshot.docs.map((e) async {

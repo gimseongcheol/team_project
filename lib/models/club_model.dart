@@ -21,6 +21,8 @@ class ClubModel {
   //final int followersCount;
   final List<String> likes;
   final int likeCount;
+  final List<String> reports;
+  final int reportCount;
 
   const ClubModel({
     required this.uid,
@@ -41,6 +43,8 @@ class ClubModel {
     required this.depart,
     required this.likes,
     required this.likeCount,
+    required this.reports,
+    required this.reportCount,
   });
 
 
@@ -66,6 +70,8 @@ class ClubModel {
       'depart' : this.depart,
       'likes': this.likes,
       'likeCount': this.likeCount,
+      'reports': this.reports,
+      'reportCount': this.reportCount,
     };
   }
 
@@ -89,11 +95,13 @@ class ClubModel {
       depart: map['depart'],
       likes: List<String>.from(map['likes']),
       likeCount: map['likeCount'],
+      reports: List<String>.from(map['reports']),
+      reportCount: map['reportCount'],
     );
   }
 
   @override
   String toString() {
-    return 'ClubModel{uid: $uid, clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, shortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount,feedCount: $feedCount, noticeCount : $noticeCount, depart : $depart, likes: $likes, likeCount : $likeCount}';
+    return 'ClubModel{uid: $uid, clubId: $clubId, clubName: $clubName, writer: $writer,createAt: $createAt, presidentName: $presidentName, professorName: $professorName, call: $call, shortComment: $shortComment, fullComment: $fullComment, profileImageUrl: $profileImageUrl, commentCount: $commentCount,feedCount: $feedCount, noticeCount : $noticeCount, depart : $depart, likes: $likes, likeCount : $likeCount, reports: $reports, reportCount : $reportCount}';
   }
 }

@@ -65,16 +65,29 @@ class FeedProvider extends StateNotifier<FeedState> with LocatorMixin {
     }
   }
   Future<void> getFeedList({
-    required String clubId,
-}) async {
+    String? feedId,
+  }) async {
+    final int feedLength = 3;
+
     try {
-      state = state.copyWith(feedStatus: FeedStatus.fetching);
-      List<FeedModel> feedList =
-      await read<FeedRepository>().getFeedList(clubId: clubId);
+      state = feedId == null
+          ? state.copyWith(feedStatus: FeedStatus.fetching)
+          : state.copyWith(feedStatus: FeedStatus.reFetching);
+
+      List<FeedModel> feedList = await read<FeedRepository>().getFeedList(
+        feedLength: feedLength,
+        feedId: feedId,
+      );
+
+      List<FeedModel> newFeedList = [
+        if (feedId != null) ...state.feedList,
+        ...feedList,
+      ];
 
       state = state.copyWith(
-        feedList: feedList,
+        feedList: newFeedList,
         feedStatus: FeedStatus.success,
+        hasNext: feedList.length == feedLength,
       );
     } on CustomException catch (_) {
       state = state.copyWith(feedStatus: FeedStatus.error);

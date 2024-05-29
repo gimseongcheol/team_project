@@ -50,6 +50,7 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
     }
   }
 
+
   Future<void> cancelLike({
     required ClubModel clubModel,
   }) async {
@@ -87,6 +88,37 @@ class ClubProvider extends StateNotifier<ClubState> with LocatorMixin {
         clubStatus: ClubStatus.success,
         clubList: newClubList,
       );
+    } on CustomException catch (_) {
+      state = state.copyWith(clubStatus: ClubStatus.error);
+      rethrow;
+    }
+  }
+  Future<ClubModel> reportClub({
+    required String clubId,
+    required List<String> clubReports,
+  }) async {
+    state = state.copyWith(clubStatus: ClubStatus.submitting);
+
+    try {
+      UserModel userModel = read<UserState>().userModel;
+
+      ClubModel clubModel = await read<ClubRepository>().reportClub(
+        clubId: clubId,
+        clubReports: clubReports,
+        uid: userModel.uid,
+        userReports: userModel.reports,
+      );
+
+      List<ClubModel> newClubList = state.clubList.map((club) {
+        return club.clubId == clubId ? clubModel : club;
+      }).toList();
+
+      state = state.copyWith(
+        clubStatus: ClubStatus.success,
+        clubList: newClubList,
+      );
+
+      return clubModel;
     } on CustomException catch (_) {
       state = state.copyWith(clubStatus: ClubStatus.error);
       rethrow;

@@ -22,6 +22,8 @@ import 'package:team_project/providers/notice/notice_provider.dart';
 import 'package:team_project/providers/notice/notice_state.dart';
 import 'package:team_project/providers/profile/profile_provider.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
+import 'package:team_project/providers/report/report_provider.dart';
+import 'package:team_project/providers/report/report_state.dart';
 import 'package:team_project/providers/schedule/schedule_provider.dart';
 import 'package:team_project/providers/schedule/schedule_state.dart';
 import 'package:team_project/providers/search/search_provider.dart';
@@ -36,6 +38,7 @@ import 'package:team_project/repositories/feed_repository.dart';
 import 'package:team_project/repositories/like_repository.dart';
 import 'package:team_project/repositories/notice_repository.dart';
 import 'package:team_project/repositories/profile_repository.dart';
+import 'package:team_project/repositories/report_repository.dart';
 import 'package:team_project/repositories/schedule_repository.dart';
 import 'package:team_project/repositories/search_repository.dart';
 import 'package:team_project/screen/auth/splash_screen.dart';
@@ -91,6 +94,11 @@ class MyApp extends StatelessWidget {
             firebaseFirestore: FirebaseFirestore.instance,
           ),
         ),
+        Provider<ReportRepository>(
+          create: (context) => ReportRepository(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
+        ),
         Provider<FeedRepository>(
           create: (context) => FeedRepository(
             firebaseStorage: FirebaseStorage.instance,
@@ -139,6 +147,9 @@ class MyApp extends StatelessWidget {
         ),
         StateNotifierProvider<FeedLikeProvider, FeedLikeState>(
           create: (context) => FeedLikeProvider(),
+        ),
+        StateNotifierProvider<ReportProvider, ReportState>(
+          create: (context) => ReportProvider(),
         ),
         StateNotifierProvider<FeedProvider, FeedState>(
           create: (context) => FeedProvider(),

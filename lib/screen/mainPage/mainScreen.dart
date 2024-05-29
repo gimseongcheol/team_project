@@ -36,22 +36,38 @@ class _MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMi
       });
     });
     feedProvider = context.read<FeedProvider>();
+    _scrollController.addListener(scrollListener);
     _getFeedList();
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(scrollListener);
+    _scrollController.dispose();
     _timer.cancel();
     super.dispose();
   }
+  void scrollListener() {
+    FeedState feedState = context.read<FeedState>();
 
+    if (feedState.feedStatus == FeedStatus.reFetching) {
+      return;
+    }
+    bool hasNext = feedState.hasNext;
+    if (_scrollController.offset >=
+        _scrollController.position.maxScrollExtent &&
+        hasNext) {
+      FeedModel lastFeedModel = feedState.feedList.last;
+      context.read<FeedProvider>().getFeedList(
+        feedId: lastFeedModel.feedId,
+      );
+    }
+  }
   void _getFeedList() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        final clubList = context.read<ClubState>().clubList;
-        for (var club in clubList) {
-          await feedProvider.getFeedList(clubId: club.clubId);
-        }
+        //final clubList = context.read<ClubState>().clubList;
+        await feedProvider.getFeedList();
       } on CustomException catch (e) {
         errorDialogWidget(context, e);
       }
@@ -63,6 +79,18 @@ class _MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMi
     super.build(context);
     FeedState feedState = context.watch<FeedState>();
     List<FeedModel> feedList = feedState.feedList;
+
+    if (feedState.feedStatus == FeedStatus.fetching) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (feedState.feedStatus == FeedStatus.success && feedList.length == 0) {
+      return Center(
+        child: Text('게시물이 존재하지 않습니다.'),
+      );
+    }
 
     return Scaffold(
       body: Column(
@@ -102,8 +130,21 @@ class _MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMi
                 _getFeedList();
               },
               child: ListView.builder(
-                itemCount: feedList.length,
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: feedList.length + 1,
                 itemBuilder: (context, index) {
+                  if (feedList.length == index) {
+                    return feedState.hasNext
+                        ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                        : Container();
+                  }
+
                   return FeedCardWidget(feedModel: feedList[index]);
                 },
               ),

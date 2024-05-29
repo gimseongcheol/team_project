@@ -40,7 +40,7 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
   void _getFeedList() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        await feedProvider.getFeedList(clubId: widget.clubId);
+        await feedProvider.getFeedList();
       } on CustomException catch (e) {
         errorDialogWidget(context, e);
       }

@@ -5,9 +5,10 @@ class UserModel {
   final String email;
   final String? profileImage;
   final int clubCount;
-  final List<String> followers;
+  final List<String> reports;
   final List<String> following;
   final List<String> likes;
+
 
   const UserModel({
     required this.uid,
@@ -16,7 +17,7 @@ class UserModel {
     required this.email,
     required this.profileImage,
     required this.clubCount,
-    required this.followers,
+    required this.reports,
     required this.following,
     required this.likes,
   });
@@ -29,7 +30,7 @@ class UserModel {
       email: '',
       profileImage: null,
       clubCount: 0,
-      followers: [],
+      reports: [],
       following: [],
       likes: [],
     );
@@ -43,7 +44,7 @@ class UserModel {
       'email': this.email,
       'profileImage': this.profileImage,
       'clubCount': this.clubCount,
-      'followers': this.followers,
+      'reports': this.reports,
       'following': this.following,
       'likes': this.likes,
     };
@@ -57,7 +58,7 @@ class UserModel {
       email: map['email'],
       profileImage: map['profileImage'],
       clubCount: map['clubCount'],
-      followers: List<String>.from(map['followers']),
+      reports: List<String>.from(map['reports']),
       following: List<String>.from(map['following']),
       likes: List<String>.from(map['likes']),
     );
@@ -70,7 +71,7 @@ class UserModel {
     String? email,
     String? profileImage,
     int? clubCount,
-    List<String>? followers,
+    List<String>? reports,
     List<String>? following,
     List<String>? likes,
   }) {
@@ -81,7 +82,7 @@ class UserModel {
       email: email ?? this.email,
       profileImage: profileImage ?? this.profileImage,
       clubCount: clubCount ?? this.clubCount,
-      followers: followers ?? this.followers,
+      reports: reports ?? this.reports,
       following: following ?? this.following,
       likes: likes ?? this.likes,
     );
@@ -89,6 +90,6 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel{uid: $uid,userid: $userid, name: $name, email: $email, profileImage: $profileImage, clubCount: $clubCount, followers: $followers, following: $following, likes: $likes}';
+    return 'UserModel{uid: $uid,userid: $userid, name: $name, email: $email, profileImage: $profileImage, clubCount: $clubCount, reports: $reports, following: $following, likes: $likes}';
   }
 }
