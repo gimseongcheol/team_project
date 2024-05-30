@@ -80,8 +80,8 @@ class _CommentScreenState extends State<CommentScreen> {
         margin:
         EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         color: _themeManager.themeMode == ThemeMode.dark
-            ? Colors.white70
-            : Colors.black54,
+            ? Colors.black54
+            : Colors.white70,
         child: Form(
           key: _formKey,
           child: Row(
@@ -98,7 +98,7 @@ class _CommentScreenState extends State<CommentScreen> {
                       border: InputBorder.none,
                       hintStyle: TextStyle(
                         color: _themeManager.themeMode == ThemeMode.dark
-                            ? Colors.white70
+                            ? Colors.black
                             : Colors.black54,
                       ),
                     ),

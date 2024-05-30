@@ -4,8 +4,16 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/feed_model.dart';
+import 'package:team_project/providers/feed/feed_provider.dart';
+import 'package:team_project/providers/feed/feed_state.dart';
+import 'package:team_project/providers/like/feed_like_provider.dart';
+import 'package:team_project/providers/user/user_provider.dart';
+import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/theme/theme_manager.dart';
+import 'package:team_project/widgets/error_dialog_widget.dart';
+import 'package:team_project/widgets/heart_anime_widget.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final FeedModel feedModel;
@@ -18,6 +26,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool _isLiked = false;
   int _likeCount = 0;
   int _indicatorIndex = 0;
+  bool isAnimating = false;
   final CarouselController carouselController = CarouselController();
 
   Widget _imageZoomInOutWidget(String imageUrl) {
@@ -48,48 +57,90 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
 //이미지 슬라이더
   Widget _imageSliderWidget(List<String> imageUrls) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          carouselController: carouselController,
-          items: imageUrls.map((url) => _imageZoomInOutWidget(url)).toList(),
-          options: CarouselOptions(
-            viewportFraction: 1.0,
-            height: MediaQuery.of(context).size.height * 0.4,
-            onPageChanged: (index, reason) {
-              _indicatorIndex = index;
-            },
-          ),
-        ),
-        //이미지 수에 따라 동그라미 추가
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: imageUrls.asMap().keys.map((e) {
-                return Container(
-                  width: 8,
-                  height: 8,
-                  margin:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white
-                        .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
-                  ),
-                );
-              }).toList(),
+    return GestureDetector(
+      onDoubleTap: () async {
+        await _likeFeed();
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CarouselSlider(
+            carouselController: carouselController,
+            items: imageUrls.map((url) => _imageZoomInOutWidget(url)).toList(),
+            options: CarouselOptions(
+              viewportFraction: 1.0,
+              height: MediaQuery.of(context).size.height * 0.35,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _indicatorIndex = index;
+                });
+              },
             ),
           ),
-        )
-      ],
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: imageUrls.asMap().keys.map((e) {
+                  return Container(
+                    width: 8,
+                    height: 8,
+                    margin:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white
+                          .withOpacity(_indicatorIndex == e ? 0.9 : 0.4),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          Opacity(
+            opacity: isAnimating ? 1 : 0,
+            child: HeartAnimationWidget(
+              isAnimating: isAnimating,
+              child: Icon(
+                Icons.favorite,
+                color: Colors.white,
+                size: 100,
+              ),
+              onEnd: () => setState(() {
+                isAnimating = false;
+              }),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+  Future<void> _likeFeed() async {
+    if (context.read<FeedState>().feedStatus == FeedStatus.submitting) {
+      return;
+    }
+    try {
+      isAnimating = true;
+      FeedModel newFeedModel = await context.read<FeedProvider>().likeFeed(
+        feedId: widget.feedModel.feedId,
+        feedLikes: widget.feedModel.likes,
+      );
+
+
+      context.read<FeedLikeProvider>().likeFeed(newFeedModel: newFeedModel);
+
+      await context.read<UserProvider>().getUserInfo();
+    } on CustomException catch (e) {
+      errorDialogWidget(context, e);
+    }
   }
   @override
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
     FeedModel feedModel = widget.feedModel;
+    String currentUserId = context.read<UserState>().userModel.uid;
+    bool isLike = feedModel.likes.contains(currentUserId);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -145,23 +196,35 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   ),
                   Row(
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        color: _isLiked ? Colors.blue : null,
-                        onPressed: () {
-                          setState(() {
-                            _isLiked = !_isLiked;
-                            if (_isLiked) {
-                              _likeCount++;
-                            } else {
-                              _likeCount--;
-                            }
-                          });
+                      GestureDetector(
+                        onTap: () async {
+                          await _likeFeed();
                         },
+                        child: HeartAnimationWidget(
+                          isAnimating: isAnimating,
+                          child: isLike
+                              ? Icon(
+                            Icons.thumb_up,
+                            color: Colors.black,
+                          )
+                              : Icon(
+                            Icons.thumb_up_alt_outlined,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
+                      SizedBox(width: 5),
                       Text(
-                        '$_likeCount',
-                        style: TextStyle(fontSize: 16.0),
+                        feedModel.likeCount.toString(),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(width: 10),
+                      Spacer(),
+                      Text(
+                        feedModel.createAt.toDate().toString().split(' ')[0],
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),

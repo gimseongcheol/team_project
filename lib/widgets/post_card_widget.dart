@@ -106,8 +106,8 @@ class _FeedCardWidgetState extends State<FeedCardWidget> {
             child: HeartAnimationWidget(
               isAnimating: isAnimating,
               child: Icon(
-                Icons.favorite,
-                color: Colors.white,
+                Icons.thumb_up,
+                color: Colors.black,
                 size: 100,
               ),
               onEnd: () => setState(() {
