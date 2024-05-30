@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/feed_model.dart';
-import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/feed/feed_provider.dart';
 import 'package:team_project/providers/feed/feed_state.dart';
-import 'package:team_project/theme/theme_manager.dart';
-import 'package:team_project/widgets/Post.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/post_card_widget.dart';
 

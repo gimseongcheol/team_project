@@ -16,9 +16,9 @@ import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/postItem_widget.dart';
 
 class PostScreen extends StatefulWidget {
-  final String clubId;
+  final ClubModel clubModel;
 
-  const PostScreen({super.key, required this.clubId});
+  const PostScreen({super.key, required this.clubModel});
 
   @override
   State<PostScreen> createState() => _PostScreenState();
@@ -54,8 +54,9 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
     FeedState feedState = context.watch<FeedState>();
     List<FeedModel> feedList = feedState.feedList;
     List<FeedModel> filteredFeedList = feedList
-        .where((feed) => feed.clubId == widget.clubId)
+        .where((feed) => feed.clubId == widget.clubModel.clubId)
         .toList();
+    ClubModel clubModel = widget.clubModel;
 
     //if (feedState.feedStatus == FeedStatus.fetching) {
     //  return Center(
@@ -63,10 +64,10 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
     //  );
     //}
     //if (feedState.feedStatus == FeedStatus.success && feedList.length == 0) {
-     // return Center(
-     //   child: Text('게시물이 존재하지 않습니다.'),
-     // );
-   // }
+    // return Center(
+    //   child: Text('게시물이 존재하지 않습니다.'),
+    // );
+    // }
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,10 +92,10 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
               child: ListView.builder(
                 itemCount: feedList.length,
                 itemBuilder: (context, index) {
-                  if(widget.clubId == feedList[index].clubId)
+                  if(widget.clubModel.clubId == feedList[index].clubId)
                     return PostItem(
                       feedModel: feedList[index],
-                  );
+                    );
                 },
               ),
             ),
@@ -107,9 +108,9 @@ class _PostScreenState extends State<PostScreen> with AutomaticKeepAliveClientMi
               context,
               MaterialPageRoute(
                   builder: (context) => CreatePostScreen(
-                        onFeedUploaded: () {},
-                        clubId: widget.clubId,
-                      )));
+                    onFeedUploaded: () {},
+                    clubModel: clubModel,
+                  )));
         },
         child: Icon(Icons.add, color: Colors.black),
       ),

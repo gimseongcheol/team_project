@@ -14,12 +14,12 @@ import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final VoidCallback onFeedUploaded;
-  final String clubId;
+  final ClubModel clubModel;
 
   const CreatePostScreen({
     super.key,
     required this.onFeedUploaded,
-    required this.clubId,
+    required this.clubModel,
   });
 
   @override
@@ -74,10 +74,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onTap: feedStatus == FeedStatus.submitting
                     ? null
                     : () {
-                        setState(() {
-                          _files.remove(data);
-                        });
-                      },
+                  setState(() {
+                    _files.remove(data);
+                  });
+                },
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.4),
@@ -103,6 +103,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
     final feedStatus = context.watch<FeedState>().feedStatus;
+    ClubModel clubModel = widget.clubModel;
 
     return Scaffold(
       appBar: AppBar(
@@ -127,7 +128,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              _showConfirmationDialog(context);
+              _showConfirmationDialog(context, clubModel);
             },
             child: Row(
               children: [
@@ -278,7 +279,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context,ClubModel clubModel) {
     final feedStatus = context.read<FeedState>().feedStatus;
     showDialog(
       context: context,
@@ -317,33 +318,33 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ),
             ElevatedButton(
               onPressed: (_files.length == 0 ||
-                      feedStatus == FeedStatus.submitting ||
-                      _textEditingController.text.isEmpty ||
-                      _contentEditingController.text.isEmpty)
+                  feedStatus == FeedStatus.submitting ||
+                  _textEditingController.text.isEmpty ||
+                  _contentEditingController.text.isEmpty)
                   ? null
                   : () async {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => PostScreen(clubId: widget.clubId)
+                      builder: (context) => ClubMainScreen(clubModel: clubModel),
                     ));
-                      try {
-                        FocusScope.of(context).unfocus();
-                        // uploadFeed 메서드의 실행이 완료될 때까지 기다림
-                        await context.read<FeedProvider>().uploadFeed(
-                              files: _files,
-                              desc: _contentEditingController.text,
-                              title: _textEditingController.text,
-                              clubId : widget.clubId,
-                            );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('게시물을 등록했습니다.')),
-                        );
-                        widget.onFeedUploaded();
-                      } on CustomException catch (e) {
-                        errorDialogWidget(context, e);
-                      }
-                    },
+                try {
+                  FocusScope.of(context).unfocus();
+                  // uploadFeed 메서드의 실행이 완료될 때까지 기다림
+                  await context.read<FeedProvider>().uploadFeed(
+                    files: _files,
+                    desc: _contentEditingController.text,
+                    title: _textEditingController.text,
+                    clubId : widget.clubModel.clubId,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('게시물을 등록했습니다.')),
+                  );
+                  widget.onFeedUploaded();
+                } on CustomException catch (e) {
+                  errorDialogWidget(context, e);
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _themeManager.themeMode == ThemeMode.dark
                     ? Color(0xff1c213a)

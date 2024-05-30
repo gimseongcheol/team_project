@@ -15,7 +15,6 @@ import 'package:team_project/widgets/avatar_widget.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/heart_anime_widget.dart';
 import 'package:team_project/theme/theme_manager.dart';
-import 'package:team_project/theme/theme_constants.dart';
 
 class FeedCardWidget extends StatefulWidget {
   final FeedModel feedModel;

@@ -323,7 +323,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete),
-                                onPressed: () {
+                                onPressed: () { 
                                   _confirmDeleteEvent(context, index);
                                 },
                               ),

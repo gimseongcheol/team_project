@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
-import 'package:team_project/models/comment_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/comment/comment_provider.dart';
 import 'package:team_project/providers/comment/comment_state.dart';
@@ -9,7 +7,6 @@ import 'package:team_project/providers/user/user_state.dart';
 import 'package:team_project/widgets/avatar_widget.dart';
 import 'package:team_project/widgets/cooment_card_widget.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
-import 'DescriptionScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/theme/theme_manager.dart';
 

@@ -23,8 +23,6 @@ class PostDetailScreen extends StatefulWidget {
   State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 class _PostDetailScreenState extends State<PostDetailScreen> {
-  bool _isLiked = false;
-  int _likeCount = 0;
   int _indicatorIndex = 0;
   bool isAnimating = false;
   final CarouselController carouselController = CarouselController();

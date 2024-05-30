@@ -8,8 +8,6 @@ import 'package:team_project/providers/search/search_provider.dart';
 import 'package:team_project/providers/search/search_state.dart';
 import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
-import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
-import 'package:team_project/screen/modify/ModifyClubScreen.dart';
 import 'package:team_project/screen/modify/createClubScreen.dart';
 import 'package:team_project/utils/debounce.dart';
 import 'package:team_project/utils/logger.dart';

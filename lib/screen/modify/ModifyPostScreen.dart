@@ -1,9 +1,7 @@
-import 'package:team_project/models/club_model.dart';
 import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'createPostScreen.dart';
 import 'revise_post_screen.dart';
 import 'package:provider/provider.dart';
 

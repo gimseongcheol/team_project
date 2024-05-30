@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_state.dart';
+import 'package:team_project/screen/mainPage/clubSearch.dart';
 import 'package:team_project/screen/mainPage/mainForm.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/screen/clubPage/DescriptionScreen.dart';
@@ -57,9 +58,9 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
     ];
     List<Widget> _screens = [
       DescriptionScreen(clubModel: clubModel), //동아리 메인 화면
-      PostScreen(clubId: widget.clubModel.clubId), // 게시글 화면
+      PostScreen(clubModel: clubModel,), // 게시글 화면
       ScheduleScreen(clubId: widget.clubModel.clubId), //달력 화면
-      NoticeScreen(clubId: widget.clubModel.clubId), //공지 화면
+      NoticeScreen(clubModel: clubModel,), //공지 화면
       CommentScreen(clubId: clubModel.clubId), //댓글 화면
     ];
     return Scaffold(
@@ -80,7 +81,8 @@ class _ClubMainScreenState extends State<ClubMainScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ClubSearch()));
           },
         ),
         actions: [IconButton(onPressed: () {

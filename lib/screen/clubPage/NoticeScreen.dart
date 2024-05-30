@@ -14,9 +14,9 @@ import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/noticeItem_widget.dart';
 
 class NoticeScreen extends StatefulWidget {
-  final String clubId;
+  final ClubModel clubModel;
 
-  const NoticeScreen({super.key, required this.clubId});
+  const NoticeScreen({super.key, required this.clubModel});
 
   @override
   State<NoticeScreen> createState() => _NoticeScreenState();
@@ -38,7 +38,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
   void _getNoticeList() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        await noticeProvider.getNoticeList(clubId: widget.clubId);
+        await noticeProvider.getNoticeList(clubId: widget.clubModel.clubId);
       } on CustomException catch (e) {
         errorDialogWidget(context, e);
       }
@@ -51,6 +51,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
     final _themeManager = Provider.of<ThemeManager>(context);
     NoticeState noticeState = context.watch<NoticeState>();
     List<NoticeModel> noticeList = noticeState.noticeList;
+    ClubModel clubModel = widget.clubModel;
 
 
     //if (feedState.feedStatus == FeedStatus.fetching) {
@@ -103,7 +104,7 @@ class _NoticeScreenState extends State<NoticeScreen> with AutomaticKeepAliveClie
               MaterialPageRoute(
                   builder: (context) => CreateNoticeScreen(
                     onNoticeUploaded: () {},
-                    clubId: widget.clubId,
+                    clubModel: clubModel,
                   )));
         },
         child: Icon(Icons.add, color: Colors.black,),

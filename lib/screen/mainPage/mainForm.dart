@@ -2,7 +2,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
-import 'package:team_project/models/club_model.dart';
 import 'package:team_project/models/user_model.dart';
 import 'package:team_project/providers/auth/auth_provider.dart'
     as myAuthProvider;
@@ -10,7 +9,6 @@ import 'package:team_project/providers/club/club_state.dart';
 import 'package:team_project/providers/profile/profile_state.dart';
 import 'package:team_project/providers/user/user_provider.dart';
 import 'package:team_project/screen/auth/signup_screen.dart';
-import 'package:team_project/screen/clubPage/CommentScreen.dart';
 import 'package:team_project/screen/mainPage/editProfile.dart';
 import 'package:team_project/screen/mainPage/editClub.dart';
 import 'package:team_project/screen/mainPage/eidtSubscribeClub.dart';

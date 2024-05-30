@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/club/club_provider.dart';
 import 'package:team_project/providers/club/club_state.dart';
-import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/like_club_widget.dart';
 

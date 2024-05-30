@@ -4,20 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
+import 'package:team_project/models/club_model.dart';
 import 'package:team_project/providers/notice/notice_provider.dart';
 import 'package:team_project/providers/notice/notice_state.dart';
+import 'package:team_project/screen/clubPage/ClubMainScreen.dart';
 import 'package:team_project/screen/clubPage/NoticeScreen.dart';
 import 'package:team_project/theme/theme_manager.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 
 class CreateNoticeScreen extends StatefulWidget {
   final VoidCallback onNoticeUploaded;
-  final String clubId;
+  final ClubModel clubModel;
 
   const CreateNoticeScreen({
     super.key,
     required this.onNoticeUploaded,
-    required this.clubId,
+    required this.clubModel,
   });
 
   @override
@@ -101,6 +103,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
   Widget build(BuildContext context) {
     final _themeManager = Provider.of<ThemeManager>(context);
     final noticeStatus = context.watch<NoticeState>().noticeStatus;
+    ClubModel clubModel = widget.clubModel;
 
     return Scaffold(
       appBar: AppBar(
@@ -125,7 +128,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              _showConfirmationDialog(context);
+              _showConfirmationDialog(context, clubModel);
             },
             child: Row(
               children: [
@@ -276,7 +279,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context, ClubModel clubModel) {
     final noticeStatus = context.read<NoticeState>().noticeStatus;
     showDialog(
       context: context,
@@ -323,7 +326,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NoticeScreen(clubId: widget.clubId)
+                        builder: (context) => ClubMainScreen(clubModel: clubModel)
                     ));
                 try {
                   FocusScope.of(context).unfocus();
@@ -332,7 +335,7 @@ class _CreateNoticeScreenState extends State<CreateNoticeScreen> {
                     files: _files,
                     desc: _contentEditingController.text,
                     title: _textEditingController.text,
-                    clubId : widget.clubId,
+                    clubId : widget.clubModel.clubId,
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('게시물을 등록했습니다.')),

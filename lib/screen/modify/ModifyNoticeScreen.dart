@@ -3,13 +3,9 @@ import 'package:team_project/models/notice_model.dart';
 import 'package:team_project/providers/notice/notice_provider.dart';
 import 'package:team_project/providers/notice/notice_state.dart';
 import 'package:team_project/screen/mainPage/mainForm.dart';
-import 'package:team_project/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:team_project/widgets/edit_notice_widget.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
-import 'createNoticeScreen.dart';
-import 'revise_notice_screen.dart';
 import 'package:provider/provider.dart';
 
 class ModifyNoticeScreen extends StatefulWidget {

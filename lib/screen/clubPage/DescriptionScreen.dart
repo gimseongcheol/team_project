@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:team_project/exceptions/custom_exception.dart';
 import 'package:team_project/models/club_model.dart';
@@ -16,9 +15,6 @@ import 'package:provider/provider.dart';
 import 'package:team_project/widgets/error_dialog_widget.dart';
 import 'package:team_project/widgets/heart_anime_widget.dart';
 
-import '../../models/user_model.dart';
-import '../../providers/profile/profile_state.dart';
-import '../../utils/logger.dart';
 
 class DescriptionScreen extends StatefulWidget {
   final ClubModel clubModel;
